@@ -39,13 +39,17 @@ def setup_directories(config: ProjectConfig, verbose: bool = False) -> None:
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
         if verbose:
-            console.print(f"[green]Created:[/green] {d.relative_to(config.project_root)}")
+            console.print(
+                f"[green]Created:[/green] {d.relative_to(config.project_root)}"
+            )
 
     component_init = config.component_dir_absolute / "__init__.py"
     if not component_init.exists():
         component_init.write_text("")
         if verbose:
-            console.print(f"[green]Created:[/green] {component_init.relative_to(config.project_root)}")
+            console.print(
+                f"[green]Created:[/green] {component_init.relative_to(config.project_root)}"
+            )
 
 
 def create_css_input(config: ProjectConfig, verbose: bool = False) -> None:
@@ -62,12 +66,14 @@ def create_app(config: ProjectConfig, verbose: bool = False) -> None:
             console.print("[yellow]Skipped:[/yellow] app.py (already exists)")
         return
 
-    app_path.write_text(generate_app_starter(
-        config,
-        app_name="app.py",
-        include_css_link=True,
-        include_components_example=True
-    ))
+    app_path.write_text(
+        generate_app_starter(
+            config,
+            app_name="app.py",
+            include_css_link=True,
+            include_components_example=True,
+        )
+    )
     if verbose:
         console.print("[green]Created:[/green] app.py")
 
@@ -159,14 +165,19 @@ def init_command(
         console.print("\n[green]✨ Initializing StarUI...[/green]")
 
         steps = [
-            ("Creating directories", lambda: setup_directories(project_config, verbose)),
+            (
+                "Creating directories",
+                lambda: setup_directories(project_config, verbose),
+            ),
             ("Creating CSS input", lambda: create_css_input(project_config, verbose)),
             ("Creating starter app", lambda: create_app(project_config, verbose)),
             ("Updating .gitignore", lambda: update_gitignore(project_config, verbose)),
         ]
 
         if config:
-            steps.append(("Creating config", lambda: create_config_file(project_config, verbose)))
+            steps.append(
+                ("Creating config", lambda: create_config_file(project_config, verbose))
+            )
 
         if verbose:
             for name, func in steps:
@@ -184,7 +195,9 @@ def init_command(
         console.print("  3. Run [blue]star build[/blue] for production CSS")
 
         if not config:
-            console.print("\n[dim]💡 Use [blue]star init --config[/blue] for config file[/dim]")
+            console.print(
+                "\n[dim]💡 Use [blue]star init --config[/blue] for config file[/dim]"
+            )
 
     except Exception as e:
         error(f"Initialization failed: {e}")

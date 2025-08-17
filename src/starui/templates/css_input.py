@@ -107,7 +107,9 @@ CSS_THEME = """\
 """
 
 
-def generate_css_input(config: ProjectConfig | None = None, include_reset: bool = True) -> str:
+def generate_css_input(
+    config: ProjectConfig | None = None, include_reset: bool = True
+) -> str:
     """Generate CSS input file content for Tailwind v4."""
     content = CSS_TEMPLATE_BASE
 

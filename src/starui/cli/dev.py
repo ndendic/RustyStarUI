@@ -28,7 +28,7 @@ class RebuildHandler(FileSystemEventHandler):
         if event.is_directory:
             return
         path = Path(cast(str, event.src_path))
-        if path.suffix in {'.py', '.html', '.css', '.js'}:
+        if path.suffix in {".py", ".html", ".css", ".js"}:
             self._rebuild(path)
 
     def _rebuild(self, changed_path: Path) -> None:
@@ -40,7 +40,9 @@ class RebuildHandler(FileSystemEventHandler):
             info(f"Changed: {changed_path}")
 
         with console.status("[bold yellow]Rebuilding CSS..."):
-            result = self.builder.build(BuildMode.DEVELOPMENT, watch=False, scan_content=True)
+            result = self.builder.build(
+                BuildMode.DEVELOPMENT, watch=False, scan_content=True
+            )
 
         if result.success:
             success(f"✓ CSS rebuilt ({result.build_time:.2f}s)")
@@ -64,7 +66,9 @@ def dev_command(
 
         # Initial build
         with console.status("[bold green]Building CSS..."):
-            result = builder.build(BuildMode.DEVELOPMENT, watch=False, scan_content=True)
+            result = builder.build(
+                BuildMode.DEVELOPMENT, watch=False, scan_content=True
+            )
             if not result.success:
                 error(f"Initial build failed: {result.error_message}")
                 raise typer.Exit(1)
@@ -87,11 +91,20 @@ def dev_command(
                 raise typer.Exit(1)
 
             app_process = subprocess.Popen(
-                [sys.executable, "-m", "uvicorn", f"{app_path.stem}:app",
-                 "--reload", "--port", str(port), "--host", "localhost"],
+                [
+                    sys.executable,
+                    "-m",
+                    "uvicorn",
+                    f"{app_path.stem}:app",
+                    "--reload",
+                    "--port",
+                    str(port),
+                    "--host",
+                    "localhost",
+                ],
                 stdout=None,  # Stream to terminal
                 stderr=None,  # Stream to terminal
-                text=True
+                text=True,
             )
             success(f"✓ App server started at http://localhost:{port}")
 

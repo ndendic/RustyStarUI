@@ -1,7 +1,5 @@
 """Tests for the main CLI application."""
 
-from unittest.mock import patch
-
 from typer.testing import CliRunner
 
 from starui.cli.main import app

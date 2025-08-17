@@ -14,12 +14,10 @@ alert_variants = cva(
     variants={
         "variant": {
             "default": "bg-card text-card-foreground",
-            "destructive": "text-destructive bg-card [&>iconify-icon]:text-current *:data-[slot=alert-description]:text-destructive/90"
+            "destructive": "text-destructive bg-card [&>iconify-icon]:text-current *:data-[slot=alert-description]:text-destructive/90",
         }
     },
-    default_variants={
-        "variant": "default"
-    }
+    default_variants={"variant": "default"},
 )
 
 
@@ -28,7 +26,7 @@ def Alert(
     variant: AlertVariant = "default",
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Alert container - pixel-perfect shadcn/ui copy.
@@ -43,9 +41,10 @@ def Alert(
         cls=cn(
             alert_variants(variant=variant),
             f"alert-{variant}",  # Add variant class for child styling
-            class_name, cls
+            class_name,
+            cls,
         ),
-        **attrs
+        **attrs,
     )
 
 
@@ -53,7 +52,7 @@ def AlertTitle(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Alert title - displays the main heading of the alert.
@@ -65,9 +64,10 @@ def AlertTitle(
         data_slot="alert-title",
         cls=cn(
             "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
-            class_name, cls
+            class_name,
+            cls,
         ),
-        **attrs
+        **attrs,
     )
 
 
@@ -75,7 +75,7 @@ def AlertDescription(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Alert description - provides detailed information for the alert.
@@ -87,7 +87,8 @@ def AlertDescription(
         data_slot="alert-description",
         cls=cn(
             "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
-            class_name, cls
+            class_name,
+            cls,
         ),
-        **attrs
+        **attrs,
     )

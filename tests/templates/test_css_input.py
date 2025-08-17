@@ -13,7 +13,7 @@ class TestCSSInput:
         """Test CSS generation includes reset by default."""
         css = generate_css_input()
 
-        assert "@import \"tailwindcss\";" in css
+        assert '@import "tailwindcss";' in css
         assert "CSS Reset" in css
         assert "box-sizing: border-box" in css
         assert ":root {" in css
@@ -33,7 +33,7 @@ class TestCSSInput:
         config = ProjectConfig(
             project_root=Path("/tmp/test"),
             css_output=Path("dist/styles.css"),
-            component_dir=Path("components/ui")
+            component_dir=Path("components/ui"),
         )
         css = generate_css_input(config)
 

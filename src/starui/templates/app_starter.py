@@ -37,14 +37,14 @@ def generate_app_starter(
     config: ProjectConfig | None = None,
     app_name: str = "app.py",
     include_css_link: bool = True,
-    include_components_example: bool = True
+    include_components_example: bool = True,
 ) -> str:
     """Generate a starter StarHTML app."""
     if config is None:
         config = ProjectConfig(
             project_root=Path.cwd(),
             css_output=Path("starui.css"),
-            component_dir=Path("components/ui")
+            component_dir=Path("components/ui"),
         )
 
     return APP_TEMPLATE.format(css_path=str(config.css_output))

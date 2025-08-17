@@ -10,16 +10,19 @@ import requests
 
 class BinaryError(Exception):
     """Binary management error."""
+
     pass
 
 
 class NetworkError(BinaryError):
     """Network error during download."""
+
     pass
 
 
 class VerificationError(BinaryError):
     """Binary verification failed."""
+
     pass
 
 
@@ -53,8 +56,12 @@ class TailwindBinaryManager:
     """Manages Tailwind CSS binaries."""
 
     DEFAULT_VERSION = "latest"
-    GITHUB_RELEASES_URL = "https://github.com/tailwindlabs/tailwindcss/releases/download"
-    GITHUB_API_URL = "https://api.github.com/repos/tailwindlabs/tailwindcss/releases/latest"
+    GITHUB_RELEASES_URL = (
+        "https://github.com/tailwindlabs/tailwindcss/releases/download"
+    )
+    GITHUB_API_URL = (
+        "https://api.github.com/repos/tailwindlabs/tailwindcss/releases/latest"
+    )
 
     def __init__(self, version: str | None = None):
         self.version = version or self.DEFAULT_VERSION
@@ -83,7 +90,9 @@ class TailwindBinaryManager:
         platform_name, arch = get_platform_info()
         return cache_dir / get_binary_name(platform_name, arch)
 
-    def _download_binary(self, url: str, binary_path: Path, checksum: str | None = None) -> None:
+    def _download_binary(
+        self, url: str, binary_path: Path, checksum: str | None = None
+    ) -> None:
         try:
             response = requests.get(url, timeout=60)
             response.raise_for_status()
@@ -95,12 +104,16 @@ class TailwindBinaryManager:
             if checksum:
                 actual = hashlib.sha256(binary_path.read_bytes()).hexdigest()
                 if actual != checksum:
-                    raise VerificationError(f"Checksum mismatch: {actual} != {checksum}")
+                    raise VerificationError(
+                        f"Checksum mismatch: {actual} != {checksum}"
+                    )
 
         except requests.RequestException as e:
             raise NetworkError(f"Failed to download: {e}") from e
 
-    def get_binary(self, cache_dir: Path | None = None, checksum: str | None = None) -> Path:
+    def get_binary(
+        self, cache_dir: Path | None = None, checksum: str | None = None
+    ) -> Path:
         # Check system PATH
         if system_binary := shutil.which("tailwindcss"):
             return Path(system_binary)

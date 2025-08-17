@@ -28,4 +28,6 @@ def test_package_has_entry_point():
     # Verify CLI entry point is configured
     scripts = pyproject_data.get("project", {}).get("scripts", {})
     assert "star" in scripts, "CLI entry point 'star' not found in project.scripts"
-    assert scripts["star"] == "starui.cli.main:app", "CLI entry point has incorrect target"
+    assert scripts["star"] == "starui.cli.main:app", (
+        "CLI entry point has incorrect target"
+    )

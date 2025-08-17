@@ -19,5 +19,5 @@ __all__ = [
     "focus_ring",
     "transition_classes",
     "datastar_attrs",
-    "merge_props"
+    "merge_props",
 ]

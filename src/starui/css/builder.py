@@ -37,9 +37,11 @@ def extract_classes(content: str) -> set[str]:
     classes: set[str] = set()
 
     # Attribute patterns
-    for pattern in [r'cls\s*=\s*["\']([^"\']*)["\']',
-                   r'class_\s*=\s*["\']([^"\']*)["\']',
-                   r'className\s*=\s*["\']([^"\']*)["\']']:
+    for pattern in [
+        r'cls\s*=\s*["\']([^"\']*)["\']',
+        r'class_\s*=\s*["\']([^"\']*)["\']',
+        r'className\s*=\s*["\']([^"\']*)["\']',
+    ]:
         for match in re.findall(pattern, content, re.MULTILINE):
             classes.update(match.split())
 
@@ -48,7 +50,7 @@ def extract_classes(content: str) -> set[str]:
         classes.update(match.split())
 
     # Filter valid classes
-    return {c for c in classes if c and re.match(r'^[a-zA-Z0-9_:-]+$', c)}
+    return {c for c in classes if c and re.match(r"^[a-zA-Z0-9_:-]+$", c)}
 
 
 class ContentScanner:
@@ -62,15 +64,15 @@ class ContentScanner:
         all_classes: set[str] = set()
 
         for pattern in self.patterns:
-            if pattern.startswith('!'):
+            if pattern.startswith("!"):
                 continue
 
             for file in self.config.project_root.glob(pattern):
-                if file.suffix not in {'.py', '.html', '.js', '.ts', '.jsx', '.tsx'}:
+                if file.suffix not in {".py", ".html", ".js", ".ts", ".jsx", ".tsx"}:
                     continue
 
                 try:
-                    content = file.read_text(encoding='utf-8')
+                    content = file.read_text(encoding="utf-8")
                     all_classes.update(extract_classes(content))
                 except (UnicodeDecodeError, PermissionError):
                     continue
@@ -86,8 +88,12 @@ class CSSBuilder:
         self.binary_manager = TailwindBinaryManager("latest")
         self.scanner = ContentScanner(config)
 
-    def build(self, mode: BuildMode = BuildMode.DEVELOPMENT,
-              watch: bool = False, scan_content: bool = True) -> BuildResult:
+    def build(
+        self,
+        mode: BuildMode = BuildMode.DEVELOPMENT,
+        watch: bool = False,
+        scan_content: bool = True,
+    ) -> BuildResult:
         """Build CSS with Tailwind."""
         start_time = time.time()
 
@@ -109,13 +115,17 @@ class CSSBuilder:
                 input_file.write_text(generate_css_input(self.config))
 
                 # Ensure output dir exists
-                self.config.css_output_absolute.parent.mkdir(parents=True, exist_ok=True)
+                self.config.css_output_absolute.parent.mkdir(
+                    parents=True, exist_ok=True
+                )
 
                 # Build command
                 cmd = [
                     str(binary_path),
-                    "-i", str(input_file),
-                    "-o", str(self.config.css_output_absolute)
+                    "-i",
+                    str(input_file),
+                    "-o",
+                    str(self.config.css_output_absolute),
                 ]
 
                 if mode == BuildMode.PRODUCTION:
@@ -127,7 +137,9 @@ class CSSBuilder:
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
 
                 if result.returncode != 0:
-                    raise BuildError(f"Tailwind failed: {result.stderr or 'Unknown error'}")
+                    raise BuildError(
+                        f"Tailwind failed: {result.stderr or 'Unknown error'}"
+                    )
 
             # Calculate stats
             build_time = time.time() - start_time
@@ -140,7 +152,7 @@ class CSSBuilder:
                 css_path=self.config.css_output_absolute,
                 build_time=build_time,
                 classes_found=classes_found,
-                css_size_bytes=css_size
+                css_size_bytes=css_size,
             )
 
         except Exception as e:

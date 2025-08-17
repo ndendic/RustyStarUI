@@ -16,10 +16,12 @@ app = typer.Typer(
     add_completion=False,
 )
 
+
 def version_callback(value: bool) -> None:
     if value:
         rich_print(f"[bold blue]star {__version__}[/bold blue]")
         raise typer.Exit()
+
 
 @app.callback()
 def main(
@@ -28,10 +30,11 @@ def main(
         "--version",
         help="Show version",
         callback=version_callback,
-        is_eager=True
+        is_eager=True,
     ),
 ) -> None:
     """Python-first UI component library for StarHTML applications."""
+
 
 app.command("add")(add_command)
 app.command("init")(init_command)

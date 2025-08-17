@@ -8,8 +8,20 @@ from starhtml import Input as BaseInput
 from .utils import cn
 
 InputType = Literal[
-    "text", "password", "email", "number", "tel", "url", "search",
-    "date", "datetime-local", "month", "time", "week", "color", "file"
+    "text",
+    "password",
+    "email",
+    "number",
+    "tel",
+    "url",
+    "search",
+    "date",
+    "datetime-local",
+    "month",
+    "time",
+    "week",
+    "color",
+    "file",
 ]
 
 
@@ -30,7 +42,7 @@ def Input(
     pattern: str | None = None,
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Input component matching shadcn/ui styling and behavior.
@@ -75,16 +87,11 @@ def Input(
         # Responsive
         "md:text-sm",
         class_name,
-        cls
+        cls,
     )
 
     # Build input attributes
-    input_attrs = {
-        "type": type,
-        "cls": classes,
-        "data_slot": "input",
-        **attrs
-    }
+    input_attrs = {"type": type, "cls": classes, "data_slot": "input", **attrs}
 
     # Add optional attributes only if provided
     if placeholder:
@@ -132,7 +139,7 @@ def InputWithLabel(
     cls: str = "",
     label_cls: str = "",
     input_cls: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Input with label and optional helper/error text.
@@ -153,6 +160,7 @@ def InputWithLabel(
     # Generate ID if not provided
     if not id:
         import uuid
+
         id = f"input_{str(uuid.uuid4())[:8]}"
 
     # Set aria-invalid if there's an error
@@ -164,7 +172,7 @@ def InputWithLabel(
             label,
             Span(" *", cls="text-destructive") if required else "",
             for_=id,
-            cls=cn("block text-sm font-medium mb-1.5", label_cls)
+            cls=cn("block text-sm font-medium mb-1.5", label_cls),
         ),
         Input(
             type=type,
@@ -176,15 +184,11 @@ def InputWithLabel(
             readonly=readonly,
             required=required,
             cls=input_cls,
-            **attrs
+            **attrs,
         ),
-        error_text and P(
-            error_text,
-            cls="text-sm text-destructive mt-1.5"
-        ),
-        helper_text and not error_text and P(
-            helper_text,
-            cls="text-sm text-muted-foreground mt-1.5"
-        ),
-        cls=cn("space-y-1.5", cls)
+        error_text and P(error_text, cls="text-sm text-destructive mt-1.5"),
+        helper_text
+        and not error_text
+        and P(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
+        cls=cn("space-y-1.5", cls),
     )

@@ -57,7 +57,7 @@ def get_project_root() -> Path:
 
 
 def validate_component_name(name: str) -> bool:
-    return bool(name and re.match(r'^[a-z][a-z0-9-]*$', name))
+    return bool(name and re.match(r"^[a-z][a-z0-9-]*$", name))
 
 
 def status_context(message: str):

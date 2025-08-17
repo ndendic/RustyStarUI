@@ -18,7 +18,7 @@ def add_command(
     """Add components to your project."""
 
     for component in components:
-        if not re.match(r'^[a-z][a-z0-9-]*$', component):
+        if not re.match(r"^[a-z][a-z0-9-]*$", component):
             error(f"Invalid component name: '{component}'")
             raise typer.Exit(1)
 
@@ -37,7 +37,9 @@ def add_command(
             for component in components:
                 if verbose:
                     info(f"Resolving {component}...")
-                all_components.update(loader.load_component_with_dependencies(component))
+                all_components.update(
+                    loader.load_component_with_dependencies(component)
+                )
 
             # Check conflicts
             component_dir = config.component_dir_absolute
@@ -62,9 +64,11 @@ def add_command(
 
             for name, source in all_components.items():
                 # Adapt imports
-                source = re.sub(r'from\s+fasthtml\.', 'from starhtml.', source)
-                source = re.sub(r'import\s+fasthtml\.', 'import starhtml.', source)
-                source = re.sub(r'from\s+starui\.(registry\.)?components\.', 'from .', source)
+                source = re.sub(r"from\s+fasthtml\.", "from starhtml.", source)
+                source = re.sub(r"import\s+fasthtml\.", "import starhtml.", source)
+                source = re.sub(
+                    r"from\s+starui\.(registry\.)?components\.", "from .", source
+                )
 
                 # Write file
                 (component_dir / f"{name}.py").write_text(source)
@@ -75,7 +79,9 @@ def add_command(
                 info(f"Location: {component_dir}")
 
             console.print("\n💡 Next steps:")
-            console.print(f"  • Import: from {config.component_dir}.button import Button")
+            console.print(
+                f"  • Import: from {config.component_dir}.button import Button"
+            )
 
         except Exception as e:
             error(f"Installation failed: {e}")

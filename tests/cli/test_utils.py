@@ -20,7 +20,7 @@ from starui.cli.utils import (
 class TestConsoleUtilities:
     """Test cases for console utility functions."""
 
-    @patch('starui.cli.utils.console.print')
+    @patch("starui.cli.utils.console.print")
     def test_success_message(self, mock_print):
         """Test success message formatting."""
         success("Operation completed successfully")
@@ -30,7 +30,7 @@ class TestConsoleUtilities:
         # Should include green color and success indicator
         assert "[green]" in str(args[0]) or "✓" in str(args[0])
 
-    @patch('starui.cli.utils.console.print')
+    @patch("starui.cli.utils.console.print")
     def test_error_message(self, mock_print):
         """Test error message formatting."""
         error("Something went wrong")
@@ -40,7 +40,7 @@ class TestConsoleUtilities:
         # Should include red color and error indicator
         assert "[red]" in str(args[0]) or "✗" in str(args[0]) or "❌" in str(args[0])
 
-    @patch('starui.cli.utils.console.print')
+    @patch("starui.cli.utils.console.print")
     def test_warning_message(self, mock_print):
         """Test warning message formatting."""
         warning("This is a warning")
@@ -50,7 +50,7 @@ class TestConsoleUtilities:
         # Should include yellow color and warning indicator
         assert "[yellow]" in str(args[0]) or "⚠" in str(args[0])
 
-    @patch('starui.cli.utils.console.print')
+    @patch("starui.cli.utils.console.print")
     def test_info_message(self, mock_print):
         """Test info message formatting."""
         info("Information message")
@@ -60,7 +60,7 @@ class TestConsoleUtilities:
         # Should include blue color or info indicator
         assert "[blue]" in str(args[0]) or "ℹ" in str(args[0])
 
-    @patch('starui.cli.utils.typer.confirm')
+    @patch("starui.cli.utils.typer.confirm")
     def test_confirm_function(self, mock_confirm):
         """Test confirmation prompt."""
         mock_confirm.return_value = True
@@ -75,8 +75,8 @@ class TestConsoleUtilities:
         progress = create_progress()
 
         assert progress is not None
-        assert hasattr(progress, 'add_task')
-        assert hasattr(progress, 'update')
+        assert hasattr(progress, "add_task")
+        assert hasattr(progress, "update")
 
 
 class TestProjectUtilities:
@@ -92,7 +92,7 @@ class TestProjectUtilities:
         subdir.mkdir(parents=True)
 
         # Should find the project root from subdirectory
-        with patch('pathlib.Path.cwd', return_value=subdir):
+        with patch("pathlib.Path.cwd", return_value=subdir):
             root = get_project_root()
             assert root == tmp_path
 
@@ -102,7 +102,7 @@ class TestProjectUtilities:
         subdir.mkdir(parents=True)
 
         # Should return current directory if no pyproject.toml found
-        with patch('pathlib.Path.cwd', return_value=subdir):
+        with patch("pathlib.Path.cwd", return_value=subdir):
             root = get_project_root()
             assert root == subdir
 
@@ -121,15 +121,14 @@ class TestProjectUtilities:
             assert validate_component_name(name) is False
 
 
-
 class TestUtilityConfiguration:
     """Test cases for utility configuration."""
 
     def test_console_is_configured(self):
         """Test that console is properly configured."""
         assert console is not None
-        assert hasattr(console, 'print')
-        assert hasattr(console, 'status')
+        assert hasattr(console, "print")
+        assert hasattr(console, "status")
 
     def test_console_rich_integration(self):
         """Test that console integrates with Rich properly."""
@@ -151,7 +150,7 @@ class TestErrorHandling:
         """Test error handling with exception object."""
         test_exception = ValueError("Test error")
 
-        with patch('starui.cli.utils.console.print') as mock_print:
+        with patch("starui.cli.utils.console.print") as mock_print:
             error("Operation failed", exception=test_exception)
 
             mock_print.assert_called()
@@ -162,12 +161,13 @@ class TestErrorHandling:
         """Test error with suggestions."""
         suggestions = ["Try running with --verbose", "Check your configuration"]
 
-        with patch('starui.cli.utils.console.print') as mock_print:
+        with patch("starui.cli.utils.console.print") as mock_print:
             error("Operation failed", suggestions=suggestions)
 
             mock_print.assert_called()
             # Should have printed suggestions
             printed_content = str(mock_print.call_args_list)
             assert "Try running with --verbose" in printed_content or any(
-                "Try running with --verbose" in str(call) for call in mock_print.call_args_list
+                "Try running with --verbose" in str(call)
+                for call in mock_print.call_args_list
             )

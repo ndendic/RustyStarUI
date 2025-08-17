@@ -1,4 +1,5 @@
 """Button component matching shadcn/ui styling and behavior."""
+
 from typing import Any, Literal
 
 from starhtml import FT
@@ -6,7 +7,9 @@ from starhtml import Button as BaseButton
 
 from .utils import cn, cva
 
-ButtonVariant = Literal["default", "destructive", "outline", "secondary", "ghost", "link"]
+ButtonVariant = Literal[
+    "default", "destructive", "outline", "secondary", "ghost", "link"
+]
 ButtonSize = Literal["default", "sm", "lg", "icon"]
 
 
@@ -19,19 +22,16 @@ button_variants = cva(
             "outline": "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
             "secondary": "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
             "ghost": "hover:bg-accent hover:text-accent-foreground",
-            "link": "text-primary underline-offset-4 hover:underline"
+            "link": "text-primary underline-offset-4 hover:underline",
         },
         "size": {
             "default": "h-10 px-4 py-2",
             "sm": "h-9 rounded-md px-3",
             "lg": "h-11 rounded-md px-8",
-            "icon": "h-10 w-10"
-        }
+            "icon": "h-10 w-10",
+        },
     },
-    default_variants={
-        "variant": "default",
-        "size": "default"
-    }
+    default_variants={"variant": "default", "size": "default"},
 )
 
 
@@ -43,19 +43,9 @@ def Button(
     disabled: bool = False,
     type: Literal["button", "submit", "reset"] = "button",
     cls: str = "",
-    **attrs: Any  # Additional HTML attributes
+    **attrs: Any,  # Additional HTML attributes
 ) -> FT:
     """Button component with pragmatic typing and shadcn/ui styling."""
-    classes = cn(
-        button_variants(variant=variant, size=size),
-        class_name,
-        cls
-    )
+    classes = cn(button_variants(variant=variant, size=size), class_name, cls)
 
-    return BaseButton(
-        *children,
-        cls=classes,
-        disabled=disabled,
-        type=type,
-        **attrs
-    )
+    return BaseButton(*children, cls=classes, disabled=disabled, type=type, **attrs)

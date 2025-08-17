@@ -15,6 +15,7 @@ def format_size(bytes: int) -> str:
         return f"{bytes / 1024:.1f} KB"
     return f"{bytes / (1024 * 1024):.1f} MB"
 
+
 def build_command(
     output: str | None = typer.Option(None, "--output", "-o", help="CSS output path"),
     minify: bool = typer.Option(True, "--minify/--no-minify", help="Minify CSS"),
@@ -28,7 +29,7 @@ def build_command(
         if output:
             path = Path(output)
             if not path.suffix:
-                path = path.with_suffix('.css')
+                path = path.with_suffix(".css")
             config.css_output = path.absolute() if path.is_absolute() else path
 
         if verbose:
@@ -45,7 +46,7 @@ def build_command(
             result = builder.build(
                 mode=BuildMode.PRODUCTION if minify else BuildMode.DEVELOPMENT,
                 watch=False,
-                scan_content=True
+                scan_content=True,
             )
 
         if result.success:

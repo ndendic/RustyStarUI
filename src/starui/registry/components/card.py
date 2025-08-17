@@ -9,7 +9,7 @@ def Card(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Card root component.
@@ -26,22 +26,17 @@ def Card(
     classes = cn(
         "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
         class_name,
-        cls
+        cls,
     )
 
-    return Div(
-        *children,
-        cls=classes,
-        data_slot="card",
-        **attrs
-    )
+    return Div(*children, cls=classes, data_slot="card", **attrs)
 
 
 def CardHeader(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Card header component.
@@ -58,22 +53,17 @@ def CardHeader(
     classes = cn(
         "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
         class_name,
-        cls
+        cls,
     )
 
-    return Div(
-        *children,
-        cls=classes,
-        data_slot="card-header",
-        **attrs
-    )
+    return Div(*children, cls=classes, data_slot="card-header", **attrs)
 
 
 def CardTitle(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Card title component.
@@ -87,25 +77,16 @@ def CardTitle(
     Returns:
         Card title element
     """
-    classes = cn(
-        "leading-none font-semibold",
-        class_name,
-        cls
-    )
+    classes = cn("leading-none font-semibold", class_name, cls)
 
-    return Div(
-        *children,
-        cls=classes,
-        data_slot="card-title",
-        **attrs
-    )
+    return Div(*children, cls=classes, data_slot="card-title", **attrs)
 
 
 def CardDescription(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Card description component.
@@ -119,25 +100,16 @@ def CardDescription(
     Returns:
         Card description element
     """
-    classes = cn(
-        "text-muted-foreground text-sm",
-        class_name,
-        cls
-    )
+    classes = cn("text-muted-foreground text-sm", class_name, cls)
 
-    return Div(
-        *children,
-        cls=classes,
-        data_slot="card-description",
-        **attrs
-    )
+    return Div(*children, cls=classes, data_slot="card-description", **attrs)
 
 
 def CardAction(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Card action component for header actions.
@@ -154,22 +126,17 @@ def CardAction(
     classes = cn(
         "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
         class_name,
-        cls
+        cls,
     )
 
-    return Div(
-        *children,
-        cls=classes,
-        data_slot="card-action",
-        **attrs
-    )
+    return Div(*children, cls=classes, data_slot="card-action", **attrs)
 
 
 def CardContent(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Card content component.
@@ -183,25 +150,16 @@ def CardContent(
     Returns:
         Card content element
     """
-    classes = cn(
-        "px-6",
-        class_name,
-        cls
-    )
+    classes = cn("px-6", class_name, cls)
 
-    return Div(
-        *children,
-        cls=classes,
-        data_slot="card-content",
-        **attrs
-    )
+    return Div(*children, cls=classes, data_slot="card-content", **attrs)
 
 
 def CardFooter(
     *children,  # type: ignore
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Card footer component.
@@ -215,15 +173,6 @@ def CardFooter(
     Returns:
         Card footer element
     """
-    classes = cn(
-        "flex items-center px-6 [.border-t]:pt-6",
-        class_name,
-        cls
-    )
+    classes = cn("flex items-center px-6 [.border-t]:pt-6", class_name, cls)
 
-    return Div(
-        *children,
-        cls=classes,
-        data_slot="card-footer",
-        **attrs
-    )
+    return Div(*children, cls=classes, data_slot="card-footer", **attrs)

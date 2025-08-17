@@ -14,10 +14,13 @@ class RegistryClient:
     def list_components(self) -> list[str]:
         """List all available components."""
         if not self.registry_path.exists():
-            raise FileNotFoundError(f"Registry directory not found: {self.registry_path}")
+            raise FileNotFoundError(
+                f"Registry directory not found: {self.registry_path}"
+            )
 
         return sorted(
-            f.stem for f in self.registry_path.glob("*.py")
+            f.stem
+            for f in self.registry_path.glob("*.py")
             if f.name not in ("__init__.py", "utils.py")
         )
 

@@ -73,8 +73,10 @@ def list_command(
         if search:
             search = search.lower()
             components = [
-                c for c in components
-                if search in c["name"].lower() or search in c.get("description", "").lower()
+                c
+                for c in components
+                if search in c["name"].lower()
+                or search in c.get("description", "").lower()
             ]
 
         if category:
@@ -107,14 +109,20 @@ def list_command(
                 if cat := get_category(comp):
                     console.print(f"  [dim]Category: {cat}[/dim]")
         else:
-            table = Table(title="Components", show_header=True, header_style="bold blue")
+            table = Table(
+                title="Components", show_header=True, header_style="bold blue"
+            )
             table.add_column("Name", style="cyan")
             table.add_column("Status", justify="center", min_width=8)
             table.add_column("Description")
             table.add_column("Dependencies", style="dim")
 
             for comp in sorted(components, key=lambda x: x["name"]):
-                status = Text("✓ Installed", style="green") if comp.get("installed") else Text("Available", style="yellow")
+                status = (
+                    Text("✓ Installed", style="green")
+                    if comp.get("installed")
+                    else Text("Available", style="yellow")
+                )
                 desc = comp.get("description", "")
                 if len(desc) > 60:
                     desc = desc[:57] + "..."

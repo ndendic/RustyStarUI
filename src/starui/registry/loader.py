@@ -13,7 +13,9 @@ class ComponentLoader:
     def load_component(self, component_name: str) -> str:
         """Load a single component's source code."""
         if not self.client.component_exists(component_name):
-            raise FileNotFoundError(f"Component '{component_name}' not found in registry")
+            raise FileNotFoundError(
+                f"Component '{component_name}' not found in registry"
+            )
         return self.client.get_component_source(component_name)
 
     def load_component_with_dependencies(self, component_name: str) -> dict[str, str]:
@@ -43,7 +45,9 @@ class DependencyResolver:
 
         def visit(comp_name: str) -> None:
             if comp_name in visiting:
-                raise ValueError(f"Circular dependency detected involving '{comp_name}'")
+                raise ValueError(
+                    f"Circular dependency detected involving '{comp_name}'"
+                )
             if comp_name in visited:
                 return
 

@@ -14,11 +14,19 @@ class ProjectConfig:
 
     @property
     def css_output_absolute(self) -> Path:
-        return self.project_root / self.css_output if not self.css_output.is_absolute() else self.css_output
+        return (
+            self.project_root / self.css_output
+            if not self.css_output.is_absolute()
+            else self.css_output
+        )
 
     @property
     def component_dir_absolute(self) -> Path:
-        return self.project_root / self.component_dir if not self.component_dir.is_absolute() else self.component_dir
+        return (
+            self.project_root / self.component_dir
+            if not self.component_dir.is_absolute()
+            else self.component_dir
+        )
 
 
 def detect_css_output(project_root: Path) -> Path:

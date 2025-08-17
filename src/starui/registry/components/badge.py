@@ -16,12 +16,10 @@ badge_variants = cva(
             "default": "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
             "secondary": "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
             "destructive": "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-            "outline": "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground"
+            "outline": "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         }
     },
-    default_variants={
-        "variant": "default"
-    }
+    default_variants={"variant": "default"},
 )
 
 
@@ -31,7 +29,7 @@ def Badge(
     href: str | None = None,
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Badge component matching shadcn/ui styling and behavior.
@@ -47,29 +45,14 @@ def Badge(
     Returns:
         Badge element (span or anchor based on href)
     """
-    classes = cn(
-        badge_variants(variant=variant),
-        class_name,
-        cls
-    )
+    classes = cn(badge_variants(variant=variant), class_name, cls)
 
     # If href is provided, render as anchor tag for clickable badges
     if href:
-        return A(
-            *children,
-            href=href,
-            cls=classes,
-            data_slot="badge",
-            **attrs
-        )
+        return A(*children, href=href, cls=classes, data_slot="badge", **attrs)
 
     # Default to span element
-    return Span(
-        *children,
-        cls=classes,
-        data_slot="badge",
-        **attrs
-    )
+    return Span(*children, cls=classes, data_slot="badge", **attrs)
 
 
 def ClickableBadge(
@@ -77,7 +60,7 @@ def ClickableBadge(
     variant: BadgeVariant = "default",
     cls: str = "",
     class_name: str = "",
-    **attrs  # type: ignore
+    **attrs,  # type: ignore
 ) -> FT:
     """
     Clickable badge with Datastar click handler.
@@ -96,7 +79,7 @@ def ClickableBadge(
         badge_variants(variant=variant),
         "cursor-pointer",  # Add cursor pointer for clickable badges
         class_name,
-        cls
+        cls,
     )
 
     return Span(
@@ -105,5 +88,5 @@ def ClickableBadge(
         data_slot="badge",
         tabindex="0",  # Make keyboard accessible
         role="button",  # Indicate it's interactive
-        **attrs
+        **attrs,
     )

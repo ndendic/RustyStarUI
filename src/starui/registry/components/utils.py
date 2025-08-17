@@ -35,7 +35,7 @@ def cva(
     base: str = "",
     variants: dict[str, dict[str, str]] | None = None,
     compound_variants: list[dict[str, Any]] | None = None,
-    default_variants: dict[str, str] | None = None
+    default_variants: dict[str, str] | None = None,
 ) -> Callable[..., str]:
     """Create a class variance authority function for component styling.
 
@@ -126,7 +126,7 @@ def component_classes(
     base: str,
     modifiers: dict[str, bool] | None = None,
     size: str | None = None,
-    variant: str | None = None
+    variant: str | None = None,
 ) -> str:
     """Generate component classes with common patterns.
 
@@ -166,10 +166,7 @@ def component_classes(
     return cn(*classes)
 
 
-def responsive_classes(
-    base: str,
-    breakpoints: dict[str, str] | None = None
-) -> str:
+def responsive_classes(base: str, breakpoints: dict[str, str] | None = None) -> str:
     """Generate responsive class names.
 
     Args:
@@ -192,10 +189,7 @@ def responsive_classes(
     return cn(*classes)
 
 
-def focus_ring(
-    color: str = "ring-primary",
-    size: str = "2"
-) -> str:
+def focus_ring(color: str = "ring-primary", size: str = "2") -> str:
     """Generate focus ring classes.
 
     Args:
@@ -215,14 +209,14 @@ def focus_ring(
         "focus-visible:outline-none",
         f"focus-visible:ring-{size}",
         f"focus-visible:{color}",
-        "focus-visible:ring-offset-2"
+        "focus-visible:ring-offset-2",
     )
 
 
 def transition_classes(
     properties: str | list[str] = "all",
     duration: str = "150",
-    timing: str = "ease-in-out"
+    timing: str = "ease-in-out",
 ) -> str:
     """Generate transition classes.
 
@@ -245,11 +239,7 @@ def transition_classes(
     else:
         transition = " ".join(f"transition-{prop}" for prop in properties)
 
-    return cn(
-        transition,
-        f"duration-{duration}",
-        timing
-    )
+    return cn(transition, f"duration-{duration}", timing)
 
 
 def datastar_attrs(**attrs: Any) -> dict[str, str]:
@@ -280,10 +270,7 @@ def datastar_attrs(**attrs: Any) -> dict[str, str]:
     return result
 
 
-def merge_props(
-    defaults: dict[str, Any],
-    overrides: dict[str, Any]
-) -> dict[str, Any]:
+def merge_props(defaults: dict[str, Any], overrides: dict[str, Any]) -> dict[str, Any]:
     """Merge component props with defaults.
 
     Args:
