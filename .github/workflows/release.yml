@@ -47,7 +47,7 @@ jobs:
     - name: Check package contents
       run: |
         echo "🔍 Checking package contents..."
-        uv run python -m pip install dist/*.whl
+        uv pip install dist/*.whl
         uv run python -c "import starui; print(f'StarUI version: {starui.__version__}')"
         uv run star --version
         
