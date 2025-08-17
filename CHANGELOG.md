@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed CSS template generation - removed double curly braces that were causing Tailwind v4 errors
+- Fixed component import transformation - components now correctly import utilities from starui instead of relative imports
 
 ## [0.1.1] - 2025-08-17
 
