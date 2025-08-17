@@ -43,7 +43,7 @@ jobs:
     - name: Get current version
       id: current_version
       run: |
-        VERSION=$(uv run python -c "import tomli; print(tomli.load(open('pyproject.toml', 'rb'))['project']['version'])")
+        VERSION=$(grep "^version = " pyproject.toml | cut -d'"' -f2)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Current version: $VERSION"
         
