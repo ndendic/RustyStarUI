@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-08-17
+
 ### Fixed
 - Fixed create-release workflow to correctly update only the project version
 - Fixed create-release workflow version extraction to use grep instead of tomli
