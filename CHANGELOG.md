@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed create-release workflow to correctly update only the project version
+- Fixed create-release workflow version extraction to use grep instead of tomli
+- Fixed GitHub Actions to use `uv pip install` instead of `python -m pip install`
+
 ## [0.1.0] - 2025-08-17
 
 ### Added
