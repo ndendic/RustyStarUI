@@ -8,35 +8,35 @@ CSS_TEMPLATE_BASE = """\
 
 CSS_RESET = """\
 /* CSS Reset */
-*, *::before, *::after {{
+*, *::before, *::after {
   box-sizing: border-box;
-}}
+}
 
-* {{
+* {
   margin: 0;
-}}
+}
 
-body {{
+body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-}}
+}
 
-img, picture, video, canvas, svg {{
+img, picture, video, canvas, svg {
   display: block;
   max-width: 100%;
-}}
+}
 
-input, button, textarea, select {{
+input, button, textarea, select {
   font: inherit;
-}}
+}
 
-p, h1, h2, h3, h4, h5, h6 {{
+p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
-}}
+}
 """
 
 CSS_THEME = """\
-:root {{
+:root {
 
   --background: hsl(0 0% 100%);
   --foreground: hsl(222.2 84% 4.9%);
@@ -58,9 +58,9 @@ CSS_THEME = """\
   --input: hsl(214.3 31.8% 91.4%);
   --ring: hsl(222.2 84% 4.9%);
   --radius: 0.5rem;
-}}
+}
 
-.dark {{
+.dark {
   --background: hsl(222.2 84% 4.9%);
   --foreground: hsl(210 40% 98%);
   --card: hsl(222.2 84% 4.9%);
@@ -80,9 +80,9 @@ CSS_THEME = """\
   --border: hsl(217.2 32.6% 17.5%);
   --input: hsl(217.2 32.6% 17.5%);
   --ring: hsl(212.7 26.8% 83.9%);
-}}
+}
 
-@theme inline {{
+@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -103,7 +103,7 @@ CSS_THEME = """\
   --color-input: var(--input);
   --color-ring: var(--ring);
   --radius: var(--radius);
-}}
+}
 """
 
 
