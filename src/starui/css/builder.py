@@ -7,6 +7,7 @@ import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+from typing import Optional
 
 from ..config import ProjectConfig, get_content_patterns
 from ..templates.css_input import generate_css_input
@@ -25,31 +26,28 @@ class BuildError(Exception):
 @dataclass
 class BuildResult:
     success: bool
-    css_path: Path | None = None
-    build_time: float | None = None
-    classes_found: int | None = None
-    css_size_bytes: int | None = None
-    error_message: str | None = None
+    css_path: Optional[Path] = None
+    build_time: Optional[float] = None
+    classes_found: Optional[int] = None
+    css_size_bytes: Optional[int] = None
+    error_message: Optional[str] = None
 
 
 def extract_classes(content: str) -> set[str]:
-    """Extract CSS classes from content."""
+    """Extract CSS classes from StarHTML/FastHTML content."""
     classes: set[str] = set()
 
-    # Attribute patterns
-    for pattern in [
+    patterns = [
         r'cls\s*=\s*["\']([^"\']*)["\']',
-        r'class_\s*=\s*["\']([^"\']*)["\']',
+        r'class_\s*=\s*["\']([^"\']*)["\']', 
         r'className\s*=\s*["\']([^"\']*)["\']',
-    ]:
+        r'cn\s*\(\s*["\']([^"\']*)["\']',
+    ]
+    
+    for pattern in patterns:
         for match in re.findall(pattern, content, re.MULTILINE):
             classes.update(match.split())
 
-    # cn() function calls
-    for match in re.findall(r'cn\s*\(\s*["\']([^"\']*)["\']', content, re.MULTILINE):
-        classes.update(match.split())
-
-    # Filter valid classes
     return {c for c in classes if c and re.match(r"^[a-zA-Z0-9_:-]+$", c)}
 
 
@@ -62,13 +60,14 @@ class ContentScanner:
 
     def scan_files(self) -> set[str]:
         all_classes: set[str] = set()
+        supported_extensions = {".py", ".html", ".js", ".ts", ".jsx", ".tsx"}
 
         for pattern in self.patterns:
             if pattern.startswith("!"):
                 continue
 
             for file in self.config.project_root.glob(pattern):
-                if file.suffix not in {".py", ".html", ".js", ".ts", ".jsx", ".tsx"}:
+                if file.suffix not in supported_extensions:
                     continue
 
                 try:
@@ -100,32 +99,27 @@ class CSSBuilder:
         try:
             binary_path = self.binary_manager.get_binary()
 
-            # Scan for classes
             classes_found = None
             if scan_content:
-                found = self.scanner.scan_files()
-                classes_found = len(found)
+                classes_found = len(self.scanner.scan_files())
 
-            # Create temp directory for build
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
 
-                # Create input CSS
+                project_input_css = self.config.project_root / "static" / "css" / "input.css"
                 input_file = temp_path / "input.css"
-                input_file.write_text(generate_css_input(self.config))
+                
+                if project_input_css.exists():
+                    input_file.write_text(project_input_css.read_text())
+                else:
+                    input_file.write_text(generate_css_input(self.config))
 
-                # Ensure output dir exists
-                self.config.css_output_absolute.parent.mkdir(
-                    parents=True, exist_ok=True
-                )
+                self.config.css_output_absolute.parent.mkdir(parents=True, exist_ok=True)
 
-                # Build command
                 cmd = [
                     str(binary_path),
-                    "-i",
-                    str(input_file),
-                    "-o",
-                    str(self.config.css_output_absolute),
+                    "-i", str(input_file),
+                    "-o", str(self.config.css_output_absolute),
                 ]
 
                 if mode == BuildMode.PRODUCTION:
@@ -133,15 +127,11 @@ class CSSBuilder:
                 if watch:
                     cmd.append("--watch")
 
-                # Run build
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
 
                 if result.returncode != 0:
-                    raise BuildError(
-                        f"Tailwind failed: {result.stderr or 'Unknown error'}"
-                    )
+                    raise BuildError(f"Tailwind failed: {result.stderr or 'Unknown error'}")
 
-            # Calculate stats
             build_time = time.time() - start_time
             css_size = None
             if self.config.css_output_absolute.exists():
