@@ -105,6 +105,10 @@ jobs:
         # Add new version entry to CHANGELOG.md
         sed -i.bak "s/## \[Unreleased\]/## [Unreleased]\n\n## [$VERSION] - $DATE/" CHANGELOG.md
         
+        # Add link at the bottom of the file
+        echo "" >> CHANGELOG.md
+        echo "[$VERSION]: https://github.com/${{ github.repository }}/releases/tag/v$VERSION" >> CHANGELOG.md
+        
         git add CHANGELOG.md
         git commit -m "📝 Update CHANGELOG for v$VERSION"
         
