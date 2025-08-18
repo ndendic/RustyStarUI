@@ -1,4 +1,4 @@
-"""Auto-discover components from local components/ui folder."""
+"""Component discovery for local UI modules."""
 
 import importlib.util
 from pathlib import Path
@@ -6,7 +6,7 @@ from typing import Any
 
 
 def discover_components(base_path: Path | None = None) -> dict[str, Any]:
-    """Auto-discover components from components/ui folder."""
+    """Discover components from components/ui folder."""
     components_path = (base_path or Path.cwd()) / "components" / "ui"
 
     if not components_path.exists():
@@ -26,12 +26,13 @@ def discover_components(base_path: Path | None = None) -> dict[str, Any]:
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
-            for attr_name in dir(module):
-                if attr_name[0].isupper() and not attr_name.startswith("_"):
-                    attr = getattr(module, attr_name)
-                    if callable(attr):
-                        components[attr_name] = attr
-
+            components.update(
+                {
+                    name: attr
+                    for name in dir(module)
+                    if name[0].isupper() and callable(attr := getattr(module, name))
+                }
+            )
         except Exception:
             continue
 

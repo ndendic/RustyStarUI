@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Updated default theme to use modern `oklch` color space matching shadcn v2 with Tailwind v4
+- Modernized type hints to use Python 3.10+ union syntax (`X | None` instead of `Optional[X]`)
+- Improved code quality with more Pythonic patterns (dict comprehensions, walrus operator)
+
 ### Fixed
 - Fixed CSS template generation - removed double curly braces that were causing Tailwind v4 errors
 - Fixed component import transformation - components now correctly import utilities from starui instead of relative imports

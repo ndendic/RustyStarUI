@@ -67,7 +67,9 @@ def add_command(
                 source = re.sub(r"from\s+fasthtml\.", "from starhtml.", source)
                 source = re.sub(r"import\s+fasthtml\.", "import starhtml.", source)
                 # Transform relative utils import to starui import
-                source = re.sub(r"from\s+\.utils\s+import", "from starui import", source)
+                source = re.sub(
+                    r"from\s+\.utils\s+import", "from starui import", source
+                )
 
                 # Write file
                 (component_dir / f"{name}.py").write_text(source)

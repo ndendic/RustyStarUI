@@ -7,7 +7,6 @@ import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
 from ..config import ProjectConfig, get_content_patterns
 from ..templates.css_input import generate_css_input
@@ -26,11 +25,11 @@ class BuildError(Exception):
 @dataclass
 class BuildResult:
     success: bool
-    css_path: Optional[Path] = None
-    build_time: Optional[float] = None
-    classes_found: Optional[int] = None
-    css_size_bytes: Optional[int] = None
-    error_message: Optional[str] = None
+    css_path: Path | None = None
+    build_time: float | None = None
+    classes_found: int | None = None
+    css_size_bytes: int | None = None
+    error_message: str | None = None
 
 
 def extract_classes(content: str) -> set[str]:
@@ -39,11 +38,11 @@ def extract_classes(content: str) -> set[str]:
 
     patterns = [
         r'cls\s*=\s*["\']([^"\']*)["\']',
-        r'class_\s*=\s*["\']([^"\']*)["\']', 
+        r'class_\s*=\s*["\']([^"\']*)["\']',
         r'className\s*=\s*["\']([^"\']*)["\']',
         r'cn\s*\(\s*["\']([^"\']*)["\']',
     ]
-    
+
     for pattern in patterns:
         for match in re.findall(pattern, content, re.MULTILINE):
             classes.update(match.split())
@@ -106,20 +105,26 @@ class CSSBuilder:
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
 
-                project_input_css = self.config.project_root / "static" / "css" / "input.css"
+                project_input_css = (
+                    self.config.project_root / "static" / "css" / "input.css"
+                )
                 input_file = temp_path / "input.css"
-                
+
                 if project_input_css.exists():
                     input_file.write_text(project_input_css.read_text())
                 else:
                     input_file.write_text(generate_css_input(self.config))
 
-                self.config.css_output_absolute.parent.mkdir(parents=True, exist_ok=True)
+                self.config.css_output_absolute.parent.mkdir(
+                    parents=True, exist_ok=True
+                )
 
                 cmd = [
                     str(binary_path),
-                    "-i", str(input_file),
-                    "-o", str(self.config.css_output_absolute),
+                    "-i",
+                    str(input_file),
+                    "-o",
+                    str(self.config.css_output_absolute),
                 ]
 
                 if mode == BuildMode.PRODUCTION:
@@ -130,7 +135,9 @@ class CSSBuilder:
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
 
                 if result.returncode != 0:
-                    raise BuildError(f"Tailwind failed: {result.stderr or 'Unknown error'}")
+                    raise BuildError(
+                        f"Tailwind failed: {result.stderr or 'Unknown error'}"
+                    )
 
             build_time = time.time() - start_time
             css_size = None

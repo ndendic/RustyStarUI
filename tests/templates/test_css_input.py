@@ -14,7 +14,6 @@ class TestCSSInput:
         css = generate_css_input()
 
         assert '@import "tailwindcss";' in css
-        assert "CSS Reset" in css
         assert "box-sizing: border-box" in css
         assert ":root {" in css
         assert "--background:" in css
@@ -24,7 +23,6 @@ class TestCSSInput:
         """Test CSS generation without reset."""
         css = generate_css_input(include_reset=False)
 
-        assert "CSS Reset" not in css
         assert "box-sizing: border-box" not in css
         assert ":root {" in css  # Theme variables should still be there
 
@@ -45,5 +43,5 @@ class TestCSSInput:
         css = generate_css_input()
 
         assert ".dark {" in css
-        assert ".dark" in css and "--background: hsl(222.2 84% 4.9%);" in css
+        assert ".dark" in css and "--background: oklch(0.145 0 0);" in css
         assert "@theme inline {" in css
