@@ -54,10 +54,10 @@ class TestCSSInput:
         css = generate_css_input()
 
         # Check for WCAG AA compliant color values
-        assert "oklch(100% 0 0)" in css  # Light background
-        assert "oklch(14.5% 0 0)" in css  # Dark foreground for contrast
-        assert "oklch(14.1% 0.005 285.823)" in css  # Dark background
-        assert "oklch(98.3% 0 0)" in css  # Light foreground for dark mode
+        assert "oklch(1 0 0)" in css  # Light background
+        assert "oklch(0.145 0 0)" in css  # Dark foreground for contrast
+        assert "oklch(0.985 0 0)" in css  # Light foreground for dark mode
+        assert "oklch(0.205 0 0)" in css  # Dark mode card background
 
     def test_font_system_tokens(self):
         """Test that font system tokens are included."""
