@@ -7,7 +7,7 @@ from ..config import ProjectConfig
 APP_TEMPLATE = """\
 from starhtml import *
 
-styles = Link(rel="stylesheet", href="/{css_path}", type="text/css")
+styles = Link(rel="stylesheet", href="{css_path}", type="text/css")
 
 app, rt = star_app(
     hdrs=(styles,),
@@ -47,4 +47,8 @@ def generate_app_starter(
             component_dir=Path("components/ui"),
         )
 
-    return APP_TEMPLATE.format(css_path=str(config.css_output))
+    # Ensure CSS path starts with / for absolute URL path
+    css_path = str(config.css_output)
+    if not css_path.startswith("/"):
+        css_path = "/" + css_path
+    return APP_TEMPLATE.format(css_path=css_path)
