@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-08-18
+
 ### Changed
 - Updated default theme to use modern `oklch` color space matching shadcn v2 with Tailwind v4
 - Modernized type hints to use Python 3.10+ union syntax (`X | None` instead of `Optional[X]`)
@@ -71,3 +73,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [0.1.0]: https://github.com/banditburai/starui/releases/tag/v0.1.0
 [0.1.1]: https://github.com/banditburai/starui/releases/tag/v0.1.1
+[0.1.2]: https://github.com/banditburai/starUI/releases/tag/v0.1.2
