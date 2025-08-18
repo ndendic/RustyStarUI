@@ -6,10 +6,10 @@ from .utils import cn
 
 
 def Card(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Card root component.
@@ -33,10 +33,10 @@ def Card(
 
 
 def CardHeader(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Card header component.
@@ -60,10 +60,10 @@ def CardHeader(
 
 
 def CardTitle(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Card title component.
@@ -83,10 +83,10 @@ def CardTitle(
 
 
 def CardDescription(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Card description component.
@@ -106,10 +106,10 @@ def CardDescription(
 
 
 def CardAction(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Card action component for header actions.
@@ -133,10 +133,10 @@ def CardAction(
 
 
 def CardContent(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Card content component.
@@ -156,10 +156,10 @@ def CardContent(
 
 
 def CardFooter(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Card footer component.

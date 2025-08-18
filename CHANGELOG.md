@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **🎨 Optimized Template System**
+  - 57% CSS reduction with hybrid theming support
+  - Enhanced ThemeToggle component with smart .dark class and data-theme detection
+  - WCAG AA compliant OKLCH colors for better accessibility
+  - Default theme system included in `star init` for immediate productivity
+
+### Changed
+- **🔧 Modern, Idiomatic Codebase**
+  - Refactored CLI commands (add.py, init.py) for concise, Pythonic patterns
+  - Enhanced app starter template with semantic color system
+  - Improved ThemeToggle to intelligently handle both Tailwind and semantic approaches
+  - Updated dependency resolution system with comprehensive test coverage
+
+### Fixed
+- **✨ Enhanced Developer Experience**
+  - Removed CSS reset (Tailwind v4 handles it automatically)
+  - Fixed StarHTML DatastarAttr type compatibility (no more type: ignore needed)
+  - Enhanced component dependency system with theme_toggle → button resolution
+  - Improved code formatting and linting compliance across all files
+
+### Technical
+- Updated StarHTML dependency to use latest GitHub version with DatastarAttr type fixes
+- Added comprehensive test suite for dependency resolution system
+- Enhanced ThemeToggle to support both `.dark` class and `data-theme` attribute approaches
+
 ## [0.1.2] - 2025-08-18
 
 ### Changed

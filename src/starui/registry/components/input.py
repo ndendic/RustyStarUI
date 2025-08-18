@@ -139,7 +139,7 @@ def InputWithLabel(
     cls: str = "",
     label_cls: str = "",
     input_cls: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Input with label and optional helper/error text.

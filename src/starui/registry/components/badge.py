@@ -24,12 +24,12 @@ badge_variants = cva(
 
 
 def Badge(
-    *children,  # type: ignore
+    *children,
     variant: BadgeVariant = "default",
     href: str | None = None,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Badge component matching shadcn/ui styling and behavior.
@@ -56,11 +56,11 @@ def Badge(
 
 
 def ClickableBadge(
-    *children,  # type: ignore
+    *children,
     variant: BadgeVariant = "default",
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Clickable badge with Datastar click handler.

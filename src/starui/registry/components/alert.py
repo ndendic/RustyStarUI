@@ -22,11 +22,11 @@ alert_variants = cva(
 
 
 def Alert(
-    *children,  # type: ignore
+    *children,
     variant: AlertVariant = "default",
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Alert container - pixel-perfect shadcn/ui copy.
@@ -49,10 +49,10 @@ def Alert(
 
 
 def AlertTitle(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Alert title - displays the main heading of the alert.
@@ -72,10 +72,10 @@ def AlertTitle(
 
 
 def AlertDescription(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Alert description - provides detailed information for the alert.

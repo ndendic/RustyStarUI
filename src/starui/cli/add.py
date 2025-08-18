@@ -1,10 +1,8 @@
 import re
-from pathlib import Path
 
 import typer
 
 from starui.config import get_project_config
-from starui.registry.client import RegistryClient
 from starui.registry.loader import ComponentLoader
 
 from .utils import confirm, console, error, info, status_context, success, warning
@@ -17,23 +15,21 @@ def add_command(
 ) -> None:
     """Add components to your project."""
 
-    for component in components:
-        if not re.match(r"^[a-z][a-z0-9-]*$", component):
-            error(f"Invalid component name: '{component}'")
-            raise typer.Exit(1)
+    invalid = [c for c in components if not re.match(r"^[a-z][a-z0-9-]*$", c)]
+    if invalid:
+        error(f"Invalid component names: {', '.join(invalid)}")
+        raise typer.Exit(1)
 
     try:
         config = get_project_config()
-        client = RegistryClient()
-        loader = ComponentLoader(client)
+        loader = ComponentLoader()
     except Exception as e:
         error(f"Initialization failed: {e}")
         raise typer.Exit(1) from e
 
     with status_context("Installing components..."):
         try:
-            # Resolve dependencies
-            all_components: dict[str, str] = {}
+            all_components = {}
             for component in components:
                 if verbose:
                     info(f"Resolving {component}...")
@@ -41,9 +37,8 @@ def add_command(
                     loader.load_component_with_dependencies(component)
                 )
 
-            # Check conflicts
             component_dir = config.component_dir_absolute
-            conflicts: list[Path] = [
+            conflicts = [
                 component_dir / f"{name}.py"
                 for name in all_components
                 if (component_dir / f"{name}.py").exists()
@@ -56,22 +51,16 @@ def add_command(
                 if not confirm("Overwrite?", default=False):
                     raise typer.Exit(0)
 
-            # Install
             component_dir.mkdir(parents=True, exist_ok=True)
-            init_file = component_dir / "__init__.py"
-            if not init_file.exists():
-                init_file.touch()
+            (component_dir / "__init__.py").touch()
 
             for name, source in all_components.items():
-                # Adapt imports
                 source = re.sub(r"from\s+fasthtml\.", "from starhtml.", source)
                 source = re.sub(r"import\s+fasthtml\.", "import starhtml.", source)
-                # Transform relative utils import to starui import
                 source = re.sub(
                     r"from\s+\.utils\s+import", "from starui import", source
                 )
 
-                # Write file
                 (component_dir / f"{name}.py").write_text(source)
 
             success(f"Installed: {', '.join(all_components.keys())}")
@@ -81,7 +70,7 @@ def add_command(
 
             console.print("\n💡 Next steps:")
             console.print(
-                f"  • Import: from {config.component_dir}.button import Button"
+                f"  • Import: from starui import {list(all_components)[0].title().replace('_', '')}"
             )
 
         except Exception as e:

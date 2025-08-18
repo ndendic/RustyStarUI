@@ -10,10 +10,10 @@ from .utils import cn
 
 
 def Label(
-    *children,  # type: ignore
+    *children,
     cls: str = "",
     class_name: str = "",
-    **attrs,  # type: ignore
+    **attrs,
 ) -> FT:
     """
     Label component - pixel-perfect shadcn/ui copy.
