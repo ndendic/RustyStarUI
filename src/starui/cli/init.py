@@ -171,10 +171,16 @@ def init_command(
 
         console.print("\n[green]✨ Initializing StarUI...[/green]")
 
+        def setup_and_update_config():
+            nonlocal project_config
+            setup_directories(project_config, verbose)
+            # Re-detect config after directories are created
+            project_config = detect_project_config(root)
+
         steps = [
             (
                 "Creating directories",
-                lambda: setup_directories(project_config, verbose),
+                setup_and_update_config,
             ),
             ("Creating CSS input", lambda: create_css_input(project_config, verbose)),
             (
