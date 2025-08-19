@@ -11,7 +11,10 @@ from starui import ThemeToggle
 styles = Link(rel="stylesheet", href="{css_path}", type="text/css")
 
 app, rt = star_app(
-    hdrs=(styles,),
+    hdrs=(
+        fouc_script(use_data_theme=True),
+        styles,
+    ),
     htmlkw=dict(lang="en", dir="ltr"),
     bodykw=dict(cls="min-h-screen bg-background text-foreground")
 )
