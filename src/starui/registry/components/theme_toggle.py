@@ -10,26 +10,27 @@ from .button import Button
 
 
 def ThemeToggle(alt_theme="dark", default_theme="light", **attrs) -> FT:
-    """Reactive theme toggle that syncs with fouc_script."""
+    """Reactive theme toggle supporting arbitrary theme names."""
 
     return Div(
         Button(
-            Span(Icon("ph:moon-bold", width="20", height="20"), ds_show("!$isDark")),
-            Span(Icon("ph:sun-bold", width="20", height="20"), ds_show("$isDark")),
-            ds_on_click("$isDark = !$isDark"),
+            Span(Icon("ph:moon-bold", width="20", height="20"), ds_show("!$isAlt")),
+            Span(Icon("ph:sun-bold", width="20", height="20"), ds_show("$isAlt")),
+            ds_on_click("$isAlt = !$isAlt"),
             variant="ghost",
             aria_label="Toggle theme",
             cls="h-9 px-4 py-2 flex-shrink-0",
         ),
-        ds_signals(isDark=False),
-        ds_on_load(f"""
-            const saved = localStorage.getItem('theme');
-            $isDark = saved === '{alt_theme}' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        """),
+        ds_signals(isAlt=False),
+        ds_on_load(
+            f"$isAlt = localStorage.getItem('theme') === '{alt_theme}' || "
+            f"(!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)"
+        ),
         ds_effect(f"""
-            document.documentElement.classList.toggle('{alt_theme}', $isDark);
-            document.documentElement.setAttribute('data-theme', $isDark ? '{alt_theme}' : '{default_theme}');
-            localStorage.setItem('theme', $isDark ? '{alt_theme}' : '{default_theme}');
+            const theme = $isAlt ? '{alt_theme}' : '{default_theme}';
+            document.documentElement.classList.toggle('{alt_theme}', $isAlt);
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
         """),
         **attrs,
     )

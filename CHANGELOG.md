@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **🛡️ FOUC Prevention in App Starter**
+  - Integrated `fouc_script` from StarHTML for flash-free theme loading
+  - Supports both `.dark` class and `data-theme` attribute approaches
+  - Automatic system preference detection on initial load
+
+### Changed
+- **🎨 Enhanced ThemeToggle Component**
+  - Simplified to work seamlessly with `fouc_script`
+  - Support for arbitrary theme names (not just dark/light)
+  - Cleaner reactive patterns using `ds_effect`
+  - Renamed signal from `$isDark` to `$isAlt` for generic theme toggling
+- **📦 First-class Component Exports**
+  - `Button` and `ThemeToggle` now available as direct imports from `starui`
+  - Enables `from starui import Button, ThemeToggle` for convenience
+
+### Fixed
+- **📁 CSS Path Detection in Init Command**
+  - Fixed critical issue where CSS output path was determined before directory creation
+  - Now correctly detects and uses `static/css/starui.css` path
+  - Ensures app starter template references correct CSS location
+- **🔧 Datastar Variable Scoping**
+  - Resolved duplicate variable declaration errors in ThemeToggle
+  - Fixed scope conflicts between `ds_on_load` and `ds_effect`
+
 ## [0.1.3] - 2025-08-18
 
 ### Added
