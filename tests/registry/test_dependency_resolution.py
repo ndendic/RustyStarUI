@@ -118,7 +118,9 @@ class TestRegistryClient:
         meta = client.get_component_metadata("button")
         assert meta["name"] == "button"
         assert meta["dependencies"] == []
-        assert isinstance(meta["description"], str)  # Should return empty string if no docstring
+        assert isinstance(
+            meta["description"], str
+        )  # Should return empty string if no docstring
 
     def test_get_component_source(self):
         """Test getting component source code."""

@@ -10,8 +10,8 @@ app, rt = star_app(
         fouc_script(use_data_theme=True),
         styles,
     ),
-    htmlkw=dict(lang="en", dir="ltr"),
-    bodykw=dict(cls="min-h-screen bg-background text-foreground"),
+    htmlkw={"lang": "en", "dir": "ltr"},
+    bodykw={"cls": "min-h-screen bg-background text-foreground"},
 )
 
 

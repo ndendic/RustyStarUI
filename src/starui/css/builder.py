@@ -50,7 +50,6 @@ def extract_classes(content: str) -> set[str]:
 
 
 class ContentScanner:
-
     def __init__(self, config: ProjectConfig):
         self.config = config
         self.patterns = get_content_patterns(config.project_root)
@@ -77,7 +76,6 @@ class ContentScanner:
 
 
 class CSSBuilder:
-
     def __init__(self, config: ProjectConfig):
         self.config = config
         self.binary_manager = TailwindBinaryManager("latest")
