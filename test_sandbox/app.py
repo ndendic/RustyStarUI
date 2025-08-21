@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-# Import all registry components at once
-from registry_loader import *
+# Import starhtml first, then override with our custom components
 from starhtml import *
+# Import all registry components at once (this will override starhtml components)
+from registry_loader import *
 
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 
@@ -10,8 +11,8 @@ app, rt = star_app(
         fouc_script(use_data_theme=True),
         styles,
     ),
-    htmlkw={"lang": "en", "dir": "ltr"},
-    bodykw={"cls": "min-h-screen bg-background text-foreground"},
+    htmlkw=dict(lang="en", dir="ltr"),
+    bodykw=dict(cls="min-h-screen bg-background text-foreground"),
 )
 
 
@@ -145,6 +146,101 @@ def index():
                     )
                 ),
                 cls="mb-8",
+            ),
+            # Tabs example - Default variant (boxed style)
+            Div(
+                H2("Tabs - Default Variant", cls="text-2xl font-semibold mb-4"),
+                Tabs(
+                    TabsList(
+                        TabsTrigger("Preview", value="preview"),
+                        TabsTrigger("Code", value="code"),
+                        TabsTrigger("Settings", value="settings"),
+                    ),
+                    TabsContent(
+                        Div(
+                            H3("Preview Content", cls="text-lg font-semibold mb-2"),
+                            P("This is the preview tab content with the default boxed style."),
+                            Button("Action in Preview", variant="secondary", cls="mt-4"),
+                        ),
+                        value="preview"
+                    ),
+                    TabsContent(
+                        Div(
+                            H3("Code Content", cls="text-lg font-semibold mb-2"),
+                            Pre(
+                                Code(
+                                    "# Example code\ndef hello_world():\n    print('Hello, World!')",
+                                    cls="block p-4 bg-muted rounded"
+                                )
+                            ),
+                        ),
+                        value="code"
+                    ),
+                    TabsContent(
+                        Div(
+                            H3("Settings Content", cls="text-lg font-semibold mb-2"),
+                            P("Configure your preferences here."),
+                            Div(
+                                Label("Enable notifications", for_="notifications"),
+                                Input(type="checkbox", id="notifications", cls="ml-2"),
+                                cls="flex items-center gap-2 mt-4"
+                            ),
+                        ),
+                        value="settings"
+                    ),
+                    default_value="preview",
+                    variant="default",
+                    cls="mb-8"
+                ),
+            ),
+            # Tabs example - Plain variant (text style)
+            Div(
+                H2("Tabs - Plain Variant", cls="text-2xl font-semibold mb-4"),
+                Tabs(
+                    TabsList(
+                        TabsTrigger("Account", value="account"),
+                        TabsTrigger("Password", value="password"),
+                        TabsTrigger("Team", value="team"),
+                        TabsTrigger("Billing", value="billing"),
+                    ),
+                    TabsContent(
+                        Div(
+                            H3("Account Settings", cls="text-lg font-semibold mb-2"),
+                            P("Manage your account settings and preferences."),
+                            Div(
+                                Label("Username", for_="username"),
+                                Input(id="username", placeholder="Enter username", cls="max-w-sm"),
+                                cls="space-y-2 mt-4"
+                            ),
+                        ),
+                        value="account"
+                    ),
+                    TabsContent(
+                        Div(
+                            H3("Password & Security", cls="text-lg font-semibold mb-2"),
+                            P("Update your password and security settings."),
+                            Button("Change Password", variant="outline", cls="mt-4"),
+                        ),
+                        value="password"
+                    ),
+                    TabsContent(
+                        Div(
+                            H3("Team Members", cls="text-lg font-semibold mb-2"),
+                            P("Manage your team and collaborate with others."),
+                        ),
+                        value="team"
+                    ),
+                    TabsContent(
+                        Div(
+                            H3("Billing Information", cls="text-lg font-semibold mb-2"),
+                            P("View and manage your subscription and payment methods."),
+                        ),
+                        value="billing"
+                    ),
+                    default_value="account",
+                    variant="plain",
+                    cls="mb-8"
+                ),
             ),
             # Sheet example
             Div(
