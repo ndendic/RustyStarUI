@@ -338,6 +338,38 @@ def index():
                 ),
                 cls="mb-8",
             ),
+            # Checkbox examples
+            Div(
+                H2("Checkboxes", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    CheckboxWithLabel(
+                        "Accept terms and conditions",
+                        signal="terms",
+                        required=True
+                    ),
+                    CheckboxWithLabel(
+                        "Subscribe to newsletter",
+                        signal="newsletter",
+                        helper_text="Get weekly updates about new features"
+                    ),
+                    CheckboxWithLabel(
+                        "Enable notifications",
+                        signal="notifications",
+                        checked=True
+                    ),
+                    CheckboxWithLabel(
+                        "Disabled option",
+                        disabled=True,
+                        helper_text="This option is currently unavailable"
+                    ),
+                    CheckboxWithLabel(
+                        "Error state example",
+                        signal="error_checkbox",
+                        error_text="This field is required"
+                    ),
+                    cls="space-y-4 mb-8"
+                ),
+            ),
             # Interactive counter with Datastar
             Div(
                 H2("Interactive Counter (Datastar)", cls="text-2xl font-semibold mb-4"),
