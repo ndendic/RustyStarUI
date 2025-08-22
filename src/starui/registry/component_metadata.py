@@ -57,7 +57,9 @@ COMPONENT_REGISTRY = {
     "input": _component("input", "Form input", ["utils"]),
     "label": _component("label", "Form label", ["utils"]),
     "radio_group": _component("radio_group", "Radio button group", ["utils"]),
+    "switch": _component("switch", "Toggle switch", ["utils"]),
     "tabs": _component("tabs", "Tabbed interface", ["utils"]),
+    "textarea": _component("textarea", "Multi-line text input", ["utils"]),
     "utils": _component("utils", "Class name utilities"),
 }
 

@@ -5,7 +5,7 @@ from starhtml import FT, Div
 from starhtml import Button as HTMLButton
 from starhtml.datastar import ds_on_click, ds_show, ds_signals
 
-from .utils import cn
+from .utils import cn, inject_signals, make_injectable
 
 TabsVariant = Literal["default", "plain"]
 
@@ -24,12 +24,7 @@ def Tabs(
     signal = signal or f"tabs_{next(_tab_ids)}"
     signal_value = f"{signal}_value"
 
-    processed_children = [
-        child._inject_signal(signal_value, default_value, variant)
-        if hasattr(child, "_inject_signal")
-        else child
-        for child in children
-    ]
+    processed_children = inject_signals(children, signal_value, default_value, variant)
 
     return Div(
         *processed_children,
@@ -47,12 +42,7 @@ def TabsList(
     **attrs: Any,
 ) -> FT:
     def _inject_signal(signal_value, default_value=None, variant="default"):
-        processed_children = [
-            child._inject_signal(signal_value, variant)
-            if hasattr(child, "_inject_signal")
-            else child
-            for child in children
-        ]
+        processed_children = inject_signals(children, signal_value, variant)
 
         base_classes = (
             "text-muted-foreground inline-flex h-9 w-fit items-center p-[3px] "
@@ -70,8 +60,7 @@ def TabsList(
             **attrs,
         )
 
-    _inject_signal._inject_signal = _inject_signal
-    return _inject_signal
+    return make_injectable(_inject_signal)
 
 
 def TabsTrigger(
@@ -123,8 +112,7 @@ def TabsTrigger(
             },
         )
 
-    _inject_signal._inject_signal = _inject_signal
-    return _inject_signal
+    return make_injectable(_inject_signal)
 
 
 def TabsContent(
@@ -148,5 +136,4 @@ def TabsContent(
             **attrs,
         )
 
-    _inject_signal._inject_signal = _inject_signal
-    return _inject_signal
+    return make_injectable(_inject_signal)
