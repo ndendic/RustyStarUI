@@ -53,7 +53,7 @@ def Checkbox(
         cls=cn(
             "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
             class_name,
-            cls
+            cls,
         ),
     )
 
@@ -101,13 +101,15 @@ def CheckboxWithLabel(
                     ),
                     data_slot="label",
                 ),
-                helper_text and P(
+                helper_text
+                and P(
                     helper_text,
                     cls=cn(
                         "text-muted-foreground text-sm",
-                        "opacity-50" if disabled else ""
-                    )
-                ) or None,
+                        "opacity-50" if disabled else "",
+                    ),
+                )
+                or None,
                 cls="grid gap-1.5" if helper_text else None,
             ),
             cls="flex items-start gap-3",
