@@ -117,6 +117,17 @@ def SheetContent(
         else None
     )
 
+    overlay = (
+        Div(
+            ds_show(f"${signal_open}"),
+            ds_on_click(f"${signal_open} = false"),
+            cls="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-in fade-in-0",
+            data_sheet_role="overlay",
+        )
+        if modal
+        else None
+    )
+
     content_panel = Div(
         close_button or None,
         *children,
@@ -129,7 +140,8 @@ def SheetContent(
         data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
         data_sheet_role="content",
         cls=cn(
-            "fixed z-50 bg-background shadow-lg transition ease-in-out",
+            "fixed z-[110] bg-background shadow-lg border flex flex-col",
+            "transition-all duration-300 ease-in-out",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:duration-300 data-[state=open]:duration-500",
             side_classes.get(side, ""),
@@ -139,20 +151,6 @@ def SheetContent(
             cls,
         ),
         **attrs,
-    )
-
-    overlay = (
-        (
-            Div(
-                ds_show(f"${signal_open}"),
-                ds_on_click(f"${signal_open} = false"),
-                data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
-                data_sheet_role="overlay",
-                cls="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            )
-        )
-        if modal
-        else None
     )
 
     return Div(overlay, content_panel, data_sheet_role="content-wrapper")
