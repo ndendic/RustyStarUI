@@ -56,6 +56,7 @@ COMPONENT_REGISTRY = {
     "checkbox": _component("checkbox", "Checkbox input", ["utils"]),
     "input": _component("input", "Form input", ["utils"]),
     "label": _component("label", "Form label", ["utils"]),
+    "radio_group": _component("radio_group", "Radio button group", ["utils"]),
     "tabs": _component("tabs", "Tabbed interface", ["utils"]),
     "utils": _component("utils", "Class name utilities"),
 }
