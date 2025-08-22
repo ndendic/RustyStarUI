@@ -1,6 +1,10 @@
-from starhtml import FT, Div
+from typing import Literal
+
+from starhtml import FT, H1, H2, H3, H4, H5, H6, Div, P
 
 from .utils import cn
+
+HeadingLevel = Literal["h1", "h2", "h3", "h4", "h5", "h6"]
 
 
 def Card(
@@ -33,12 +37,24 @@ def CardHeader(
 
 def CardTitle(
     *children,
+    level: HeadingLevel = "h3",
     class_name: str = "",
     cls: str = "",
     **attrs,
 ) -> FT:
     classes = cn("leading-none font-semibold", class_name, cls)
-    return Div(*children, cls=classes, data_slot="card-title", **attrs)
+
+    heading_components = {
+        "h1": H1,
+        "h2": H2,
+        "h3": H3,
+        "h4": H4,
+        "h5": H5,
+        "h6": H6,
+    }
+
+    Heading = heading_components[level]
+    return Heading(*children, cls=classes, data_slot="card-title", **attrs)
 
 
 def CardDescription(
@@ -48,7 +64,7 @@ def CardDescription(
     **attrs,
 ) -> FT:
     classes = cn("text-muted-foreground text-sm", class_name, cls)
-    return Div(*children, cls=classes, data_slot="card-description", **attrs)
+    return P(*children, cls=classes, data_slot="card-description", **attrs)
 
 
 def CardAction(

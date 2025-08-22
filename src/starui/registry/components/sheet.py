@@ -1,7 +1,7 @@
 from typing import Literal
 
-from starhtml import FT, Div, Span
-from starhtml.datastar import ds_on_click, ds_on_keydown, ds_show, ds_signals
+from starhtml import FT, H2, Div, P, Span
+from starhtml.datastar import ds_effect, ds_on_click, ds_on_keydown, ds_show, ds_signals
 
 from .utils import cn
 
@@ -12,8 +12,6 @@ SheetSize = Literal["sm", "md", "lg", "xl", "full"]
 def Sheet(
     *children,
     signal: str,
-    side: SheetSide = "right",
-    size: SheetSize = "sm",
     modal: bool = True,
     default_open: bool = False,
     class_name: str = "",
@@ -22,12 +20,19 @@ def Sheet(
 ) -> FT:
     signal_open = f"{signal}_open"
 
+    scroll_lock = (
+        Div(ds_effect(f"document.body.style.overflow = ${signal_open} ? 'hidden' : ''"))
+        if modal
+        else None
+    )
+
     return Div(
         *children,
         ds_signals(**{signal_open: default_open}),
         ds_on_keydown(f"evt.key === 'Escape' && (${signal_open} = false)", "window")
         if modal
         else None,
+        scroll_lock,
         data_sheet_root=signal,
         data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
         cls=cn("relative", class_name, cls),
@@ -98,53 +103,56 @@ def SheetContent(
     close_button = (
         (
             SheetClose(
-                "✕",
-                Span("Close", cls="sr-only"),
+                Span(
+                    "×",
+                    aria_hidden="true",
+                    cls="text-2xl font-light leading-none -mt-0.5",
+                ),
                 signal=signal,
-                variant="ghost",
                 size="icon",
-                cls="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none h-6 w-6 p-0",
+                cls="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary",
             )
         )
         if show_close
         else None
     )
 
-    overlay = (
-        Div(
-            ds_show(f"${signal_open}"),
-            ds_on_click(f"${signal_open} = false"),
-            cls="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-in fade-in-0",
-            data_sheet_role="overlay",
-        )
-        if modal
-        else None
-    )
-
     content_panel = Div(
+        close_button or None,
         *children,
-        close_button,
         ds_show(f"${signal_open}"),
         id=content_id,
         role="dialog",
-        aria_modal="true" if modal else "false",
+        aria_modal="true" if modal else None,
         aria_labelledby=f"{content_id}-title",
         aria_describedby=f"{content_id}-description",
-        tabindex="-1",
+        data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
+        data_sheet_role="content",
         cls=cn(
-            "fixed z-50 bg-background shadow-lg border flex flex-col",
-            "transition-all duration-300 ease-in-out",
+            "fixed z-50 bg-background shadow-lg transition ease-in-out",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
-            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            side_classes.get(side, side_classes["right"]),
+            "data-[state=closed]:duration-300 data-[state=open]:duration-500",
+            side_classes.get(side, ""),
             size_classes.get(size, ""),
+            "overflow-y-auto",
             class_name,
             cls,
         ),
-        data_sheet_role="content",
-        data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
-        data_side=side,
         **attrs,
+    )
+
+    overlay = (
+        (
+            Div(
+                ds_show(f"${signal_open}"),
+                ds_on_click(f"${signal_open} = false"),
+                data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
+                data_sheet_role="overlay",
+                cls="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            )
+        )
+        if modal
+        else None
     )
 
     return Div(overlay, content_panel, data_sheet_role="content-wrapper")
@@ -201,7 +209,7 @@ def SheetTitle(
 ) -> FT:
     content_id = f"{signal}-content"
 
-    return Div(
+    return H2(
         *children,
         id=f"{content_id}-title",
         data_sheet_role="title",
@@ -215,7 +223,7 @@ def SheetDescription(
 ) -> FT:
     content_id = f"{signal}-content"
 
-    return Div(
+    return P(
         *children,
         id=f"{content_id}-description",
         data_sheet_role="description",
