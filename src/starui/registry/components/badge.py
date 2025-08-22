@@ -1,6 +1,7 @@
 from typing import Literal
 
 from starhtml import FT, A, Span
+from starhtml import Button as HTMLButton
 
 from .utils import cn, cva
 
@@ -38,12 +39,11 @@ def Badge(
         return A(*children, href=href, cls=classes, data_slot="badge", **attrs)
 
     if clickable:
-        return Span(
+        return HTMLButton(
             *children,
             cls=cn(classes, "cursor-pointer"),
             data_slot="badge",
-            tabindex="0",
-            role="button",
+            type="button",
             **attrs,
         )
 

@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # Import starhtml first, then override with our custom components
-from starhtml import *
-
 # Import all registry components at once (this will override starhtml components)
 from registry_loader import *
+from starhtml import *
 
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 
@@ -357,6 +356,80 @@ def index():
                     size="sm",
                 ),
                 cls="mb-8",
+            ),
+            # Radio Group examples
+            Div(
+                H2("Radio Groups", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    RadioGroupWithLabel(
+                        "Select your plan",
+                        options=[
+                            {"value": "free", "label": "Free - $0/month"},
+                            {"value": "pro", "label": "Pro - $10/month"},
+                            {"value": "enterprise", "label": "Enterprise - Custom"},
+                        ],
+                        value="free",
+                        signal="plan",
+                        helper_text="Choose the plan that best fits your needs",
+                    ),
+                    RadioGroupWithLabel(
+                        label="Notification preferences",
+                        options=[
+                            {"value": "all", "label": "All notifications"},
+                            {"value": "important", "label": "Important only"},
+                            {"value": "none", "label": "No notifications"},
+                        ],
+                        signal="notifications_radio",
+                        orientation="horizontal",
+                        required=True,
+                    ),
+                    RadioGroupWithLabel(
+                        label="Size",
+                        options=[
+                            {"value": "sm", "label": "Small"},
+                            {"value": "md", "label": "Medium"},
+                            {"value": "lg", "label": "Large"},
+                            {"value": "xl", "label": "Extra Large", "disabled": True},
+                        ],
+                        signal="size_radio",
+                        required=True,
+                        error_text="Please select a size",
+                    ),
+                    Div(
+                        P("Simple radio group (fully auto-managed):", cls="text-sm font-medium mb-2"),
+                        RadioGroup(
+                            RadioGroupItem("small", "Small"),
+                            RadioGroupItem("medium", "Medium"),
+                            RadioGroupItem("large", "Large"),
+                            value="medium",
+                        ),
+                        cls="p-4 border rounded-lg",
+                    ),
+                    Div(
+                        P("Custom styled radio group (blue indicator):", cls="text-sm font-medium mb-2"),
+                        RadioGroup(
+                            RadioGroupItem(
+                                "option1",
+                                "Option 1",
+                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500"
+                            ),
+                            RadioGroupItem(
+                                "option2",
+                                "Option 2",
+                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500"
+                            ),
+                            RadioGroupItem(
+                                "option3",
+                                "Option 3",
+                                disabled=True,
+                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500"
+                            ),
+                            value="option2",
+                        ),
+                        cls="p-4 border rounded-lg",
+                    ),
+                    cls="space-y-6 mb-8",
+                ),
             ),
             # Checkbox examples
             Div(
