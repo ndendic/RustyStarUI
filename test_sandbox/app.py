@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # Import starhtml first, then override with our custom components
+from starhtml import *
+
 # Import all registry components at once (this will override starhtml components)
 from registry_loader import *
-from starhtml import *
 
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 
@@ -396,7 +397,10 @@ def index():
                         error_text="Please select a size",
                     ),
                     Div(
-                        P("Simple radio group (fully auto-managed):", cls="text-sm font-medium mb-2"),
+                        P(
+                            "Simple radio group (fully auto-managed):",
+                            cls="text-sm font-medium mb-2",
+                        ),
                         RadioGroup(
                             RadioGroupItem("small", "Small"),
                             RadioGroupItem("medium", "Medium"),
@@ -406,29 +410,124 @@ def index():
                         cls="p-4 border rounded-lg",
                     ),
                     Div(
-                        P("Custom styled radio group (blue indicator):", cls="text-sm font-medium mb-2"),
+                        P(
+                            "Custom styled radio group (blue indicator):",
+                            cls="text-sm font-medium mb-2",
+                        ),
                         RadioGroup(
                             RadioGroupItem(
                                 "option1",
                                 "Option 1",
-                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500"
+                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500",
                             ),
                             RadioGroupItem(
                                 "option2",
                                 "Option 2",
-                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500"
+                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500",
                             ),
                             RadioGroupItem(
                                 "option3",
                                 "Option 3",
                                 disabled=True,
-                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500"
+                                indicator_cls="[&>div]:bg-blue-600 dark:[&>div]:bg-blue-500",
                             ),
                             value="option2",
                         ),
                         cls="p-4 border rounded-lg",
                     ),
                     cls="space-y-6 mb-8",
+                ),
+            ),
+            # Switch examples
+            Div(
+                H2("Switches", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    SwitchWithLabel(
+                        "Enable notifications",
+                        signal="switch_notifications",
+                        checked=True,
+                        helper_text="Receive email notifications about updates",
+                    ),
+                    SwitchWithLabel(
+                        "Marketing emails",
+                        signal="switch_marketing",
+                        helper_text="Get promotional emails and special offers",
+                    ),
+                    SwitchWithLabel(
+                        "Two-factor authentication",
+                        signal="switch_2fa",
+                        required=True,
+                        helper_text="Enhanced security for your account",
+                    ),
+                    SwitchWithLabel(
+                        "Disabled option",
+                        disabled=True,
+                        helper_text="This feature is not available in your plan",
+                    ),
+                    SwitchWithLabel(
+                        "Error state example",
+                        signal="switch_error",
+                        error_text="This setting requires admin approval",
+                    ),
+                    # Simple switches without labels
+                    Div(
+                        P("Simple switches:", cls="text-sm font-medium mb-2"),
+                        Div(
+                            Switch(signal="simple1", checked=True),
+                            Switch(signal="simple2"),
+                            Switch(disabled=True),
+                            cls="flex gap-4",
+                        ),
+                        cls="p-4 border rounded-lg",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
+            # Textarea examples
+            Div(
+                H2("Textareas", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic textarea
+                    TextareaWithLabel(
+                        "Description",
+                        placeholder="Enter your description here...",
+                        signal="description",
+                        helper_text="Provide a detailed description",
+                    ),
+                    # Textarea with error
+                    TextareaWithLabel(
+                        "Bio",
+                        placeholder="Tell us about yourself",
+                        signal="bio",
+                        required=True,
+                        error_text="Bio is required and must be at least 50 characters",
+                    ),
+                    # Disabled textarea
+                    TextareaWithLabel(
+                        "Notes",
+                        value="This field is currently disabled",
+                        disabled=True,
+                        helper_text="This field will be enabled after verification",
+                    ),
+                    # Textarea with fixed rows
+                    TextareaWithLabel(
+                        "Comments",
+                        placeholder="Share your thoughts...",
+                        signal="comments",
+                        rows=5,
+                        helper_text="Fixed height with 5 rows",
+                    ),
+                    # Simple textarea without label
+                    Div(
+                        P("Simple textarea:", cls="text-sm font-medium mb-2"),
+                        Textarea(
+                            placeholder="Type something...",
+                            signal="simple_textarea",
+                            resize="vertical",
+                        ),
+                        cls="p-4 border rounded-lg",
+                    ),
+                    cls="space-y-4 mb-8",
                 ),
             ),
             # Checkbox examples

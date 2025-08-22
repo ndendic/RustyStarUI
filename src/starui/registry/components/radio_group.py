@@ -6,7 +6,7 @@ from starhtml import FT, Div, Label, P, Span
 from starhtml import Input as HTMLInput
 from starhtml.datastar import ds_class, ds_on_change, ds_signals
 
-from .utils import cn
+from .utils import cn, inject_signals, make_injectable
 
 _radio_group_ids = count(1)
 
@@ -24,12 +24,7 @@ def RadioGroup(
     signal = signal or f"radio_{next(_radio_group_ids)}"
     group_name = f"radio_group_{signal}"
 
-    processed_children = [
-        child._inject_signal(signal, group_name, value)
-        if hasattr(child, "_inject_signal")
-        else child
-        for child in children
-    ]
+    processed_children = inject_signals(children, signal, group_name, value)
 
     return Div(
         *processed_children,
@@ -73,10 +68,8 @@ def RadioGroupItem(
             Div(
                 Div(cls="size-2 rounded-full bg-primary"),
                 ds_class(
-                    {
-                        "opacity-100": f"${signal} === '{value}'",
-                        "opacity-0": f"${signal} !== '{value}'",
-                    }
+                    opacity_100=f"${signal} === '{value}'",
+                    opacity_0=f"${signal} !== '{value}'",
                 ),
                 cls=cn(
                     "absolute inset-0 flex items-center justify-center",
@@ -94,28 +87,27 @@ def RadioGroupItem(
             data_slot="radio-visual",
         )
 
-        container = Div(
-            radio_input,
-            visual_radio,
-            cls="relative inline-flex items-center",
-            data_slot="radio-container",
-        )
-
         if not label:
-            return container
+            return Div(
+                radio_input,
+                visual_radio,
+                cls="relative inline-flex items-center",
+                data_slot="radio-container",
+            )
 
         return Label(
-            container,
+            radio_input,
+            visual_radio,
             Span(
                 label,
                 cls="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
             ),
             for_=radio_id,
             cls="flex items-center gap-2 cursor-pointer",
+            data_slot="radio-container",
         )
 
-    _inject_signal._inject_signal = _inject_signal
-    return _inject_signal
+    return make_injectable(_inject_signal)
 
 
 def RadioGroupWithLabel(
@@ -133,9 +125,10 @@ def RadioGroupWithLabel(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    signal = signal or f"radio_{str(uuid4())[:8]}"
-    name = name or f"radio_group_{str(uuid4())[:8]}"
-    group_id = f"radiogroup_{str(uuid4())[:8]}"
+    base_id = str(uuid4())[:8]
+    signal = signal or f"radio_{base_id}"
+    name = name or f"radio_group_{signal}"
+    group_id = f"radiogroup_{base_id}"
 
     radio_group_classes = cn(
         "flex gap-2",
@@ -156,8 +149,6 @@ def RadioGroupWithLabel(
                 RadioGroupItem(
                     value=option["value"],
                     label=option.get("label"),
-                    signal=signal,
-                    name=name,
                     disabled=disabled or option.get("disabled", False),
                 )
                 for option in options

@@ -63,3 +63,17 @@ def cva(base: str = "", config: dict[str, Any] | None = None) -> Callable[..., s
         return cn(*classes)
 
     return variant_function
+
+
+def make_injectable(func: Callable) -> Callable:
+    """Mark a function as injectable for signal propagation."""
+    func._inject_signal = func
+    return func
+
+
+def inject_signals(children: list[Any], *args: Any) -> list[Any]:
+    """Process children and inject signals where possible."""
+    return [
+        child._inject_signal(*args) if hasattr(child, "_inject_signal") else child
+        for child in children
+    ]
