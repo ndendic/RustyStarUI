@@ -73,7 +73,10 @@ def make_injectable(func: Callable) -> Callable:
 
 def inject_signals(children: list[Any], *args: Any) -> list[Any]:
     """Process children and inject signals where possible."""
-    return [
-        child._inject_signal(*args) if hasattr(child, "_inject_signal") else child
-        for child in children
-    ]
+    result = []
+    for child in children:
+        if hasattr(child, "_inject_signal") and callable(child._inject_signal):
+            result.append(child._inject_signal(*args))
+        else:
+            result.append(child)
+    return result

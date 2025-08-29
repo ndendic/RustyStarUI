@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2025-08-29
+
+### Added
+- **✨ New Components**
+  - Added `HoverCard` component with smart mouseenter/mouseleave handling and positioning
+  - Added `Popover` component with native Popover API integration and positioning
+  - Added `Select` component with native popover dropdown and automatic width matching
+  - Added `Switch` component with toggle functionality and accessibility
+  - Added `Textarea` component with multi-line text input support
+
+### Fixed
+- **🎯 Positioning System Overhaul**
+  - Fixed positioning flash issue where floating elements briefly appear in wrong position
+  - Enhanced position handler with opacity-based hiding during initial positioning
+  - Improved native Popover API integration with deferred positioning initialization
+  - Fixed scroll delta positioning for popovers, selects, and hover cards during viewport scrolling
+
+### Changed
+- **🔧 StarHTML API Migration (0.1.11 → 0.1.12)**
+  - Updated to new `ds_signals` API requiring `value()` wrapper for strings and `js()` for JavaScript expressions
+  - Migrated components from manual signal management to injectable pattern using `make_injectable()` and `inject_signals()`
+  - Replaced manual positioning code with enhanced Floating UI-powered position handler
+  - Updated hover card to use proper `ds_on_mouseenter`/`ds_on_mouseleave` event handlers
+
+- **⚡ Component Architecture Improvements**
+  - Implemented signal injection pattern across all components for cleaner APIs
+  - Removed requirement for users to manage signals manually - now auto-generated with UUIDs
+  - Enhanced component processing with recursive signal injection for nested components (PopoverClose)
+  - Improved component metadata registry with position handler dependencies
+
+- **🧹 Code Quality & Standards**
+  - Standardized import organization and formatting across all components
+  - Removed unnecessary comments focusing on "why" over "what"
+  - Applied consistent spacing and modern Python patterns
+  - Enhanced error handling and edge case coverage
+
+### Technical
+- **📦 Dependency Management**
+  - Added dependency injection system for component handlers (position, scroll)
+  - Enhanced component metadata with handler configuration support
+  - Improved local component discovery with better error handling
+
 ## [0.1.5] - 2025-08-20
 
 ### Fixed

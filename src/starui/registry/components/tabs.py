@@ -1,9 +1,9 @@
 from itertools import count
-from typing import Any, Literal
+from typing import Literal
 
 from starhtml import FT, Div
 from starhtml import Button as HTMLButton
-from starhtml.datastar import ds_on_click, ds_show, ds_signals
+from starhtml.datastar import ds_on_click, ds_show, ds_signals, value
 
 from .utils import cn, inject_signals, make_injectable
 
@@ -13,44 +13,33 @@ _tab_ids = count(1)
 
 
 def Tabs(
-    *children: Any,
+    *children,
     default_value: str,
-    signal: str = "",
     variant: TabsVariant = "default",
-    class_name: str = "",
     cls: str = "",
-    **attrs: Any,
+    **attrs,
 ) -> FT:
-    signal = signal or f"tabs_{next(_tab_ids)}"
-    signal_value = f"{signal}_value"
-
-    processed_children = inject_signals(children, signal_value, default_value, variant)
-
+    signal = attrs.pop("signal", None)
+    if not signal:
+        signal = f"tabs_{next(_tab_ids)}"
+    processed_children = inject_signals(children, signal, default_value, variant)
     return Div(
         *processed_children,
-        ds_signals(**{signal_value: default_value}),
+        ds_signals({signal: value(default_value)}),
         data_slot="tabs",
-        cls=cn("flex flex-col gap-2", class_name, cls),
+        cls=cn("w-full", cls),
         **attrs,
     )
 
 
-def TabsList(
-    *children: Any,
-    class_name: str = "",
-    cls: str = "",
-    **attrs: Any,
-) -> FT:
-    def _inject_signal(signal_value, default_value=None, variant="default"):
-        processed_children = inject_signals(children, signal_value, variant)
+def TabsList(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
+    def _inject_signal(signal, default_value=None, variant="default"):
+        processed_children = inject_signals(children, signal, default_value, variant)
 
-        base_classes = (
-            "text-muted-foreground inline-flex h-9 w-fit items-center p-[3px] "
-            "justify-start gap-4 rounded-none bg-transparent px-2 md:px-0"
-            if variant == "plain"
-            else "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center "
-            "justify-center rounded-lg p-[3px]"
-        )
+        base_classes = {
+            "plain": "text-muted-foreground inline-flex h-9 w-fit items-center p-[3px] justify-start gap-4 rounded-none bg-transparent px-2 md:px-0",
+            "default": "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
+        }[variant]
 
         return Div(
             *processed_children,
@@ -64,17 +53,19 @@ def TabsList(
 
 
 def TabsTrigger(
-    *children: Any,
+    *children,
     value: str,
     disabled: bool = False,
     class_name: str = "",
     cls: str = "",
-    **attrs: Any,
+    **attrs,
 ) -> FT:
-    def _inject_signal(signal_value, variant="default"):
+    def _inject_signal(signal, default_value=None, variant="default"):
+        is_active = default_value == value
+
         base = (
             "inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center "
-            "gap-1.5 rounded-md border border-transparent py-1 font-medium "
+            "gap-1.5 rounded-md py-1 font-medium "
             "whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] "
             "focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 "
             "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
@@ -82,18 +73,12 @@ def TabsTrigger(
 
         variant_styles = {
             "plain": "text-muted-foreground data-[state=active]:text-foreground px-0 text-base data-[state=active]:shadow-none",
-            "default": (
-                "px-2 text-sm text-foreground dark:text-muted-foreground "
-                "data-[state=active]:bg-background data-[state=active]:text-foreground "
-                "data-[state=active]:shadow-sm dark:data-[state=active]:border-input "
-                "dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground "
-                "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring"
-            ),
+            "default": "px-2 text-sm text-foreground dark:text-muted-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:border data-[state=active]:border-transparent dark:data-[state=active]:bg-input/30 dark:data-[state=active]:!border-input dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring",
         }
 
         return HTMLButton(
             *children,
-            ds_on_click(f"${signal_value} = '{value}'"),
+            ds_on_click(f"${signal} = '{value}'"),
             disabled=disabled,
             type="button",
             role="tab",
@@ -101,13 +86,14 @@ def TabsTrigger(
             id=f"tab-{value}",
             cls=cn(
                 base,
-                variant_styles.get(variant, variant_styles["default"]),
+                variant_styles[variant],
                 class_name,
                 cls,
             ),
+            data_state="active" if is_active else "inactive",
             **{
-                "data-attr-data-state": f"${signal_value} === '{value}' ? 'active' : 'inactive'",
-                "data-attr-aria-selected": f"${signal_value} === '{value}'",
+                "data-attr-data-state": f"${signal} === '{value}' ? 'active' : 'inactive'",
+                "data-attr-aria-selected": f"${signal} === '{value}'",
                 **attrs,
             },
         )
@@ -116,16 +102,12 @@ def TabsTrigger(
 
 
 def TabsContent(
-    *children: Any,
-    value: str,
-    class_name: str = "",
-    cls: str = "",
-    **attrs: Any,
+    *children, value: str, class_name: str = "", cls: str = "", **attrs
 ) -> FT:
-    def _inject_signal(signal_value, default_value=None, variant="default"):
+    def _inject_signal(signal, default_value=None, variant="default"):
         return Div(
             *children,
-            ds_show(f"${signal_value} === '{value}'"),
+            ds_show(f"${signal} === '{value}'"),
             data_slot="tabs-content",
             role="tabpanel",
             id=f"panel-{value}",

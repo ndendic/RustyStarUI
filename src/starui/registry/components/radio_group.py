@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from starhtml import FT, Div, Label, P, Span
 from starhtml import Input as HTMLInput
-from starhtml.datastar import ds_class, ds_on_change, ds_signals
+from starhtml.datastar import ds_class, ds_on_change, ds_signals, value
 
 from .utils import cn, inject_signals, make_injectable
 
@@ -13,7 +13,7 @@ _radio_group_ids = count(1)
 
 def RadioGroup(
     *children: Any,
-    value: str | None = None,
+    initial_value: str | None = None,
     signal: str = "",
     disabled: bool = False,
     required: bool = False,
@@ -24,11 +24,11 @@ def RadioGroup(
     signal = signal or f"radio_{next(_radio_group_ids)}"
     group_name = f"radio_group_{signal}"
 
-    processed_children = inject_signals(children, signal, group_name, value)
+    processed_children = inject_signals(children, signal, group_name, initial_value)
 
     return Div(
         *processed_children,
-        ds_signals(**{signal: value or ""}),
+        ds_signals({signal: value(initial_value or "")}),
         cls=cn("grid gap-2", class_name, cls),
         data_slot="radio-group",
         data_radio_signal=signal,

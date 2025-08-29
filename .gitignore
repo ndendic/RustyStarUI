@@ -96,3 +96,6 @@ PRD.md
 .completions/
 .sesskey
 
+toolbench/
+toolbench-changes.diff
+.mcp.json
