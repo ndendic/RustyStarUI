@@ -5,22 +5,21 @@ from starhtml import FT, Button, Div, Icon, Label, P, Span
 from starhtml.datastar import (
     ds_class,
     ds_on_click,
+    ds_on_toggle,
+    ds_position,
+    ds_ref,
     ds_show,
     ds_signals,
     ds_text,
-    ds_ref,
-    ds_style,
-    ds_on_toggle,
+    value,
 )
-from fastcore.xml import NotStr
-
 
 from .utils import cn
 
 
 def Select(
     *children,
-    value: str | None = None,
+    initial_value: str | None = None,
     signal: str | None = None,
     cls: str = "",
     **attrs: Any,
@@ -28,12 +27,13 @@ def Select(
     signal = signal or f"select_{uuid4().hex[:8]}"
     return Div(
         *children,
-        # Track select state including open state for positioning
-        ds_signals({
-            f"{signal}_value": value or "",
-            f"{signal}_label": "",
-            f"{signal}_open": False,
-        }),
+        ds_signals(
+            {
+                f"{signal}_value": value(initial_value or ""),
+                f"{signal}_label": value(""),
+                f"{signal}_open": False,
+            }
+        ),
         cls=cn("relative inline-block", cls),
         **attrs,
     )
@@ -48,7 +48,7 @@ def SelectTrigger(
 ) -> FT:
     signal = signal or "select"
     trigger_id = attrs.pop("id", f"{signal}-trigger")
-    
+
     return Button(
         *children,
         Icon("lucide:chevron-down", cls="size-4 shrink-0 opacity-50"),
@@ -59,7 +59,7 @@ def SelectTrigger(
         role="combobox",
         aria_haspopup="listbox",
         aria_controls=f"{signal}-content",
-        data_placeholder=f"!${signal}_label",        
+        data_placeholder=f"!${signal}_label",
         id=trigger_id,
         cls=cn(
             width,
@@ -100,40 +100,26 @@ def SelectContent(
     **attrs: Any,
 ) -> FT:
     signal = signal or "select"
-    
+
     return Div(
         Div(*children, cls="p-1 max-h-[300px] overflow-auto"),
-        ds_signals({f"{signal}_top": -9999, f"{signal}_left": -9999, f"{signal}_width": 180, f"{signal}_open": False, f"{signal}_initialScrollY": 0, f"{signal}_initialScrollX": 0}),
+        ds_ref(f"{signal}Content"),
         ds_on_toggle(f"""
-            ${signal}_open = event.newState === 'open';
-            if (event.newState === 'open' && ${signal}Trigger && ${signal}Content) {{
-                requestAnimationFrame(() => {{
-                    // Store initial scroll position
-                    ${signal}_initialScrollY = window.scrollY;
-                    ${signal}_initialScrollX = window.scrollX;
-                    
-                    const tr = ${signal}Trigger.getBoundingClientRect();
-                    const cr = ${signal}Content.getBoundingClientRect();
-                    const gap = 4, pad = 8;                    
-                    ${signal}_width = tr.width;                    
-                    let top = tr.bottom + gap;
-                    if (top + cr.height > window.innerHeight - pad) {{
-                        top = tr.top - cr.height - gap;
-                    }}                                        
-                    let left = tr.left;
-                    left = Math.max(pad, Math.min(left, window.innerWidth - tr.width - pad));                    
-                    ${signal}_top = top;
-                    ${signal}_left = left;
-                }});
+            if (event.newState === 'open') {{
+                const trigger = document.getElementById('{signal}-trigger');
+                if (trigger) {{
+                    el.style.minWidth = trigger.offsetWidth + 'px';
+                }}
             }}
         """),
-        ds_ref(f"{signal}Content"),
-        ds_style(
-            position="'fixed'",
-            top=f"${signal}_top + 'px'",
-            left=f"${signal}_left + 'px'",
-            width=f"${signal}_width + 'px'",
-            minWidth=f"${signal}_width + 'px'"
+        ds_position(
+            anchor=f"{signal}-trigger",
+            placement="bottom",
+            offset=4,
+            flip=True,
+            shift=True,
+            hide=True,
+            auto_size=True,
         ),
         popover="auto",
         id=f"{signal}-content",
@@ -141,35 +127,9 @@ def SelectContent(
         aria_labelledby=f"{signal}-trigger",
         tabindex="-1",
         cls=cn(
-            "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md dark:border-input",
+            "z-50 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md dark:border-input",
             cls,
         ),
-        # Add scroll handler using delta positioning for smooth movement
-        **{f"data-on-scroll__throttle.16ms": NotStr(f"""
-            if (${signal}_open) {{
-                // Calculate scroll delta from initial position
-                const deltaY = window.scrollY - ${signal}_initialScrollY;
-                const deltaX = window.scrollX - ${signal}_initialScrollX;
-                
-                // Apply inverse delta to maintain fixed position relative to document
-                ${signal}_top = ${signal}_top - deltaY;
-                ${signal}_left = ${signal}_left - deltaX;
-                
-                // Update stored scroll position for next delta calculation
-                ${signal}_initialScrollY = window.scrollY;
-                ${signal}_initialScrollX = window.scrollX;
-                
-                // Check if trigger is still visible (less frequently)
-                if (Math.floor(window.scrollY / 100) !== Math.floor((window.scrollY - deltaY) / 100)) {{
-                    const tr = ${signal}Trigger.getBoundingClientRect();
-                    const triggerVisible = tr.bottom > 0 && tr.top < window.innerHeight && 
-                                         tr.right > 0 && tr.left < window.innerWidth;
-                    if (!triggerVisible) {{
-                        el.hidePopover();
-                    }}
-                }}
-            }}
-        """)},
         **attrs,
     )
 
@@ -184,22 +144,23 @@ def SelectItem(
 ) -> FT:
     label = label or value
     signal = signal or "select"
-    
-    children = [
+
+    return Div(
         Span(label),
         Span(
             Icon("lucide:check", cls="h-4 w-4"),
             ds_show(f"${signal}_value === '{value}'"),
             cls="absolute right-2 flex h-3.5 w-3.5 items-center justify-center",
-        )
-    ]
-    
-    if not disabled:
-        # Set value and label, then programmatically close the popover
-        children.append(ds_on_click(f"${signal}_value='{value}';${signal}_label='{label}';document.getElementById('{signal}-content').hidePopover()"))
-    
-    return Div(
-        *children,
+        ),
+        *(
+            ()
+            if disabled
+            else [
+                ds_on_click(
+                    f"${signal}_value='{value}';${signal}_label='{label}';document.getElementById('{signal}-content').hidePopover()"
+                )
+            ]
+        ),
         role="option",
         data_value=value,
         data_selected=f"${signal}_value === '{value}'",
@@ -256,7 +217,12 @@ def SelectWithLabel(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    select_id = f"select_{str(uuid4())[:8]}"
+    # Generate signal if not provided
+    if not signal:
+        signal = f"select_{uuid4().hex[:8]}"
+
+    # Use the signal-based ID that SelectTrigger expects
+    select_id = f"{signal}-trigger"
 
     def build_options(opts):
         items = []
@@ -294,11 +260,10 @@ def SelectWithLabel(
                 cls=select_cls,
                 disabled=disabled,
                 aria_invalid="true" if error_text else None,
-                id=select_id,
+                # Don't override the ID - SelectTrigger will set it correctly
             ),
             SelectContent(*build_options(options), signal=signal),
-            value=value,
-            name=name,
+            initial_value=value,
             signal=signal,
             **attrs,
         ),

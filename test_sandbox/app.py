@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Import starhtml first, then override with our custom components
 from starhtml import *
+from starhtml.datastar import value
 
 # Import all registry components at once (this will override starhtml components)
 from registry_loader import *
@@ -10,7 +11,8 @@ styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 app, rt = star_app(
     hdrs=(
         fouc_script(use_data_theme=True),
-        styles,
+        styles,        
+        position_handler(),  # Enhanced handler is now built-in
     ),
     htmlkw=dict(lang="en", dir="ltr"),
     bodykw=dict(cls="min-h-screen bg-background text-foreground"),
@@ -530,6 +532,200 @@ def index():
                     cls="space-y-4 mb-8",
                 ),
             ),
+            # Select examples
+            Div(
+                H2("Select", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic select
+                    SelectWithLabel(
+                        "Country",
+                        options=["United States", "Canada", "Mexico", "United Kingdom", "France", "Germany"],
+                        placeholder="Choose a country",
+                        signal="country",
+                        helper_text="Select your country of residence",
+                    ),
+                    # Select with value/label tuples
+                    SelectWithLabel(
+                        "Language",
+                        options=[
+                            ("en", "English"),
+                            ("es", "Spanish"),
+                            ("fr", "French"),
+                            ("de", "German"),
+                            ("jp", "Japanese"),
+                        ],
+                        value="en",
+                        signal="language",
+                        helper_text="Choose your preferred language",
+                    ),
+                    # Select with groups
+                    SelectWithLabel(
+                        "Framework",
+                        options=[
+                            {"group": "Frontend", "items": ["React", "Vue", "Angular", "Svelte"]},
+                            {"group": "Backend", "items": [("django", "Django"), ("fastapi", "FastAPI"), ("flask", "Flask")]},
+                            {"group": "Full Stack", "items": ["Next.js", "Nuxt", "SvelteKit"]},
+                        ],
+                        placeholder="Select a framework",
+                        signal="framework",
+                        required=True,
+                    ),
+                    # Select with error state
+                    SelectWithLabel(
+                        "Department",
+                        options=["Engineering", "Design", "Marketing", "Sales", "Support"],
+                        signal="department",
+                        error_text="Please select a valid department",
+                        required=True,
+                    ),
+                    # Disabled select
+                    SelectWithLabel(
+                        "Plan",
+                        options=["Free", "Pro", "Enterprise"],
+                        value="Free",
+                        disabled=True,
+                        helper_text="Upgrade your account to change plans",
+                    ),
+                    # Simple select without label
+                    Div(
+                        P("Simple select:", cls="text-sm font-medium mb-2"),
+                        Select(
+                            SelectTrigger(
+                                SelectValue(placeholder="Pick an option", signal="simple_select"),
+                                signal="simple_select",
+                            ),
+                            SelectContent(
+                                SelectItem("Option 1", signal="simple_select"),
+                                SelectItem("Option 2", signal="simple_select"),
+                                SelectItem("Option 3", signal="simple_select"),
+                                SelectItem("Disabled", disabled=True, signal="simple_select"),
+                                signal="simple_select",
+                            ),
+                            signal="simple_select",
+                        ),
+                        cls="p-4 border rounded-lg",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
+            # Popover examples
+            Div(
+                H2("Popovers", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic popover
+                    Popover(
+                        PopoverTrigger("Open Popover"),
+                        PopoverContent(
+                            Div(
+                                H3("About this feature", cls="font-semibold mb-2"),
+                                P("This is a popover component that displays rich content in a floating panel.", cls="text-sm text-muted-foreground mb-3"),
+                                PopoverClose("✕"),
+                            ),
+                        ),
+                    ),
+                    # Popover with different positioning
+                    Popover(
+                        PopoverTrigger("Top Popover", variant="outline"),
+                        PopoverContent(
+                            Div(
+                                H3("Top positioned", cls="font-semibold mb-2"),
+                                P("This popover appears above the trigger.", cls="text-sm"),
+                            ),
+                            side="top",
+                        ),
+                    ),
+                    # Popover with form
+                    Popover(
+                        PopoverTrigger("Settings", variant="secondary"),
+                        PopoverContent(
+                            Div(
+                                H3("Quick Settings", cls="font-semibold mb-3"),
+                                Div(
+                                    Label("Theme", cls="text-sm font-medium"),
+                                    Button("Toggle", variant="outline", size="sm"),
+                                    cls="flex justify-between items-center mb-2",
+                                ),
+                                Div(
+                                    Label("Notifications", cls="text-sm font-medium"),
+                                    Switch(signal="notif_setting"),
+                                    cls="flex justify-between items-center",
+                                ),
+                                PopoverClose("Done", variant="ghost"),
+                            ),
+                        ),
+                    ),
+                    cls="flex flex-wrap gap-4 mb-8",
+                ),
+            ),
+            # HoverCard examples
+            Div(
+                H2("Hover Cards", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic hover card
+                    HoverCard(
+                        HoverCardTrigger(
+                            Span("@username", cls="text-blue-600 underline cursor-pointer"),
+                            signal="user_hover",
+                        ),
+                        HoverCardContent(
+                            Div(
+                                Div(
+                                    Div("👤", cls="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-2xl mb-3"),
+                                    H3("John Doe", cls="font-semibold mb-1"),
+                                    P("@username", cls="text-sm text-muted-foreground mb-2"),
+                                    P("Full-stack developer passionate about building great user experiences.", cls="text-sm"),
+                                    cls="text-center",
+                                ),
+                            ),
+                            signal="user_hover",
+                        ),
+                        signal="user_hover",
+                    ),
+                    # Hover card with different positioning
+                    HoverCard(
+                        HoverCardTrigger(
+                            Button("Hover for info", variant="outline"),
+                            signal="info_hover",
+                        ),
+                        HoverCardContent(
+                            Div(
+                                H3("Quick Info", cls="font-semibold mb-2"),
+                                P("This hover card appears when you hover over the trigger element.", cls="text-sm text-muted-foreground mb-2"),
+                                P("It stays open while you're hovering over either the trigger or the content.", cls="text-sm"),
+                            ),
+                            signal="info_hover",
+                            side="top",
+                        ),
+                        signal="info_hover",
+                    ),
+                    # Product hover card
+                    HoverCard(
+                        HoverCardTrigger(
+                            Badge("Product Info", variant="secondary"),
+                            signal="product_hover",
+                        ),
+                        HoverCardContent(
+                            Div(
+                                Div(
+                                    H3("StarUI Components", cls="font-semibold mb-2"),
+                                    Badge("v1.0.0", variant="outline", cls="mb-2"),
+                                    P("A modern component library built with StarHTML and Datastar for reactive Python web apps.", cls="text-sm text-muted-foreground mb-3"),
+                                    Div(
+                                        Badge("Python"),
+                                        Badge("StarHTML", variant="secondary"),
+                                        Badge("Datastar", variant="outline"),
+                                        cls="flex gap-1",
+                                    ),
+                                ),
+                            ),
+                            signal="product_hover",
+                            side="left",
+                        ),
+                        signal="product_hover",
+                    ),
+                    cls="flex flex-wrap gap-4 mb-8",
+                ),
+            ),
             # Checkbox examples
             Div(
                 H2("Checkboxes", cls="text-2xl font-semibold mb-4"),
@@ -629,7 +825,7 @@ def index():
                         ),
                         type="submit",
                     ),
-                    ds_signals(name="", email="", submitted=False),
+                    ds_signals(name=value(""), email=value(""), submitted=False),
                     ds_on_submit(
                         "event.preventDefault(); if($name && $email.includes('@')) alert('Form submitted!')"
                     ),
