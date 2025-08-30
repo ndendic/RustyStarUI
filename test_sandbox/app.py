@@ -338,7 +338,7 @@ def index():
             ),
             # Dialog with different size and content
             Div(
-                H2("Alert Dialog", cls="text-2xl font-semibold mb-4"),
+                H2("Dialog (Small Size)", cls="text-2xl font-semibold mb-4"),
                 Dialog(
                     trigger=DialogTrigger(
                         "Delete Account", ref_id="delete-dialog", variant="destructive"
@@ -358,6 +358,90 @@ def index():
                     ),
                     ref_id="delete-dialog",
                     size="sm",
+                ),
+                cls="mb-8",
+            ),
+            # Alert Dialog examples
+            Div(
+                H2("Alert Dialog", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic alert dialog
+                    AlertDialog(
+                        trigger=AlertDialogTrigger(
+                            "Show Alert", 
+                            ref_id="basic_alert"
+                        ),
+                        content=AlertDialogContent(
+                            AlertDialogHeader(
+                                AlertDialogTitle("Are you absolutely sure?"),
+                                AlertDialogDescription(
+                                    "This action cannot be undone. This will permanently delete your "
+                                    "account and remove your data from our servers."
+                                ),
+                            ),
+                            AlertDialogFooter(
+                                AlertDialogCancel("Cancel", ref_id="basic_alert"),
+                                AlertDialogAction(
+                                    "Continue",
+                                    ref_id="basic_alert",
+                                    action="console.log('Action confirmed!')",
+                                ),
+                            ),
+                        ),
+                        ref_id="basic_alert",
+                    ),
+                    # Destructive alert dialog
+                    AlertDialog(
+                        trigger=AlertDialogTrigger(
+                            "Delete Item", 
+                            ref_id="destructive_alert",
+                            variant="destructive"
+                        ),
+                        content=AlertDialogContent(
+                            AlertDialogHeader(
+                                AlertDialogTitle("Delete Item"),
+                                AlertDialogDescription(
+                                    "Are you sure you want to delete this item? This action is irreversible."
+                                ),
+                            ),
+                            AlertDialogFooter(
+                                AlertDialogCancel("Cancel", ref_id="destructive_alert"),
+                                AlertDialogAction(
+                                    "Delete",
+                                    ref_id="destructive_alert",
+                                    variant="destructive",
+                                    action="console.log('Item deleted!')",
+                                ),
+                            ),
+                        ),
+                        ref_id="destructive_alert",
+                    ),
+                    # Alert dialog with custom action
+                    AlertDialog(
+                        trigger=AlertDialogTrigger(
+                            "Confirm Action", 
+                            ref_id="custom_alert",
+                            variant="outline"
+                        ),
+                        content=AlertDialogContent(
+                            AlertDialogHeader(
+                                AlertDialogTitle("Confirm Action"),
+                                AlertDialogDescription(
+                                    "This will apply the changes you've made. Do you want to proceed?"
+                                ),
+                            ),
+                            AlertDialogFooter(
+                                AlertDialogCancel("Not now", ref_id="custom_alert"),
+                                AlertDialogAction(
+                                    "Yes, apply changes",
+                                    ref_id="custom_alert",
+                                    action="alert('Changes applied successfully!')",
+                                ),
+                            ),
+                        ),
+                        ref_id="custom_alert",
+                    ),
+                    cls="flex flex-wrap gap-4",
                 ),
                 cls="mb-8",
             ),

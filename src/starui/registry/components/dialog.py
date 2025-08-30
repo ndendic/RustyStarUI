@@ -14,7 +14,7 @@ from starhtml import (
     Dialog as HTMLDialog,
 )
 from starhtml import P as HTMLP
-from starhtml.datastar import ds_effect, ds_on, ds_on_click, ds_ref, ds_signals
+from starhtml.datastar import ds_effect, ds_on_click, ds_on_close, ds_ref, ds_signals
 
 from .utils import cn, cva
 
@@ -22,7 +22,7 @@ DialogSize = Literal["sm", "md", "lg", "xl", "full"]
 
 
 dialog_variants = cva(
-    base="fixed max-h-[85vh] w-full overflow-auto m-auto bg-background text-foreground border rounded-lg shadow-lg p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm open:animate-in open:fade-in-0 open:zoom-in-95 open:duration-200 open:backdrop:animate-in open:backdrop:fade-in-0 open:backdrop:duration-200",
+    base="fixed max-h-[85vh] w-full overflow-auto m-auto bg-background text-foreground border border-input rounded-lg shadow-lg p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm open:animate-in open:fade-in-0 open:zoom-in-95 open:duration-200 open:backdrop:animate-in open:backdrop:fade-in-0 open:backdrop:duration-200",
     config={
         "variants": {
             "size": {
@@ -52,7 +52,7 @@ def Dialog(
 
     classes = cn(dialog_variants(size=size), class_name, cls)
 
-    dialog_attrs = [ds_ref(ref_id), ds_on("close", f"${signal_name} = false")]
+    dialog_attrs = [ds_ref(ref_id), ds_on_close(f"${signal_name} = false")]
 
     if modal:
         dialog_attrs.append(
