@@ -14,7 +14,7 @@ _tab_ids = count(1)
 
 def Tabs(
     *children,
-    default_value: str,
+    default_id: str,
     variant: TabsVariant = "default",
     cls: str = "",
     **attrs,
@@ -22,10 +22,10 @@ def Tabs(
     signal = attrs.pop("signal", None)
     if not signal:
         signal = f"tabs_{next(_tab_ids)}"
-    processed_children = inject_signals(children, signal, default_value, variant)
+    processed_children = inject_signals(children, signal, default_id, variant)
     return Div(
         *processed_children,
-        ds_signals({signal: value(default_value)}),
+        ds_signals({signal: value(default_id)}),
         data_slot="tabs",
         cls=cn("w-full", cls),
         **attrs,
@@ -33,8 +33,8 @@ def Tabs(
 
 
 def TabsList(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
-    def _inject_signal(signal, default_value=None, variant="default"):
-        processed_children = inject_signals(children, signal, default_value, variant)
+    def _inject_signal(signal, default_id=None, variant="default"):
+        processed_children = inject_signals(children, signal, default_id, variant)
 
         base_classes = {
             "plain": "text-muted-foreground inline-flex h-9 w-fit items-center p-[3px] justify-start gap-4 rounded-none bg-transparent px-2 md:px-0",
@@ -54,14 +54,14 @@ def TabsList(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
 
 def TabsTrigger(
     *children,
-    value: str,
+    id: str,
     disabled: bool = False,
     class_name: str = "",
     cls: str = "",
     **attrs,
 ) -> FT:
-    def _inject_signal(signal, default_value=None, variant="default"):
-        is_active = default_value == value
+    def _inject_signal(signal, default_id=None, variant="default"):
+        is_active = default_id == id
 
         base = (
             "inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center "
@@ -78,12 +78,13 @@ def TabsTrigger(
 
         return HTMLButton(
             *children,
-            ds_on_click(f"${signal} = '{value}'"),
+            ds_on_click(f"${signal} = '{id}'"),
             disabled=disabled,
             type="button",
             role="tab",
-            aria_controls=f"panel-{value}",
-            id=f"tab-{value}",
+            aria_selected="true" if is_active else f"${signal} === '{id}'",
+            aria_controls=f"panel-{id}",
+            id=id,
             cls=cn(
                 base,
                 variant_styles[variant],
@@ -92,8 +93,8 @@ def TabsTrigger(
             ),
             data_state="active" if is_active else "inactive",
             **{
-                "data-attr-data-state": f"${signal} === '{value}' ? 'active' : 'inactive'",
-                "data-attr-aria-selected": f"${signal} === '{value}'",
+                "data-attr-data-state": f"${signal} === '{id}' ? 'active' : 'inactive'",
+                "data-attr-aria-selected": f"${signal} === '{id}'",
                 **attrs,
             },
         )
@@ -101,20 +102,18 @@ def TabsTrigger(
     return make_injectable(_inject_signal)
 
 
-def TabsContent(
-    *children, value: str, class_name: str = "", cls: str = "", **attrs
-) -> FT:
-    def _inject_signal(signal, default_value=None, variant="default"):
+def TabsContent(*children, id: str, class_name: str = "", cls: str = "", **attrs) -> FT:
+    def _inject_signal(signal, default_id=None, variant="default"):
         return Div(
             *children,
-            ds_show(f"${signal} === '{value}'"),
+            ds_show(f"${signal} === '{id}'"),
             data_slot="tabs-content",
             role="tabpanel",
-            id=f"panel-{value}",
-            aria_labelledby=f"tab-{value}",
+            id=f"panel-{id}",
+            aria_labelledby=id,
             tabindex="0",
-            cls=cn("mt-2 outline-none", class_name, cls),
-            style=None if default_value == value else "display: none",
+            cls=cn("mt-2 outline-none overflow-x-auto", class_name, cls),
+            style=None if default_id == id else "display: none",
             **attrs,
         )
 
