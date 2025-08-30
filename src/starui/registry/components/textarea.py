@@ -1,6 +1,9 @@
 from typing import Any, Literal
 
-from starhtml import FT, Div, Label, P, Span
+from starhtml import FT, Div
+from starhtml import Label as HTMLLabel
+from starhtml import P as HTMLP
+from starhtml import Span as HTMLSpan
 from starhtml import Textarea as HTMLTextarea
 from starhtml.datastar import ds_bind
 
@@ -108,9 +111,9 @@ def TextareaWithLabel(
         attrs["aria_invalid"] = "true"
 
     return Div(
-        Label(
+        HTMLLabel(
             label,
-            Span(" *", cls="text-destructive") if required else "",
+            HTMLSpan(" *", cls="text-destructive") if required else "",
             for_=id,
             cls=cn("block text-sm font-medium mb-1.5", label_cls),
         ),
@@ -127,9 +130,9 @@ def TextareaWithLabel(
             cls=textarea_cls,
             **attrs,
         ),
-        error_text and P(error_text, cls="text-sm text-destructive mt-1.5"),
+        error_text and HTMLP(error_text, cls="text-sm text-destructive mt-1.5"),
         helper_text
         and not error_text
-        and P(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
+        and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
         cls=cn("space-y-1.5", cls),
     )

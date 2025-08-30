@@ -72,6 +72,12 @@ COMPONENT_REGISTRY = {
     "switch": _component("switch", "Toggle switch", ["utils"]),
     "tabs": _component("tabs", "Tabbed interface", ["utils"]),
     "textarea": _component("textarea", "Multi-line text input", ["utils"]),
+    "typography": _component(
+        "typography",
+        "Typography components with beautiful defaults",
+        ["utils"],
+        css_imports=['@plugin "@tailwindcss/typography";'],
+    ),
     "utils": _component("utils", "Class name utilities"),
 }
 

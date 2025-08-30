@@ -1,4 +1,5 @@
-from starhtml import FT, Div, Icon, Span
+from starhtml import FT, Div, Icon
+from starhtml import Span as HTMLSpan
 from starhtml.datastar import ds_effect, ds_on_click, ds_on_load, ds_show, ds_signals
 
 from .button import Button
@@ -9,8 +10,8 @@ def ThemeToggle(alt_theme="dark", default_theme="light", **attrs) -> FT:
 
     return Div(
         Button(
-            Span(Icon("ph:moon-bold", width="20", height="20"), ds_show("!$isAlt")),
-            Span(Icon("ph:sun-bold", width="20", height="20"), ds_show("$isAlt")),
+            HTMLSpan(Icon("ph:moon-bold", width="20", height="20"), ds_show("!$isAlt")),
+            HTMLSpan(Icon("ph:sun-bold", width="20", height="20"), ds_show("$isAlt")),
             ds_on_click("$isAlt = !$isAlt"),
             variant="ghost",
             aria_label="Toggle theme",

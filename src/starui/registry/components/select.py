@@ -1,7 +1,10 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Button, Div, Icon, Label, P, Span
+from starhtml import FT, Div, Icon, Span
+from starhtml import Button as HTMLButton
+from starhtml import Label as HTMLLabel
+from starhtml import P as HTMLP
 from starhtml.datastar import (
     ds_class,
     ds_on_click,
@@ -49,7 +52,7 @@ def SelectTrigger(
     signal = signal or "select"
     trigger_id = attrs.pop("id", f"{signal}-trigger")
 
-    return Button(
+    return HTMLButton(
         *children,
         Icon("lucide:chevron-down", cls="size-4 shrink-0 opacity-50"),
         ds_ref(f"{signal}Trigger"),
@@ -247,7 +250,7 @@ def SelectWithLabel(
         return items
 
     return Div(
-        Label(
+        HTMLLabel(
             label,
             Span(" *", cls="text-destructive") if required else "",
             for_=select_id,
@@ -267,9 +270,9 @@ def SelectWithLabel(
             signal=signal,
             **attrs,
         ),
-        error_text and P(error_text, cls="text-sm text-destructive mt-1.5"),
+        error_text and HTMLP(error_text, cls="text-sm text-destructive mt-1.5"),
         helper_text
         and not error_text
-        and P(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
+        and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
         cls=cn("space-y-1.5", cls),
     )

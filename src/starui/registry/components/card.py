@@ -1,6 +1,12 @@
 from typing import Literal
 
-from starhtml import FT, H1, H2, H3, H4, H5, H6, Div, P
+from starhtml import FT, Div, P
+from starhtml import H1 as HTMLH1
+from starhtml import H2 as HTMLH2
+from starhtml import H3 as HTMLH3
+from starhtml import H4 as HTMLH4
+from starhtml import H5 as HTMLH5
+from starhtml import H6 as HTMLH6
 
 from .utils import cn
 
@@ -45,12 +51,12 @@ def CardTitle(
     classes = cn("leading-none font-semibold", class_name, cls)
 
     heading_components = {
-        "h1": H1,
-        "h2": H2,
-        "h3": H3,
-        "h4": H4,
-        "h5": H5,
-        "h6": H6,
+        "h1": HTMLH1,
+        "h2": HTMLH2,
+        "h3": HTMLH3,
+        "h4": HTMLH4,
+        "h5": HTMLH5,
+        "h6": HTMLH6,
     }
 
     Heading = heading_components[level]

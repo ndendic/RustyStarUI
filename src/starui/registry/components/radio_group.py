@@ -2,8 +2,11 @@ from itertools import count
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div, Label, P, Span
+from starhtml import FT, Div
 from starhtml import Input as HTMLInput
+from starhtml import Label as HTMLLabel
+from starhtml import P as HTMLP
+from starhtml import Span as HTMLSpan
 from starhtml.datastar import ds_class, ds_on_change, ds_signals, value
 
 from .utils import cn, inject_signals, make_injectable
@@ -95,10 +98,10 @@ def RadioGroupItem(
                 data_slot="radio-container",
             )
 
-        return Label(
+        return HTMLLabel(
             radio_input,
             visual_radio,
-            Span(
+            HTMLSpan(
                 label,
                 cls="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
             ),
@@ -137,9 +140,9 @@ def RadioGroupWithLabel(
 
     return Div(
         label
-        and Label(
+        and HTMLLabel(
             label,
-            required and Span(" *", cls="text-destructive") or None,
+            required and HTMLSpan(" *", cls="text-destructive") or None,
             cls="text-sm font-medium mb-3 block",
             for_=group_id,
         )
@@ -162,10 +165,10 @@ def RadioGroupWithLabel(
             id=group_id,
             aria_invalid="true" if error_text else None,
         ),
-        error_text and P(error_text, cls="text-sm text-destructive mt-1.5") or None,
+        error_text and HTMLP(error_text, cls="text-sm text-destructive mt-1.5") or None,
         helper_text
         and not error_text
-        and P(helper_text, cls="text-sm text-muted-foreground mt-1.5")
+        and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5")
         or None,
         cls=cn("space-y-1.5", class_name, cls),
         **attrs,

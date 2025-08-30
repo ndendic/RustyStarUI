@@ -2,18 +2,18 @@ from typing import Any, Literal
 
 from starhtml import (
     FT,
-    H2,
     Div,
     Icon,
-    P,
     Span,
 )
+from starhtml import H2 as HTMLH2
 from starhtml import (
     Button as BaseButton,
 )
 from starhtml import (
     Dialog as HTMLDialog,
 )
+from starhtml import P as HTMLP
 from starhtml.datastar import ds_effect, ds_on, ds_on_click, ds_ref, ds_signals
 
 from .utils import cn, cva
@@ -189,7 +189,7 @@ def DialogTitle(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    return H2(
+    return HTMLH2(
         *children,
         cls=cn("text-lg leading-none font-semibold text-foreground", class_name, cls),
         **attrs,
@@ -202,7 +202,7 @@ def DialogDescription(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    return P(
+    return HTMLP(
         *children,
         cls=cn("text-muted-foreground text-sm", class_name, cls),
         **attrs,

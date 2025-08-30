@@ -9,7 +9,8 @@ from registry_loader import *
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 
 app, rt = star_app(
-    hdrs=(
+    live=True,
+    hdrs=(        
         fouc_script(use_data_theme=True),
         styles,        
         position_handler(),  # Enhanced handler is now built-in
