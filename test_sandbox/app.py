@@ -766,6 +766,159 @@ def index():
                     cls="space-y-4 mb-8",
                 ),
             ),
+            # Toggle examples
+            Div(
+                H2("Toggles", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic toggles
+                    Div(
+                        P("Basic toggles:", cls="text-sm font-medium mb-2"),
+                        Div(
+                            Toggle(Icon("lucide:bold"), signal="toggle_bold"),
+                            Toggle(Icon("lucide:italic"), signal="toggle_italic", pressed=True),
+                            Toggle(Icon("lucide:underline"), signal="toggle_underline"),
+                            Toggle(Icon("lucide:strikethrough"), disabled=True),
+                            cls="flex gap-1",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # Outline variant toggles
+                    Div(
+                        P("Outline variant:", cls="text-sm font-medium mb-2"),
+                        Div(
+                            Toggle(Icon("lucide:align-left"), variant="outline", signal="align_left"),
+                            Toggle(Icon("lucide:align-center"), variant="outline", signal="align_center", pressed=True),
+                            Toggle(Icon("lucide:align-right"), variant="outline", signal="align_right"),
+                            Toggle(Icon("lucide:align-justify"), variant="outline", signal="align_justify"),
+                            cls="flex gap-1",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # Different sizes
+                    Div(
+                        P("Different sizes:", cls="text-sm font-medium mb-2"),
+                        Div(
+                            Toggle("Small", size="sm", variant="outline", signal="size_sm"),
+                            Toggle("Default", size="default", variant="outline", signal="size_default"),
+                            Toggle("Large", size="lg", variant="outline", signal="size_lg"),
+                            cls="flex gap-2 items-center",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # Toggle with text
+                    Div(
+                        P("Toggle with text:", cls="text-sm font-medium mb-2"),
+                        Div(
+                            Toggle(
+                                Icon("lucide:wifi"),
+                                Span("WiFi", cls="ml-1"),
+                                variant="outline",
+                                signal="wifi_toggle",
+                            ),
+                            Toggle(
+                                Icon("lucide:bluetooth"),
+                                Span("Bluetooth", cls="ml-1"),
+                                variant="outline",
+                                signal="bluetooth_toggle",
+                                pressed=True,
+                            ),
+                            Toggle(
+                                Icon("lucide:plane"),
+                                Span("Airplane Mode", cls="ml-1"),
+                                variant="outline",
+                                signal="airplane_toggle",
+                            ),
+                            cls="flex gap-2",
+                        ),
+                        cls="mb-4",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
+            # Toggle Group examples
+            Div(
+                H2("Toggle Groups", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Single selection toggle group
+                    Div(
+                        P("Text formatting (single selection):", cls="text-sm font-medium mb-2"),
+                        SingleToggleGroup(
+                            ("bold", Icon("lucide:bold")),
+                            ("italic", Icon("lucide:italic")),
+                            ("underline", Icon("lucide:underline")),
+                            signal="text_format",
+                            variant="outline",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # Multiple selection toggle group
+                    Div(
+                        P("Text options (multiple selection):", cls="text-sm font-medium mb-2"),
+                        MultipleToggleGroup(
+                            ("bold", Icon("lucide:bold")),
+                            ("italic", Icon("lucide:italic")),
+                            ("underline", Icon("lucide:underline")),
+                            ("strikethrough", Icon("lucide:strikethrough")),
+                            signal="text_options",
+                            variant="outline",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # Alignment toggle group
+                    Div(
+                        P("Text alignment:", cls="text-sm font-medium mb-2"),
+                        SingleToggleGroup(
+                            ("left", Icon("lucide:align-left")),
+                            ("center", Icon("lucide:align-center")),
+                            ("right", Icon("lucide:align-right")),
+                            ("justify", Icon("lucide:align-justify")),
+                            signal="alignment",
+                            variant="default",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # Size toggle group
+                    Div(
+                        P("Size selection:", cls="text-sm font-medium mb-2"),
+                        SingleToggleGroup(
+                            ("sm", "Small"),
+                            ("md", "Medium"),
+                            ("lg", "Large"),
+                            ("xl", "Extra Large"),
+                            signal="size_selection",
+                            variant="outline",
+                            size="lg",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # View mode toggle group
+                    Div(
+                        P("View mode:", cls="text-sm font-medium mb-2"),
+                        SingleToggleGroup(
+                            ("list", Div(Icon("lucide:list"), Span("List", cls="ml-1"))),
+                            ("grid", Div(Icon("lucide:layout-grid"), Span("Grid", cls="ml-1"))),
+                            ("gallery", Div(Icon("lucide:image"), Span("Gallery", cls="ml-1"))),
+                            signal="view_mode",
+                            variant="outline",
+                        ),
+                        cls="mb-4",
+                    ),
+                    # Disabled toggle group
+                    Div(
+                        P("Disabled group:", cls="text-sm font-medium mb-2"),
+                        SingleToggleGroup(
+                            ("option1", "Option 1"),
+                            ("option2", "Option 2"),
+                            ("option3", "Option 3"),
+                            signal="disabled_group",
+                            variant="outline",
+                            disabled=True,
+                        ),
+                        cls="mb-4",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
             # Interactive counter with Datastar
             Div(
                 H2("Interactive Counter (Datastar)", cls="text-2xl font-semibold mb-4"),
