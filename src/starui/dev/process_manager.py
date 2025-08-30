@@ -62,13 +62,13 @@ class ProcessManager:
         port: int,
         watch_patterns: list[str] = None,
         enable_css_hot_reload: bool = True,
+        css_ws_port: int = 5001,
     ) -> subprocess.Popen:
         if enable_css_hot_reload:
-            wrapper_file = app_file.parent / f"{app_file.stem}_dev.py"
-            if not wrapper_file.exists():
-                wrapper_file.write_text(f"""from {app_file.stem} import app as original_app
+            wrapper_file = app_file.parent / f"{app_file.stem}_dev_{css_ws_port}.py"
+            wrapper_file.write_text(f"""from {app_file.stem} import app as original_app
 from starui.dev.middleware import CSSHotReloadMiddleware
-app = CSSHotReloadMiddleware(original_app)""")
+app = CSSHotReloadMiddleware(original_app, ws_port={css_ws_port})""")
             app_module = f"{wrapper_file.stem}:app"
         else:
             app_module = f"{app_file.stem}:app"
@@ -163,7 +163,9 @@ app = CSSHotReloadMiddleware(original_app)""")
         thread = threading.Thread(target=run, daemon=True)
         thread.start()
         self.threads["websocket"] = thread
-        console.print("[green]WebSocket server started on port 5001[/green]")
+        console.print(
+            f"[green]WebSocket server started on port {websocket_server.port}[/green]"
+        )
         return thread
 
     def is_running(self, name: str) -> bool:

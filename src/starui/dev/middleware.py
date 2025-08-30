@@ -7,26 +7,32 @@ from typing import Any
 class CSSHotReloadMiddleware:
     """Injects CSS hot reload script into HTML responses."""
 
-    SCRIPT = b"""<script>
-(()=>{
-if(!['localhost','127.0.0.1'].includes(location.hostname))return;
-const ws=new WebSocket('ws://localhost:5001/css-hot-reload');
-ws.onmessage=e=>{
-const m=JSON.parse(e.data);
-if(m.type==='css-update')[...document.querySelectorAll('link[href*="starui.css"]')].forEach(l=>{
-const n=l.cloneNode();n.href=l.href.split('?')[0]+'?t='+Date.now();
-n.onload=()=>l.remove();l.after(n);
-console.log(`[CSS] Updated in ${(m.buildTime||0).toFixed(2)}s`);
-})};
-ws.onopen=()=>console.log('[CSS] Hot reload connected');
-ws.onclose=()=>setTimeout(()=>location.reload(),1000);
-})()
-</script>"""
-
     def __init__(
-        self, app: Callable[[dict[str, Any], Callable, Callable], Awaitable[None]]
+        self,
+        app: Callable[[dict[str, Any], Callable, Callable], Awaitable[None]],
+        ws_port: int = 5001,
     ):
         self.app = app
+        self.ws_port = ws_port
+        self.script = self._generate_script()
+
+    def _generate_script(self) -> bytes:
+        """Generate the CSS hot reload script with the correct port."""
+        return f"""<script>
+(()=>{{
+if(!['localhost','127.0.0.1'].includes(location.hostname))return;
+const ws=new WebSocket('ws://localhost:{self.ws_port}/css-hot-reload');
+ws.onmessage=e=>{{
+const m=JSON.parse(e.data);
+if(m.type==='css-update')[...document.querySelectorAll('link[href*="starui.css"]')].forEach(l=>{{
+const n=l.cloneNode();n.href=l.href.split('?')[0]+'?t='+Date.now();
+n.onload=()=>l.remove();l.after(n);
+console.log(`[CSS] Updated in ${{(m.buildTime||0).toFixed(2)}}s`);
+}});}};
+ws.onopen=()=>console.log('[CSS] Hot reload connected on port {self.ws_port}');
+ws.onclose=()=>setTimeout(()=>location.reload(),1000);
+}})()
+</script>""".encode()
 
     async def __call__(
         self,
@@ -72,14 +78,14 @@ ws.onclose=()=>setTimeout(()=>location.reload(),1000);
                     if content_type and "text/html" in content_type:
                         if b"</head>" in response_body:
                             response_body = response_body.replace(
-                                b"</head>", self.SCRIPT + b"</head>"
+                                b"</head>", self.script + b"</head>"
                             )
                         elif b"</body>" in response_body:
                             response_body = response_body.replace(
-                                b"</body>", self.SCRIPT + b"</body>"
+                                b"</body>", self.script + b"</body>"
                             )
                         else:
-                            response_body += self.SCRIPT
+                            response_body += self.script
 
                         # Update content-length if present
                         new_headers = []
