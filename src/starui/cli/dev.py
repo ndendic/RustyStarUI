@@ -18,15 +18,21 @@ from ..templates.css_input import generate_css_input
 from .utils import console, error, success
 
 
+def check_port_available(port: int) -> bool:
+    """Check if a port is available."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(("localhost", port))
+            return True
+    except OSError:
+        return False
+
+
 def find_available_port(start_port: int = 5000, max_tries: int = 100) -> int:
     """Find an available port starting from start_port."""
     for port in range(start_port, start_port + max_tries):
-        try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.bind(("localhost", port))
-                return port
-        except OSError:
-            continue
+        if check_port_available(port):
+            return port
     raise RuntimeError(
         f"No available ports in range {start_port}-{start_port + max_tries}"
     )
@@ -34,16 +40,19 @@ def find_available_port(start_port: int = 5000, max_tries: int = 100) -> int:
 
 def dev_command(
     app_file: str | None = typer.Argument(None, help="StarHTML app file to run"),
-    port: int = typer.Option(0, "--port", "-p", help="Port for app server (0=auto)"),
+    port: int = typer.Option(5000, "--port", "-p", help="Port for app server"),
     css_hot_reload: bool = typer.Option(
         True, "--css-hot/--no-css-hot", help="Enable CSS hot reload"
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Fail if requested port is unavailable"
     ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show details"),
 ) -> None:
     """Start development server with CSS hot reload.
 
-    If port is 0 or not specified, automatically finds an available port.
-    CSS WebSocket port is always auto-discovered.
+    By default, if the requested port is in use, automatically finds the next
+    available port. Use --strict to disable this behavior.
     """
 
     if not app_file:
@@ -59,13 +68,21 @@ def dev_command(
     manager = ProcessManager()
     input_css_path = None
 
-    # Auto-discover ports if needed
-    if port == 0:
-        port = find_available_port(5000)
-        success(f"✓ Auto-selected port {port} for app server")
+    # Handle port availability
+    if check_port_available(port):
+        actual_port = port
+    elif strict:
+        error(f"Port {port} is already in use")
+        raise typer.Exit(1)
+    else:
+        console.print(
+            f"[yellow]Port {port} is in use, finding available port...[/yellow]"
+        )
+        actual_port = find_available_port(port + 1)
+        success(f"✓ Using port {actual_port} instead")
 
     # Always auto-discover CSS WebSocket port
-    css_ws_port = find_available_port(port + 1)  # Try next port after app port
+    css_ws_port = find_available_port(actual_port + 1)  # Try next port after app port
 
     try:
         input_css_path = _prepare_css_input(config)
@@ -74,8 +91,8 @@ def dev_command(
         )
         _start_tailwind_watcher(manager, input_css_path, config, websocket_server)
         _wait_for_css_build(config)
-        _start_app_server(manager, app_path, port, css_ws_port, css_hot_reload)
-        _display_info(config, port, css_ws_port, css_hot_reload, app_file)
+        _start_app_server(manager, app_path, actual_port, css_ws_port, css_hot_reload)
+        _display_info(config, actual_port, css_ws_port, css_hot_reload, app_file)
 
         console.print("Press Ctrl+C to stop\n")
         try:
