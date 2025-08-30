@@ -9,7 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.7] - 2025-08-30
 
-## [0.1.6] - 2025-08-29
+### Added
+- **📚 Typography Plugin Integration**
+  - Added `@tailwindcss/typography` plugin support for rich content styling
+  - Integrated Typography component with Tailwind Typography plugin for article and prose content
+  - Enhanced prose component with size variants (sm, base, lg) for different content contexts
+
+### Changed
+- **✨ Typography Component System**
+  - Introduced comprehensive Typography components (H1-H6, Display, Lead, Subtitle, P, Blockquote, etc.)
+  - Fixed HTML tag conflicts by using prefixed imports (HTMLH1, HTMLP, etc.) in components
+  - Standardized text styling with semantic components for better content hierarchy
+  
+- **🔧 Build System Improvements**
+  - Rewrote watchdog implementation for better CSS change detection
+  - Enhanced file watcher to properly track CSS modifications during development
+  - Improved hot-reload reliability for style changes
+
+### Fixed
+- **🏷️ HTML Tag Version Conflicts**
+  - Resolved naming conflicts between StarHTML base tags and Typography components
+  - Fixed component imports to use proper prefixing throughout the codebase
+  - Ensured compatibility between raw HTML elements and styled Typography components
 
 ## [0.1.6] - 2025-08-29
 
@@ -206,13 +227,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/banditburai/starui/releases/tag/v0.1.0
 [0.1.1]: https://github.com/banditburai/starui/releases/tag/v0.1.1
 [0.1.2]: https://github.com/banditburai/starUI/releases/tag/v0.1.2
-
 [0.1.3]: https://github.com/banditburai/starUI/releases/tag/v0.1.3
-
 [0.1.4]: https://github.com/banditburai/starUI/releases/tag/v0.1.4
-
 [0.1.5]: https://github.com/banditburai/starUI/releases/tag/v0.1.5
-
 [0.1.6]: https://github.com/banditburai/starUI/releases/tag/v0.1.6
-
 [0.1.7]: https://github.com/banditburai/starUI/releases/tag/v0.1.7
