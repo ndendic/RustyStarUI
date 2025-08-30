@@ -1,8 +1,11 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div, Label, P, Span
+from starhtml import FT, Div
 from starhtml import Button as HTMLButton
+from starhtml import Label as HTMLLabel
+from starhtml import P as HTMLP
+from starhtml import Span as HTMLSpan
 from starhtml.datastar import ds_class, ds_on_click, ds_signals
 
 from .utils import cn
@@ -22,7 +25,7 @@ def Switch(
 
     return Div(
         HTMLButton(
-            Span(
+            HTMLSpan(
                 ds_class(
                     **{
                         "translate-x-3.5": f"${signal}",
@@ -81,9 +84,9 @@ def SwitchWithLabel(
 
     return Div(
         Div(
-            Label(
+            HTMLLabel(
                 label,
-                required and Span(" *", cls="text-destructive") or None,
+                required and HTMLSpan(" *", cls="text-destructive") or None,
                 for_=switch_id,
                 cls=cn(
                     "text-sm font-medium",
@@ -104,10 +107,10 @@ def SwitchWithLabel(
             ),
             cls="flex items-center gap-3",
         ),
-        error_text and P(error_text, cls="text-sm text-destructive mt-1.5") or None,
+        error_text and HTMLP(error_text, cls="text-sm text-destructive mt-1.5") or None,
         helper_text
         and not error_text
-        and P(helper_text, cls="text-sm text-muted-foreground mt-1.5")
+        and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5")
         or None,
         cls=cn("space-y-1.5", class_name, cls),
         **attrs,

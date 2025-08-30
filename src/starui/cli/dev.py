@@ -93,22 +93,28 @@ def dev_command(
                 error(f"App file not found: {app_file}")
                 raise typer.Exit(1)
 
-            app_process = subprocess.Popen(
-                [
-                    sys.executable,
-                    "-m",
-                    "uvicorn",
-                    f"{app_path.stem}:app",
-                    "--reload",
-                    "--port",
-                    str(port),
-                    "--host",
-                    "localhost",
-                ],
-                stdout=None,  # Stream to terminal
-                stderr=None,  # Stream to terminal
-                text=True,
-            )
+            cmd = [
+                sys.executable,
+                "-m",
+                "uvicorn",
+                f"{app_path.stem}:app",
+                "--reload",
+                "--port",
+                str(port),
+                "--host",
+                "localhost",
+            ]
+
+            if config.css_output_absolute.exists():
+                try:
+                    css_path = config.css_output_absolute.relative_to(
+                        config.project_root
+                    )
+                    cmd.extend(["--reload-include", str(css_path)])
+                except ValueError:
+                    pass
+
+            app_process = subprocess.Popen(cmd, text=True)
             success(f"✓ App server started at http://localhost:{port}")
 
         if watch:

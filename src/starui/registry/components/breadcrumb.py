@@ -1,10 +1,15 @@
-from starhtml import FT, A, Icon, Li, Nav, Ol, Span
+from starhtml import FT, Icon
+from starhtml import A as HTMLA
+from starhtml import Li as HTMLLi
+from starhtml import Nav as HTMLNav
+from starhtml import Ol as HTMLOl
+from starhtml import Span as HTMLSpan
 
 from .utils import cn
 
 
 def Breadcrumb(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
-    return Nav(
+    return HTMLNav(
         *children,
         aria_label="breadcrumb",
         data_slot="breadcrumb",
@@ -14,7 +19,7 @@ def Breadcrumb(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
 
 
 def BreadcrumbList(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
-    return Ol(
+    return HTMLOl(
         *children,
         data_slot="breadcrumb-list",
         cls=cn(
@@ -27,7 +32,7 @@ def BreadcrumbList(*children, class_name: str = "", cls: str = "", **attrs) -> F
 
 
 def BreadcrumbItem(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
-    return Li(
+    return HTMLLi(
         *children,
         data_slot="breadcrumb-item",
         cls=cn("inline-flex items-center gap-1.5", class_name, cls),
@@ -38,7 +43,7 @@ def BreadcrumbItem(*children, class_name: str = "", cls: str = "", **attrs) -> F
 def BreadcrumbLink(
     *children, href: str = "#", class_name: str = "", cls: str = "", **attrs
 ) -> FT:
-    return A(
+    return HTMLA(
         *children,
         href=href,
         data_slot="breadcrumb-link",
@@ -48,7 +53,7 @@ def BreadcrumbLink(
 
 
 def BreadcrumbPage(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
-    return Span(
+    return HTMLSpan(
         *children,
         role="link",
         aria_disabled="true",
@@ -62,7 +67,7 @@ def BreadcrumbPage(*children, class_name: str = "", cls: str = "", **attrs) -> F
 def BreadcrumbSeparator(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
     separator_content = children if children else (Icon("lucide:chevron-right"),)
 
-    return Li(
+    return HTMLLi(
         *separator_content,
         role="presentation",
         aria_hidden="true",
@@ -73,9 +78,9 @@ def BreadcrumbSeparator(*children, class_name: str = "", cls: str = "", **attrs)
 
 
 def BreadcrumbEllipsis(class_name: str = "", cls: str = "", **attrs) -> FT:
-    return Span(
+    return HTMLSpan(
         Icon("lucide:more-horizontal", cls="size-4"),
-        Span("More", cls="sr-only"),
+        HTMLSpan("More", cls="sr-only"),
         role="presentation",
         aria_hidden="true",
         data_slot="breadcrumb-ellipsis",

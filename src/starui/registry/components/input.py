@@ -1,7 +1,9 @@
 from typing import Literal
 
-from starhtml import FT, Div, Label, P, Span
+from starhtml import FT, Div, Span
 from starhtml import Input as HTMLInput
+from starhtml import Label as HTMLLabel
+from starhtml import P as HTMLP
 
 from .utils import cn
 
@@ -113,7 +115,7 @@ def InputWithLabel(
         attrs["aria_invalid"] = "true"
 
     return Div(
-        Label(
+        HTMLLabel(
             label,
             Span(" *", cls="text-destructive") if required else "",
             for_=id,
@@ -131,9 +133,9 @@ def InputWithLabel(
             cls=input_cls,
             **attrs,
         ),
-        error_text and P(error_text, cls="text-sm text-destructive mt-1.5"),
+        error_text and HTMLP(error_text, cls="text-sm text-destructive mt-1.5"),
         helper_text
         and not error_text
-        and P(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
+        and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
         cls=cn("space-y-1.5", cls),
     )

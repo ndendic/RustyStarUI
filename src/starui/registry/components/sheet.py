@@ -1,6 +1,7 @@
 from typing import Literal
 
-from starhtml import FT, H2, Div, P, Span
+from starhtml import FT, Div, P, Span
+from starhtml import H2 as HTMLH2
 from starhtml.datastar import ds_effect, ds_on_click, ds_on_keydown, ds_show, ds_signals
 
 from .utils import cn
@@ -207,7 +208,7 @@ def SheetTitle(
 ) -> FT:
     content_id = f"{signal}-content"
 
-    return H2(
+    return HTMLH2(
         *children,
         id=f"{content_id}-title",
         data_sheet_role="title",

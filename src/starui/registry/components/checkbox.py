@@ -1,8 +1,11 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div, Icon, Label, P, Span
+from starhtml import FT, Div, Icon
 from starhtml import Input as HTMLInput
+from starhtml import Label as HTMLLabel
+from starhtml import P as HTMLP
+from starhtml import Span as HTMLSpan
 from starhtml.datastar import ds_bind, ds_class, ds_signals
 
 from .utils import cn
@@ -45,7 +48,7 @@ def Checkbox(
             ),
             **attrs,
         ),
-        Span(
+        HTMLSpan(
             Icon("lucide:check"),
             ds_class(
                 **{
@@ -98,9 +101,9 @@ def CheckboxWithLabel(
                 indicator_cls=indicator_cls,
             ),
             Div(
-                Label(
+                HTMLLabel(
                     label,
-                    required and Span(" *", cls="text-destructive") or None,
+                    required and HTMLSpan(" *", cls="text-destructive") or None,
                     for_=checkbox_id,
                     cls=cn(
                         "flex items-center gap-2 text-sm leading-none font-medium select-none",
@@ -112,7 +115,7 @@ def CheckboxWithLabel(
                     data_slot="label",
                 ),
                 helper_text
-                and P(
+                and HTMLP(
                     helper_text,
                     cls=cn(
                         "text-muted-foreground text-sm",
@@ -124,7 +127,7 @@ def CheckboxWithLabel(
             ),
             cls="flex items-start gap-3",
         ),
-        error_text and P(error_text, cls="text-sm text-destructive mt-1.5") or None,
+        error_text and HTMLP(error_text, cls="text-sm text-destructive mt-1.5") or None,
         cls=cn(class_name, cls),
         **attrs,
     )

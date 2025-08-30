@@ -76,6 +76,22 @@ def _setup_code_highlighting(config, theme: str | None) -> None:
     info("Run 'star build css' to rebuild your styles")
 
 
+def _setup_css_imports(config, css_imports: list[str]) -> None:
+    input_css = config.css_dir_absolute / "input.css"
+    if not input_css.exists():
+        return
+
+    content = input_css.read_text()
+    new_imports = [imp for imp in css_imports if imp not in content]
+
+    if new_imports:
+        content = content.replace(
+            '@import "tailwindcss";',
+            f'@import "tailwindcss";\n{"\n".join(new_imports)}',
+        )
+        input_css.write_text(content)
+
+
 def add_command(
     components: list[str] = typer.Argument(..., help="Components to add"),
     force: bool = typer.Option(False, "--force", help="Overwrite existing files"),
@@ -124,6 +140,13 @@ def add_command(
             for pkg in metadata.packages
         }
 
+        css_imports = [
+            css_import
+            for name in resolved
+            if (metadata := get_component_metadata(name))
+            for css_import in metadata.css_imports
+        ]
+
         for package in packages:
             info(f"Installing package: {package}")
             try:
@@ -139,6 +162,9 @@ def add_command(
 
         if "code_block" in resolved:
             _setup_code_highlighting(config, theme)
+
+        if css_imports:
+            _setup_css_imports(config, css_imports)
 
         with status_context("Installing components..."):
             component_dir.mkdir(parents=True, exist_ok=True)

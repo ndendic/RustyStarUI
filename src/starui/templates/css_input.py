@@ -4,6 +4,7 @@ from ..config import ProjectConfig
 
 TAILWIND_CSS_TEMPLATE = """\
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
 
