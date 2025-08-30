@@ -156,9 +156,9 @@ def index():
                 H2("Tabs - Default Variant", cls="text-2xl font-semibold mb-4"),
                 Tabs(
                     TabsList(
-                        TabsTrigger("Preview", value="preview"),
-                        TabsTrigger("Code", value="code"),
-                        TabsTrigger("Settings", value="settings"),
+                        TabsTrigger("Preview", id="preview"),
+                        TabsTrigger("Code", id="code"),
+                        TabsTrigger("Settings", id="settings"),
                     ),
                     TabsContent(
                         Div(
@@ -170,7 +170,7 @@ def index():
                                 "Action in Preview", variant="secondary", cls="mt-4"
                             ),
                         ),
-                        value="preview",
+                        id="preview",
                     ),
                     TabsContent(
                         Div(
@@ -182,7 +182,7 @@ def index():
                                 )
                             ),
                         ),
-                        value="code",
+                        id="code",
                     ),
                     TabsContent(
                         Div(
@@ -194,9 +194,9 @@ def index():
                                 cls="flex items-center gap-2 mt-4",
                             ),
                         ),
-                        value="settings",
+                        id="settings",
                     ),
-                    default_value="preview",
+                    default_id="preview",
                     variant="default",
                     cls="mb-8",
                 ),
@@ -206,10 +206,10 @@ def index():
                 H2("Tabs - Plain Variant", cls="text-2xl font-semibold mb-4"),
                 Tabs(
                     TabsList(
-                        TabsTrigger("Account", value="account"),
-                        TabsTrigger("Password", value="password"),
-                        TabsTrigger("Team", value="team"),
-                        TabsTrigger("Billing", value="billing"),
+                        TabsTrigger("Account", id="account"),
+                        TabsTrigger("Password", id="password"),
+                        TabsTrigger("Team", id="team"),
+                        TabsTrigger("Billing", id="billing"),
                     ),
                     TabsContent(
                         Div(
@@ -225,7 +225,7 @@ def index():
                                 cls="space-y-2 mt-4",
                             ),
                         ),
-                        value="account",
+                        id="account",
                     ),
                     TabsContent(
                         Div(
@@ -233,23 +233,23 @@ def index():
                             P("Update your password and security settings."),
                             Button("Change Password", variant="outline", cls="mt-4"),
                         ),
-                        value="password",
+                        id="password",
                     ),
                     TabsContent(
                         Div(
                             H3("Team Members", cls="text-lg font-semibold mb-2"),
                             P("Manage your team and collaborate with others."),
                         ),
-                        value="team",
+                        id="team",
                     ),
                     TabsContent(
                         Div(
                             H3("Billing Information", cls="text-lg font-semibold mb-2"),
                             P("View and manage your subscription and payment methods."),
                         ),
-                        value="billing",
+                        id="billing",
                     ),
-                    default_value="account",
+                    default_id="account",
                     variant="plain",
                     cls="mb-8",
                 ),
