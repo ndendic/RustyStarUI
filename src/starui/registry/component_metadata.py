@@ -35,6 +35,9 @@ def _component(
 
 COMPONENT_REGISTRY = {
     "accordion": _component("accordion", "Collapsible content sections", ["utils"]),
+    "alert_dialog": _component(
+        "alert_dialog", "Alert dialog for confirmations", ["utils", "button"]
+    ),
     "code_block": _component(
         "code_block",
         "Code block with syntax highlighting",
