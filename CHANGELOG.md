@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2025-08-30
+
 ## [0.1.6] - 2025-08-29
 
 ## [0.1.6] - 2025-08-29
@@ -212,3 +214,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.5]: https://github.com/banditburai/starUI/releases/tag/v0.1.5
 
 [0.1.6]: https://github.com/banditburai/starUI/releases/tag/v0.1.6
+
+[0.1.7]: https://github.com/banditburai/starUI/releases/tag/v0.1.7
