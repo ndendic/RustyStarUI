@@ -72,6 +72,10 @@ COMPONENT_REGISTRY = {
     "switch": _component("switch", "Toggle switch", ["utils"]),
     "tabs": _component("tabs", "Tabbed interface", ["utils"]),
     "textarea": _component("textarea", "Multi-line text input", ["utils"]),
+    "toggle": _component("toggle", "Toggle button", ["utils"]),
+    "toggle_group": _component(
+        "toggle_group", "Toggle button group", ["utils", "toggle"]
+    ),
     "typography": _component(
         "typography",
         "Typography components with beautiful defaults",
