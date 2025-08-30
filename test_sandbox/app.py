@@ -919,6 +919,131 @@ def index():
                     cls="space-y-4 mb-8",
                 ),
             ),
+            # Accordion examples
+            Div(
+                H2("Accordion", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Single accordion with collapsible
+                    Div(
+                        P(
+                            "Single selection (collapsible):",
+                            cls="text-sm font-medium mb-2",
+                        ),
+                        Accordion(
+                            AccordionItem(
+                                AccordionTrigger("Is it accessible?", value="item-1"),
+                                AccordionContent(
+                                    "Yes. It adheres to the WAI-ARIA design pattern.",
+                                    value="item-1",
+                                ),
+                                value="item-1",
+                            ),
+                            AccordionItem(
+                                AccordionTrigger("Is it styled?", value="item-2"),
+                                AccordionContent(
+                                    "Yes. It comes with default styles that matches the other components' aesthetic.",
+                                    value="item-2",
+                                ),
+                                value="item-2",
+                            ),
+                            AccordionItem(
+                                AccordionTrigger("Is it animated?", value="item-3"),
+                                AccordionContent(
+                                    "Yes. It's animated by default, but you can disable it if you prefer.",
+                                    value="item-3",
+                                ),
+                                value="item-3",
+                            ),
+                            type="single",
+                            collapsible=True,
+                            default_value="item-1",
+                            signal="accordion_single",
+                            cls="w-full",
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Multiple selection accordion
+                    Div(
+                        P("Multiple selection:", cls="text-sm font-medium mb-2"),
+                        Accordion(
+                            AccordionItem(
+                                AccordionTrigger(
+                                    "Getting Started", value="getting-started"
+                                ),
+                                AccordionContent(
+                                    Div(
+                                        P(
+                                            "To get started with our product, follow these steps:",
+                                            cls="mb-2",
+                                        ),
+                                        Ul(
+                                            Li("1. Sign up for an account"),
+                                            Li("2. Complete your profile"),
+                                            Li("3. Explore the dashboard"),
+                                            cls="list-disc pl-6",
+                                        ),
+                                    ),
+                                    value="getting-started",
+                                ),
+                                value="getting-started",
+                            ),
+                            AccordionItem(
+                                AccordionTrigger("Features", value="features"),
+                                AccordionContent(
+                                    Div(
+                                        P(
+                                            "Our platform offers these key features:",
+                                            cls="mb-2",
+                                        ),
+                                        Ul(
+                                            Li("Real-time collaboration"),
+                                            Li("Advanced analytics"),
+                                            Li("Custom integrations"),
+                                            Li("24/7 support"),
+                                            cls="list-disc pl-6",
+                                        ),
+                                    ),
+                                    value="features",
+                                ),
+                                value="features",
+                            ),
+                            AccordionItem(
+                                AccordionTrigger("Pricing", value="pricing"),
+                                AccordionContent(
+                                    Div(
+                                        P(
+                                            "We offer flexible pricing plans:",
+                                            cls="mb-2",
+                                        ),
+                                        Div(
+                                            Div(
+                                                "Free: $0/month - Basic features",
+                                                cls="py-1",
+                                            ),
+                                            Div(
+                                                "Pro: $29/month - Advanced features",
+                                                cls="py-1",
+                                            ),
+                                            Div(
+                                                "Enterprise: Custom - Full access",
+                                                cls="py-1",
+                                            ),
+                                        ),
+                                    ),
+                                    value="pricing",
+                                ),
+                                value="pricing",
+                            ),
+                            type="multiple",
+                            default_value=["getting-started"],
+                            signal="accordion_multiple",
+                            cls="w-full",
+                        ),
+                        cls="mb-6",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
             # Interactive counter with Datastar
             Div(
                 H2("Interactive Counter (Datastar)", cls="text-2xl font-semibold mb-4"),
