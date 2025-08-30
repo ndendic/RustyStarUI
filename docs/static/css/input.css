@@ -1,0 +1,384 @@
+@import "tailwindcss";
+@import './starlighter.css';
+
+@source "../../../src/starui/registry/components/";
+
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  /* Font families - Exact shadcn system */
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+  
+  /* Radius system - Exact shadcn values */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Shadow system - Exact shadcn shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Starlighter code highlighting - GitHub Light theme */
+  --code-bg: #ffffff;
+  --code-color: #24292e;
+  --code-border: #e1e4e8;
+  --token-keyword: #d73a49;
+  --token-string: #032f62;
+  --token-comment: #6a737d;
+  --token-number: #005cc5;
+  --token-operator: #24292e;
+  --token-identifier: #6f42c1;
+  --token-builtin: #e36209;
+  --token-decorator: #6f42c1;
+  --token-punctuation: #24292e;
+  --scrollbar-track: #f6f8fa;
+  --scrollbar-thumb: #d1d5da;
+  --scrollbar-thumb-hover: #a8b1bb;
+}
+
+.dark, [data-theme="dark"] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.31 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.31 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.31 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.521 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.31 0 0);
+  --input: oklch(100% 0 0 / 0.15);
+  --ring: oklch(0.851 0 0);
+  --chart-1: oklch(0.828 0.189 84.429);
+  --chart-2: oklch(0.769 0.188 70.08);
+  --chart-3: oklch(0.646 0.222 41.116);
+  --chart-4: oklch(0.6 0.118 184.704);
+  --chart-5: oklch(0.398 0.07 227.392);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.985 0 0);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.31 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.31 0 0);
+  --sidebar-ring: oklch(0.851 0 0);
+  
+  /* Starlighter code highlighting - GitHub Dark theme */
+  --code-bg: #0d1117;
+  --code-color: #c9d1d9;
+  --code-border: #30363d;
+  --token-keyword: #ff7b72;
+  --token-string: #a5d6ff;
+  --token-comment: #8b949e;
+  --token-number: #79c0ff;
+  --token-operator: #c9d1d9;
+  --token-identifier: #d2a8ff;
+  --token-builtin: #ffa657;
+  --token-decorator: #d2a8ff;
+  --token-punctuation: #c9d1d9;
+  --scrollbar-track: #0d1117;
+  --scrollbar-thumb: #30363d;
+  --scrollbar-thumb-hover: #484f58;
+}
+
+[data-theme="blue"] { --primary: oklch(59.2% 0.221 239.314); --primary-foreground: oklch(98.5% 0 0); }
+[data-theme="green"] { --primary: oklch(46.3% 0.154 154.893); --primary-foreground: oklch(98.5% 0 0); }
+
+/* Theme definitions from Copan styles.css */
+[data-theme="light"] {
+  /* Light mode colors - exact match to shadcn site */
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(14.5% 0 0);
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(14.5% 0 0);
+  --color-popover: oklch(100% 0 0);
+  --color-popover-foreground: oklch(14.5% 0 0);
+  --color-primary: oklch(20.5% 0 0);
+  --color-primary-foreground: oklch(98.5% 0 0);
+  --color-secondary: oklch(97% 0 0);
+  --color-secondary-foreground: oklch(20.5% 0 0);
+  --color-muted: oklch(97% 0 0);
+  --color-muted-foreground: oklch(55.6% 0 0);
+  --color-accent: oklch(97% 0 0);
+  --color-accent-foreground: oklch(20.5% 0 0);
+  --color-destructive: oklch(57.7% 0.245 27.325);
+  --color-destructive-foreground: oklch(98.5% 0 0);
+  --color-border: oklch(92.2% 0 0);
+  --color-input: oklch(92.2% 0 0);
+  --color-ring: oklch(70.8% 0 0);
+}
+
+[data-theme="dark"] {
+  /* Dark mode colors - Direct Tailwind variable definitions */
+  --color-background: oklch(14.1% 0.005 285.823);
+  --color-foreground: oklch(98.3% 0 0);
+  --color-card: oklch(14.1% 0.005 285.823);
+  --color-card-foreground: oklch(98.3% 0 0);
+  --color-popover: oklch(24.2% 0.005 285.823);
+  --color-popover-foreground: oklch(98.3% 0 0);
+  --color-primary: oklch(98.3% 0 0);
+  --color-primary-foreground: oklch(22.2% 0.03 261.692);
+  --color-secondary: oklch(24.2% 0.005 285.823);
+  --color-secondary-foreground: oklch(98.3% 0 0);
+  --color-muted: oklch(24.2% 0.005 285.823);
+  --color-muted-foreground: oklch(71.2% 0.014 261.692);
+  --color-accent: oklch(24.2% 0.005 285.823);
+  --color-accent-foreground: oklch(98.3% 0 0);
+  --color-destructive: oklch(44.2% 0.158 26.548);
+  --color-destructive-foreground: oklch(96.9% 0.021 23.104);
+  --color-border: oklch(24.2% 0.005 285.823);
+  --color-input: oklch(24.2% 0.005 285.823);
+  --color-ring: oklch(84.7% 0.005 285.823);    
+}
+
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius: var(--radius);
+}
+
+/* Additional styles from Copan styles.css */
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  background-color: var(--color-background);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent elastic scrolling showing white space */
+  overscroll-behavior-y: none;
+}
+
+code {
+  font-family: var(--font-mono);
+}
+
+/* Typography hierarchy - Applied to prose/content areas only */
+/* These styles apply to actual content, not structural headings */
+.prose h1,
+article h1 {
+  scroll-margin-top: 5rem;
+  margin-top: 0.5rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.prose h2,
+article h2 {
+  scroll-margin-top: 5rem;
+  margin-top: 4rem;
+  padding-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose h2:first-child,
+article h2:first-child {
+  margin-top: 0;
+}
+
+.prose h3,
+article h3 {
+  scroll-margin-top: 5rem;
+  margin-top: 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.prose h4,
+.prose h5,
+.prose h6,
+article h4,
+article h5,
+article h6 {
+  scroll-margin-top: 5rem;
+  margin-top: 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.025em;
+}
+
+.prose p,
+article p {
+  line-height: 1.65rem;
+  margin-top: 1.5rem;
+}
+
+.prose p:first-child,
+article p:first-child {
+  margin-top: 0;
+}
+
+/* Starlighter code block styles */
+.code-container {
+  background: var(--code-bg);
+  color: var(--code-color);
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  padding: 20px;
+  overflow-x: auto;
+  margin: 0;
+  min-width: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'SF Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.code-container pre {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre;
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.code-container code {
+  font-family: inherit;
+  background: none;
+  padding: 0;
+  display: block;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Token colors */
+.token-keyword { color: var(--token-keyword); }
+.token-string { color: var(--token-string); }
+.token-comment { color: var(--token-comment); font-style: italic; }
+.token-number { color: var(--token-number); }
+.token-operator { color: var(--token-operator); }
+.token-identifier { color: var(--token-identifier); }
+.token-builtin { color: var(--token-builtin); }
+.token-decorator { color: var(--token-decorator); }
+.token-punctuation { color: var(--token-punctuation); }
+
+/* Scrollbar styling */
+.code-container::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.code-container::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+.code-container::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.code-container::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Fix overflow issues - minimal necessary changes */
+
+/* Add missing Tailwind utility class */
+.overflow-x-hidden {
+  overflow-x: hidden !important;
+}
+
+/* Prevent main content area from expanding beyond viewport */
+main {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+
+/* Allow code tab panels to scroll internally without expanding page width */
+[role="tabpanel"] {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
