@@ -33,8 +33,6 @@ class BuildResult:
 
 
 def extract_classes(content: str) -> set[str]:
-    classes: set[str] = set()
-
     patterns = [
         r'cls\s*=\s*["\']([^"\']*)["\']',
         r'class_\s*=\s*["\']([^"\']*)["\']',
@@ -42,6 +40,7 @@ def extract_classes(content: str) -> set[str]:
         r'cn\s*\(\s*["\']([^"\']*)["\']',
     ]
 
+    classes = set()
     for pattern in patterns:
         for match in re.findall(pattern, content, re.MULTILINE):
             classes.update(match.split())
@@ -104,11 +103,11 @@ class CSSBuilder:
                 input_file = project_input_css
                 use_temp = False
             else:
+                css_dir = self.config.css_output_absolute.parent
+                css_dir.mkdir(parents=True, exist_ok=True)
+
                 with tempfile.NamedTemporaryFile(
-                    mode="w",
-                    suffix=".css",
-                    dir=self.config.project_root / "static" / "css",
-                    delete=False,
+                    mode="w", suffix=".css", dir=css_dir, delete=False
                 ) as temp_file:
                     temp_file.write(generate_css_input(self.config))
                     input_file = Path(temp_file.name)
@@ -157,11 +156,6 @@ class CSSBuilder:
             )
 
         except Exception as e:
-            if (
-                "use_temp" in locals()
-                and use_temp
-                and "input_file" in locals()
-                and input_file.exists()
-            ):
-                input_file.unlink()
+            if "use_temp" in locals() and use_temp and "input_file" in locals():
+                input_file.unlink(missing_ok=True)
             return BuildResult(success=False, error_message=str(e))
