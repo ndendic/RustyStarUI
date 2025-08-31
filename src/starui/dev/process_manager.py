@@ -28,6 +28,12 @@ class ProcessManager:
             self.console.print(f"[yellow]{name} already running[/yellow]")
             return existing
 
+        # Set COLUMNS to prevent line wrapping in subprocess output
+        if env is None:
+            env = os.environ.copy()
+        if "COLUMNS" not in env:
+            env["COLUMNS"] = "200"
+
         proc = subprocess.Popen(
             cmd,
             cwd=cwd,
@@ -49,7 +55,8 @@ class ProcessManager:
                         if clean := line.rstrip():
                             # Let uvicorn/tailwind format their own output
                             if name in ("uvicorn", "tailwind"):
-                                self.console.print(clean, highlight=False)
+                                # Use direct print to preserve original formatting
+                                print(clean, flush=True)
                             else:
                                 self.console.print(
                                     f"[dim cyan][{name}][/dim cyan] {clean}"
@@ -89,7 +96,9 @@ class ProcessManager:
         for exclude in RELOAD_EXCLUDES:
             cmd.extend(["--reload-exclude", exclude])
 
-        return self.start_process("uvicorn", cmd, app_file.parent, os.environ.copy())
+        env = os.environ.copy()
+        env["COLUMNS"] = "200"  # Prevent line wrapping in output
+        return self.start_process("uvicorn", cmd, app_file.parent, env)
 
     def _get_app_module(self, app_file: Path, hot_reload: bool, debug: bool):
         if not hot_reload:
