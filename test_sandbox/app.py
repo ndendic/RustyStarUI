@@ -1284,6 +1284,91 @@ def index():
                     cls="space-y-4 mb-8",
                 ),
             ),
+            # Skeleton examples
+            Div(
+                H2("Skeleton", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic skeleton shapes
+                    Div(
+                        H3("Basic Shapes", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Skeleton(cls="h-4 w-64"),  # Text line
+                            Skeleton(cls="h-4 w-48"),  # Shorter text line
+                            Skeleton(cls="h-4 w-56"),  # Another text line
+                            cls="space-y-2 mb-4",
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Card skeleton
+                    Div(
+                        H3("Card Skeleton", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Div(
+                                Skeleton(cls="h-12 w-12 rounded-full"),  # Avatar
+                                Div(
+                                    Skeleton(cls="h-4 w-32"),  # Name
+                                    Skeleton(cls="h-3 w-24"),  # Subtitle
+                                    cls="space-y-2",
+                                ),
+                                cls="flex items-center space-x-4",
+                            ),
+                            Skeleton(cls="h-32 w-full mt-4"),  # Content area
+                            Skeleton(cls="h-4 w-full mt-4"),  # Footer line
+                            cls="p-4 border rounded-lg",
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Article skeleton
+                    Div(
+                        H3("Article Skeleton", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Skeleton(cls="h-8 w-3/4 mb-4"),  # Title
+                            Skeleton(cls="h-3 w-32 mb-6"),  # Date
+                            Div(
+                                Skeleton(cls="h-4 w-full"),
+                                Skeleton(cls="h-4 w-full"),
+                                Skeleton(cls="h-4 w-2/3"),
+                                cls="space-y-2 mb-4",
+                            ),
+                            Skeleton(cls="h-40 w-full"),  # Image placeholder
+                            cls="p-4 border rounded-lg",
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Interactive skeleton toggle
+                    Div(
+                        H3("Loading State Toggle", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Button(
+                                ds_text("$loading ? 'Stop Loading' : 'Start Loading'"),
+                                ds_on_click("$loading = !$loading"),
+                                variant="outline",
+                                cls="mb-4",
+                            ),
+                            # Content that toggles based on loading state
+                            Div(
+                                Skeleton(cls="h-6 w-48 mb-2"),
+                                Skeleton(cls="h-4 w-64 mb-4"),
+                                Skeleton(cls="h-20 w-full"),
+                                ds_show("$loading"),
+                            ),
+                            Div(
+                                H4("Content Loaded!", cls="text-lg font-semibold mb-2"),
+                                P("This content appears when loading is complete.", cls="mb-4"),
+                                Div(
+                                    "This is the actual content that would load.",
+                                    cls="p-4 bg-muted rounded-lg",
+                                ),
+                                ds_show("!$loading"),
+                            ),
+                            ds_signals(loading=True),
+                            cls="p-4 border rounded-lg",
+                        ),
+                        cls="mb-6",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
             # Progress examples
             Div(
                 H2("Progress", cls="text-2xl font-semibold mb-4"),

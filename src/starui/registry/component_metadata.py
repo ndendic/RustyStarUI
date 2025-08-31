@@ -76,6 +76,7 @@ COMPONENT_REGISTRY = {
     "radio_group": _component("radio_group", "Radio button group", ["utils"]),
     "select": _component("select", "Dropdown selection", ["utils"], ["position"]),
     "separator": _component("separator", "Visual separators", ["utils"]),
+    "skeleton": _component("skeleton", "Loading placeholder", ["utils"]),
     "switch": _component("switch", "Toggle switch", ["utils"]),
     "tabs": _component("tabs", "Tabbed interface", ["utils"]),
     "textarea": _component("textarea", "Multi-line text input", ["utils"]),
