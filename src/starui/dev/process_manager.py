@@ -21,15 +21,21 @@ class ProcessManager:
         self.shutdown = threading.Event()
         self.console = Console()
 
-    def start_process(self, name: str, cmd: list[str], cwd: Path = None, env: dict = None):
+    def start_process(
+        self, name: str, cmd: list[str], cwd: Path = None, env: dict = None
+    ):
         if existing := self.processes.get(name):
             self.console.print(f"[yellow]{name} already running[/yellow]")
             return existing
 
         proc = subprocess.Popen(
-            cmd, cwd=cwd, env=env,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            text=True, bufsize=1
+            cmd,
+            cwd=cwd,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
         )
         self.processes[name] = proc
         self._monitor(name, proc)
@@ -45,7 +51,9 @@ class ProcessManager:
                             if name in ("uvicorn", "tailwind"):
                                 self.console.print(clean, highlight=False)
                             else:
-                                self.console.print(f"[dim cyan][{name}][/dim cyan] {clean}")
+                                self.console.print(
+                                    f"[dim cyan][{name}][/dim cyan] {clean}"
+                                )
                     else:
                         time.sleep(0.1)
 
@@ -53,13 +61,27 @@ class ProcessManager:
         thread.start()
         self.threads[f"{name}_monitor"] = thread
 
-    def start_uvicorn(self, app_file: Path, port: int, patterns: list[str],
-                      hot_reload: bool = True, debug: bool = True):
+    def start_uvicorn(
+        self,
+        app_file: Path,
+        port: int,
+        patterns: list[str],
+        hot_reload: bool = True,
+        debug: bool = True,
+    ):
         module = self._get_app_module(app_file, hot_reload, debug)
         cmd = [
-            sys.executable, "-m", "uvicorn", module,
-            "--reload", "--port", str(port),
-            "--host", "localhost", "--reload-delay", "0.1"
+            sys.executable,
+            "-m",
+            "uvicorn",
+            module,
+            "--reload",
+            "--port",
+            str(port),
+            "--host",
+            "localhost",
+            "--reload-delay",
+            "0.1",
         ]
 
         for pattern in patterns:
@@ -121,14 +143,23 @@ except Exception as e:
 app = original_app""")
         return f"{wrapper.stem}:app"
 
-    def start_tailwind_watcher(self, binary: Path, input_css: Path, output_css: Path,
-                              project_root: Path, on_rebuild: Callable = None):
+    def start_tailwind_watcher(
+        self,
+        binary: Path,
+        input_css: Path,
+        output_css: Path,
+        project_root: Path,
+        on_rebuild: Callable = None,
+    ):
         cmd = [
             str(binary),
-            "--input", str(input_css),
-            "--output", str(output_css),
+            "--input",
+            str(input_css),
+            "--output",
+            str(output_css),
             "--watch=always",
-            "--cwd", str(project_root),
+            "--cwd",
+            str(project_root),
         ]
         proc = self.start_process("tailwind", cmd, project_root)
 
@@ -187,7 +218,8 @@ app = original_app""")
     def wait_for_any_exit(self):
         while not self.shutdown.is_set():
             dead = [
-                name for name, proc in self.processes.items()
+                name
+                for name, proc in self.processes.items()
                 if proc.poll() is not None
                 # Tailwind exiting cleanly is expected
                 and not (name == "tailwind" and proc.returncode == 0)

@@ -71,6 +71,7 @@ def test_wait_for_css_exists(mock_success, tmp_path):
 def test_wait_for_css_timeout(mock_sleep, mock_console, mock_error, tmp_path):
     """Test wait_for_css timeout."""
     from click.exceptions import Exit
+
     css_path = tmp_path / "nonexistent.css"
 
     with pytest.raises(Exit):
