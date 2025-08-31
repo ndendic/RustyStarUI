@@ -1,7 +1,4 @@
-"""Development server with CSS hot reload."""
-
 import asyncio
-import socket
 import tempfile
 import time
 from pathlib import Path
@@ -12,45 +9,14 @@ from rich.table import Table
 
 from ..config import detect_project_config
 from ..css.binary import TailwindBinaryManager
-from ..dev import CSSHotReloadServer
+from ..dev.analyzer import resolve_port
 from ..dev.process_manager import ProcessManager
 from ..templates.css_input import generate_css_input
 from .utils import console, error, success
 
 
-def port_available(port: int) -> bool:
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind(("localhost", port))
-            return True
-    except OSError:
-        return False
-
-
-def find_port(start: int = 5000, max_tries: int = 100) -> int:
-    for port in range(start, start + max_tries):
-        if port_available(port):
-            return port
-    raise RuntimeError(f"No ports available in {start}-{start + max_tries}")
-
-
-def resolve_port(requested: int, strict: bool) -> int:
-    if port_available(requested):
-        return requested
-
-    if strict:
-        error(f"Port {requested} is already in use")
-        raise typer.Exit(1)
-
-    console.print(f"[yellow]Port {requested} in use, finding available...[/yellow]")
-    available = find_port(requested + 1)
-    success(f"✓ Using port {available}")
-    return available
-
-
 def prepare_css_input(config) -> Path:
-    project_input = config.project_root / "static" / "css" / "input.css"
-    if project_input.exists():
+    if (project_input := config.project_root / "static" / "css" / "input.css").exists():
         return project_input
 
     css_dir = config.css_output_absolute.parent
@@ -63,52 +29,38 @@ def prepare_css_input(config) -> Path:
         return Path(f.name)
 
 
-def start_css_websocket(
-    port: int, manager: ProcessManager
-) -> CSSHotReloadServer | None:
-    try:
-        loop = asyncio.new_event_loop()
-        server = CSSHotReloadServer(port=port)
-        manager.start_websocket_server(server, loop)
-        success(f"✓ CSS hot reload on port {port}")
-        return server
-    except Exception as e:
-        error(f"CSS hot reload failed: {e}")
-        return None
-
-
-def start_tailwind(manager: ProcessManager, input_css: Path, config, ws_server):
+def start_tailwind(
+    manager: ProcessManager, input_css: Path, config, enable_css_hot_reload: bool = True
+):
     binary = TailwindBinaryManager("latest").get_binary()
 
-    callback = None
-    if ws_server:
+    def notify_css_update(css_path: Path):
+        if not enable_css_hot_reload:
+            return
 
-        def callback(css_path: Path):
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                loop.run_until_complete(ws_server.notify_css_update(css_path, 0))
-            except Exception:
-                pass
-            finally:
-                loop.close()
+        from ..dev.unified_reload import DevReloadHandler
+
+        try:
+            asyncio.run(DevReloadHandler.notify_css_update(css_path, time.time()))
+        except Exception as e:
+            console.print(f"[yellow]Warning: Could not notify CSS update: {e}[/yellow]")
 
     manager.start_tailwind_watcher(
         tailwind_binary=Path(binary),
         input_css=input_css,
         output_css=config.css_output_absolute,
         project_root=config.project_root,
-        on_rebuild=callback,
+        on_rebuild=notify_css_update if enable_css_hot_reload else None,
     )
 
 
-def wait_for_css(config, timeout: int = 10):
+def wait_for_css(config, timeout: int = 10) -> None:
     if config.css_output_absolute.exists():
         success("✓ CSS ready")
         return
 
     console.print("[yellow]Building CSS...[/yellow]")
-    for _ in range(timeout * 2):  # Check every 0.5s
+    for _ in range(timeout * 2):
         if config.css_output_absolute.exists():
             success("✓ CSS built")
             return
@@ -118,26 +70,29 @@ def wait_for_css(config, timeout: int = 10):
     raise typer.Exit(1)
 
 
-def cleanup_files(input_css: Path | None, config, app_path: Path):
-    if input_css and input_css.name.startswith("tmp"):
-        input_css.unlink(missing_ok=True)
+def cleanup_files(input_css: Path | None, config, app_path: Path) -> None:
+    files_to_clean = [
+        input_css if input_css and input_css.name.startswith("tmp") else None,
+        *app_path.parent.glob(f"{app_path.stem}_dev_*.py"),
+        *config.css_output_absolute.parent.glob("tmp*.css"),
+    ]
 
-    for wrapper in app_path.parent.glob(f"{app_path.stem}_dev_*.py"):
-        wrapper.unlink(missing_ok=True)
-
-    for temp in config.css_output_absolute.parent.glob("tmp*.css"):
-        temp.unlink(missing_ok=True)
+    for file_path in filter(None, files_to_clean):
+        file_path.unlink(missing_ok=True)
 
 
-def show_status(config, port: int, ws_port: int, css_hot: bool, app_file: str):
+def show_status(config, port: int, css_hot: bool, app_file: str) -> None:
     table = Table(title="StarUI Development Server", show_header=False)
     table.add_column(style="cyan")
     table.add_column(style="green")
 
-    table.add_row("App", f"http://localhost:{port}")
-    table.add_row("File", app_file)
-    table.add_row("CSS", str(config.css_output))
-    table.add_row("Hot Reload", f"✓ (WebSocket on port {ws_port})" if css_hot else "✗")
+    for label, value in [
+        ("App", f"http://localhost:{port}"),
+        ("File", app_file),
+        ("CSS", str(config.css_output)),
+        ("Hot Reload", f"✓ (Unified WebSocket on port {port})" if css_hot else "✗"),
+    ]:
+        table.add_row(label, value)
 
     console.print(Panel(table, border_style="green"))
 
@@ -151,13 +106,12 @@ def dev_command(
     strict: bool = typer.Option(
         False, "--strict", help="Fail if requested port is unavailable"
     ),
+    debug: bool = typer.Option(
+        True, "--debug/--no-debug", help="Enable debug mode (disables compression)"
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show details"),
 ) -> None:
-    """Start development server with CSS hot reload.
-
-    By default, if the requested port is in use, automatically finds the next
-    available port. Use --strict to disable this behavior.
-    """
+    """Start development server with CSS hot reload and smart port detection."""
     if not app_file:
         error("App file is required")
         raise typer.Exit(1)
@@ -171,13 +125,17 @@ def dev_command(
     manager = ProcessManager()
     input_css = None
 
-    app_port = resolve_port(port, strict)
-    ws_port = find_port(app_port + 1)
+    try:
+        app_port, port_message = resolve_port(port, strict, app_path)
+        if port_message:
+            console.print(f"[blue]{port_message}[/blue]")
+    except RuntimeError as e:
+        error(str(e))
+        raise typer.Exit(1) from e
 
     try:
         input_css = prepare_css_input(config)
-        ws_server = start_css_websocket(ws_port, manager) if css_hot_reload else None
-        start_tailwind(manager, input_css, config, ws_server)
+        start_tailwind(manager, input_css, config, css_hot_reload)
         wait_for_css(config)
 
         manager.start_uvicorn(
@@ -185,11 +143,11 @@ def dev_command(
             port=app_port,
             watch_patterns=["*.py", "*.html"],
             enable_css_hot_reload=css_hot_reload,
-            css_ws_port=ws_port,
+            force_debug=debug,
         )
-        success(f"✓ Server running at http://localhost:{app_port}")
 
-        show_status(config, app_port, ws_port, css_hot_reload, app_file)
+        success(f"✓ Server running at http://localhost:{app_port}")
+        show_status(config, app_port, css_hot_reload, app_file)
         console.print("Press Ctrl+C to stop\n")
 
         try:
