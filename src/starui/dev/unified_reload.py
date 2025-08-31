@@ -89,10 +89,11 @@ def create_dev_reload_route() -> WebSocketRoute:
     return WebSocketRoute("/live-reload", endpoint=DevReloadHandler)
 
 
-def DevReloadJs(**kwargs) -> str:
+def DevReloadJs(**kwargs):
     """Generate unified development reload JavaScript."""
-    return """<script>
-(() => {
+    from starhtml.xtend import Script
+    
+    js_code = """(() => {
     if (!['localhost', '127.0.0.1'].includes(location.hostname)) return;
 
     let attempts = 0;
@@ -164,5 +165,6 @@ def DevReloadJs(**kwargs) -> str:
     };
 
     connect();
-})();
-</script>"""
+})();"""
+    
+    return Script(js_code)
