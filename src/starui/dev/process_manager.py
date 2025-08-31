@@ -1,4 +1,4 @@
-"""Development process coordination."""
+"""Process coordination for development server."""
 
 import os
 import subprocess
@@ -6,32 +6,29 @@ import sys
 import threading
 import time
 from collections.abc import Callable
+from contextlib import suppress
 from pathlib import Path
-from typing import Any
 
 from rich.console import Console
+
+RELOAD_EXCLUDES = ["*.css", "static/**", "**/tmp*", "**/__pycache__/**", "*_dev.py"]
 
 
 class ProcessManager:
     def __init__(self):
-        self.processes: dict[str, subprocess.Popen] = {}
-        self.threads: dict[str, threading.Thread] = {}
-        self.shutdown_event = threading.Event()
+        self.processes = {}
+        self.threads = {}
+        self.shutdown = threading.Event()
         self.console = Console()
 
     def start_process(
-        self,
-        name: str,
-        cmd: list[str],
-        cwd: Path | None = None,
-        env: dict[str, str] | None = None,
-    ) -> subprocess.Popen:
+        self, name: str, cmd: list[str], cwd: Path = None, env: dict = None
+    ):
         if existing := self.processes.get(name):
             self.console.print(f"[yellow]{name} already running[/yellow]")
             return existing
 
-        self.console.print(f"[green]Starting {name}...[/green]")
-        process = subprocess.Popen(
+        proc = subprocess.Popen(
             cmd,
             cwd=cwd,
             env=env,
@@ -40,22 +37,27 @@ class ProcessManager:
             text=True,
             bufsize=1,
         )
-        self.processes[name] = process
-        self._start_monitor(name, process)
-        return process
+        self.processes[name] = proc
+        self._monitor(name, proc)
+        return proc
 
-    def _start_monitor(self, name: str, process: subprocess.Popen) -> None:
-        def monitor():
-            try:
-                while process.poll() is None and not self.shutdown_event.is_set():
-                    if (line := process.stdout.readline()) and (clean := line.strip()):
-                        self.console.print(f"[dim cyan][{name}][/dim cyan] {clean}")
+    def _monitor(self, name: str, proc: subprocess.Popen):
+        def run():
+            with suppress(Exception):
+                while proc.poll() is None and not self.shutdown.is_set():
+                    if line := proc.stdout.readline():
+                        if clean := line.rstrip():
+                            # Let uvicorn/tailwind format their own output
+                            if name in ("uvicorn", "tailwind"):
+                                self.console.print(clean, highlight=False)
+                            else:
+                                self.console.print(
+                                    f"[dim cyan][{name}][/dim cyan] {clean}"
+                                )
                     else:
                         time.sleep(0.1)
-            except Exception as e:
-                self.console.print(f"[red]Error monitoring {name}: {e}[/red]")
 
-        thread = threading.Thread(target=monitor, daemon=True)
+        thread = threading.Thread(target=run, daemon=True)
         thread.start()
         self.threads[f"{name}_monitor"] = thread
 
@@ -63,75 +65,16 @@ class ProcessManager:
         self,
         app_file: Path,
         port: int,
-        watch_patterns: list[str] | None = None,
-        enable_css_hot_reload: bool = True,
-        force_debug: bool = True,
-    ) -> subprocess.Popen:
-        app_module = self._create_app_module(
-            app_file, enable_css_hot_reload, force_debug
-        )
-        cmd = self._build_uvicorn_cmd(app_module, port, watch_patterns)
-        return self.start_process(
-            "uvicorn", cmd, app_file.parent, env=os.environ.copy()
-        )
-
-    def _create_app_module(
-        self, app_file: Path, enable_hot_reload: bool, force_debug: bool = True
-    ) -> str:
-        if not enable_hot_reload:
-            return f"{app_file.stem}:app"
-
-        wrapper_file = app_file.parent / f"{app_file.stem}_dev.py"
-        wrapper_file.write_text(f"""from {app_file.stem} import app as original_app
-from starui.dev.unified_reload import create_dev_reload_route, DevReloadJs
-
-# Force debug mode to disable compression
-if hasattr(original_app, 'debug'):
-    original_app.debug = {force_debug}
-
-# Replace StarHTML's live reload with StarUI's enhanced system
-try:
-    # Remove existing live reload routes
-    if hasattr(original_app, 'routes'):
-        original_app.routes = [
-            route for route in original_app.routes
-            if not (hasattr(route, 'path') and route.path == '/live-reload')
-        ]
-
-    # Remove existing live reload JS from headers
-    if hasattr(original_app, 'hdrs') and original_app.hdrs:
-        original_app.hdrs = [
-            hdr for hdr in original_app.hdrs
-            if 'live-reload' not in str(hdr).lower()
-        ]
-    elif not hasattr(original_app, 'hdrs'):
-        original_app.hdrs = []
-
-    # Add StarUI's unified dev reload
-    original_app.hdrs.append(DevReloadJs())
-
-    dev_route = create_dev_reload_route()
-    if hasattr(original_app, 'routes'):
-        original_app.routes.append(dev_route)
-    elif hasattr(original_app, 'router') and hasattr(original_app.router, 'routes'):
-        original_app.router.routes.append(dev_route)
-
-    print("[StarUI] Replaced StarHTML live reload with unified dev reload system")
-
-except Exception as e:
-    print(f"Warning: Could not replace dev reload system: {{e}}")
-
-app = original_app""")
-        return f"{wrapper_file.stem}:app"
-
-    def _build_uvicorn_cmd(
-        self, app_module: str, port: int, watch_patterns: list[str] | None
-    ) -> list[str]:
+        patterns: list[str],
+        hot_reload: bool = True,
+        debug: bool = True,
+    ):
+        module = self._get_app_module(app_file, hot_reload, debug)
         cmd = [
             sys.executable,
             "-m",
             "uvicorn",
-            app_module,
+            module,
             "--reload",
             "--port",
             str(port),
@@ -141,30 +84,75 @@ app = original_app""")
             "0.1",
         ]
 
-        for pattern in watch_patterns or ["*.py", "*.html"]:
+        for pattern in patterns:
             cmd.extend(["--reload-include", pattern])
-
-        for exclude in [
-            "*.css",
-            "static/**",
-            "**/tmp*",
-            "**/__pycache__/**",
-            "*_dev.py",
-        ]:
+        for exclude in RELOAD_EXCLUDES:
             cmd.extend(["--reload-exclude", exclude])
 
-        return cmd
+        return self.start_process("uvicorn", cmd, app_file.parent, os.environ.copy())
+
+    def _get_app_module(self, app_file: Path, hot_reload: bool, debug: bool):
+        if not hot_reload:
+            return f"{app_file.stem}:app"
+
+        wrapper = app_file.parent / f"{app_file.stem}_dev.py"
+        wrapper.write_text(f"""import sys
+from {app_file.stem} import app as original_app
+from starui.dev.unified_reload import create_dev_reload_route, DevReloadJs
+from starlette.routing import WebSocketRoute
+
+if hasattr(original_app, 'debug'):
+    original_app.debug = {debug}
+
+try:
+    router = getattr(original_app, 'router', original_app)
+
+    if hasattr(router, 'routes'):
+        router.routes = [
+            r for r in router.routes
+            if not (isinstance(r, WebSocketRoute) and r.path == '/live-reload')
+        ]
+
+    if hasattr(original_app, 'hdrs'):
+        if isinstance(original_app.hdrs, list):
+            original_app.hdrs = [
+                h for h in original_app.hdrs
+                if 'live-reload' not in str(h).lower()
+                and 'LiveReloadJs' not in str(type(h).__name__)
+            ]
+        else:
+            original_app.hdrs = []
+    else:
+        original_app.hdrs = []
+
+    original_app.hdrs.append(DevReloadJs())
+    route = create_dev_reload_route()
+
+    if hasattr(router, 'routes'):
+        router.routes.append(route)
+    elif hasattr(router, 'mount'):
+        router.mount('/live-reload', route)
+
+    sys.stdout.write("[StarUI] ✓ Replaced StarHTML live reload with unified dev reload system\\n")
+    sys.stdout.flush()
+
+except Exception as e:
+    sys.stderr.write(f"[StarUI] Warning: Could not fully replace dev reload system: {{e}}\\n")
+    sys.stderr.flush()
+
+app = original_app""")
+        return f"{wrapper.stem}:app"
 
     def start_tailwind_watcher(
         self,
-        tailwind_binary: Path,
+        binary: Path,
         input_css: Path,
         output_css: Path,
         project_root: Path,
-        on_rebuild: Callable[[Path], Any] | None = None,
-    ) -> subprocess.Popen:
+        on_rebuild: Callable = None,
+    ):
         cmd = [
-            str(tailwind_binary),
+            str(binary),
             "--input",
             str(input_css),
             "--output",
@@ -173,83 +161,76 @@ app = original_app""")
             "--cwd",
             str(project_root),
         ]
-        process = self.start_process("tailwind", cmd, project_root)
+        proc = self.start_process("tailwind", cmd, project_root)
 
         if on_rebuild:
-            self._start_file_watcher(output_css, on_rebuild)
-        return process
+            self._watch(output_css, on_rebuild)
 
-    def _start_file_watcher(
-        self, file_path: Path, callback: Callable[[Path], Any]
-    ) -> None:
-        def monitor():
-            last_mtime = file_path.stat().st_mtime if file_path.exists() else 0
-            if last_mtime:
-                callback(file_path)  # Initial callback
+        return proc
 
-            while not self.shutdown_event.is_set():
-                try:
-                    if (
-                        file_path.exists()
-                        and (mtime := file_path.stat().st_mtime) > last_mtime
-                    ):
-                        last_mtime = mtime
-                        callback(file_path)
-                except Exception:
-                    pass
+    def _watch(self, path: Path, callback: Callable):
+        def run():
+            last = path.stat().st_mtime if path.exists() else 0
+            if last:
+                callback(path)  # Initial trigger
+
+            while not self.shutdown.is_set():
+                with suppress(Exception):
+                    if path.exists() and (mtime := path.stat().st_mtime) > last:
+                        last = mtime
+                        callback(path)
                 time.sleep(0.5)
 
-        thread = threading.Thread(target=monitor, daemon=True)
+        thread = threading.Thread(target=run, daemon=True)
         thread.start()
         self.threads["tailwind_monitor"] = thread
 
     def is_running(self, name: str) -> bool:
-        return (
-            process := self.processes.get(name)
-        ) is not None and process.poll() is None
+        return (p := self.processes.get(name)) and p.poll() is None
 
-    def stop_process(self, name: str, timeout: int = 2) -> bool:
-        if not (process := self.processes.get(name)):
+    def stop_process(self, name: str, timeout: int = 2):
+        if not (proc := self.processes.get(name)):
             return True
 
-        try:
-            process.terminate()
-            process.wait(timeout=timeout)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            process.wait(timeout=1)
-        except Exception:
-            pass
+        with suppress(Exception):
+            proc.terminate()
+            try:
+                proc.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.wait(timeout=1)
 
         self.processes.pop(name, None)
         return True
 
-    def stop_all(self, timeout: int = 2) -> None:
-        if self.shutdown_event.is_set():
+    def stop_all(self, timeout: int = 2):
+        if self.shutdown.is_set():
             return
 
-        self.shutdown_event.set()
+        self.shutdown.set()
+
         for name in list(self.processes):
             self.stop_process(name, timeout)
 
         self.processes.clear()
         self.threads.clear()
 
-    def wait_for_any_exit(self) -> None:
-        while not self.shutdown_event.is_set():
-            dead_processes = [
+    def wait_for_any_exit(self):
+        while not self.shutdown.is_set():
+            dead = [
                 name
                 for name, proc in self.processes.items()
                 if proc.poll() is not None
+                # Tailwind exiting cleanly is expected
                 and not (name == "tailwind" and proc.returncode == 0)
             ]
 
-            if dead_processes:
-                for name in dead_processes:
+            if dead:
+                for name in dead:
                     self.console.print(f"[red]{name} died unexpectedly[/red]")
                     del self.processes[name]
 
-                if "uvicorn" in dead_processes:
+                if "uvicorn" in dead:
                     break
 
             time.sleep(0.5)
