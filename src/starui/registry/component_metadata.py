@@ -38,6 +38,7 @@ COMPONENT_REGISTRY = {
     "alert_dialog": _component(
         "alert_dialog", "Alert dialog for confirmations", ["utils", "button"]
     ),
+    "avatar": _component("avatar", "User profile images with fallback", ["utils"]),
     "code_block": _component(
         "code_block",
         "Code block with syntax highlighting",

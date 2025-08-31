@@ -1128,6 +1128,130 @@ def index():
                     cls="space-y-4 mb-8",
                 ),
             ),
+            # Avatar examples
+            Div(
+                H2("Avatars", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic Avatar with image
+                    Div(
+                        H3("Basic Avatar", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Avatar(
+                                AvatarImage(
+                                    src="https://github.com/shadcn.png",
+                                    alt="@shadcn"
+                                )
+                            ),
+                            Avatar(
+                                AvatarFallback("CN")
+                            ),
+                            Avatar(
+                                AvatarImage(
+                                    src="https://avatars.githubusercontent.com/u/1?v=4",
+                                    alt="User"
+                                )
+                            ),
+                            cls="flex gap-4 items-center"
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Different sizes (composition example)
+                    Div(
+                        H3("Avatar Sizes", cls="text-lg font-medium mb-2"),
+                        P("Use size classes to customize:", cls="text-sm text-muted-foreground mb-2"),
+                        Div(
+                            Avatar(AvatarFallback("XS"), cls="size-6"),
+                            Avatar(AvatarFallback("SM"), cls="size-8"),
+                            Avatar(AvatarFallback("MD")),  # default size-10
+                            Avatar(AvatarFallback("LG"), cls="size-12"),
+                            Avatar(AvatarFallback("XL"), cls="size-16"),
+                            Avatar(AvatarFallback("2X"), cls="size-20"),
+                            cls="flex gap-4 items-center"
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Avatar with automatic fallback
+                    Div(
+                        H3("Automatic Fallback", cls="text-lg font-medium mb-2"),
+                        P("The second avatar will show fallback as the image URL is invalid:", cls="text-sm text-muted-foreground mb-2"),
+                        Div(
+                            AvatarWithFallback(
+                                src="https://github.com/shadcn.png",
+                                alt="@shadcn",
+                                fallback="CN"
+                            ),
+                            AvatarWithFallback(
+                                src="https://invalid-url.com/image.jpg",
+                                alt="Invalid",
+                                fallback="IN"
+                            ),
+                            AvatarWithFallback(
+                                fallback="NI"
+                            ),
+                            cls="flex gap-4 items-center"
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Avatar Group (composition example)
+                    Div(
+                        H3("Avatar Group", cls="text-lg font-medium mb-2"),
+                        P("Compose avatars with overlapping styles:", cls="text-sm text-muted-foreground mb-2"),
+                        Div(
+                            Div(
+                                Avatar(AvatarFallback("JD")),
+                                Avatar(AvatarFallback("AS")),
+                                Avatar(AvatarFallback("PQ")),
+                                Avatar(AvatarFallback("+2", cls="text-xs font-medium")),
+                                cls="flex -space-x-2 [&>*[data-slot=avatar]]:ring-2 [&>*[data-slot=avatar]]:ring-background"
+                            ),
+                            cls="mb-2"
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Avatar with Badge (composition example)
+                    Div(
+                        H3("Avatar with Badge", cls="text-lg font-medium mb-2"),
+                        P("Compose with absolute positioning:", cls="text-sm text-muted-foreground mb-2"),
+                        Div(
+                            # Green status badge
+                            Div(
+                                Avatar(AvatarFallback("JD")),
+                                Span(cls="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-background"),
+                                cls="relative inline-block"
+                            ),
+                            # Red status badge
+                            Div(
+                                Avatar(AvatarFallback("AS")),
+                                Span(cls="absolute bottom-0 right-0 size-3 bg-red-500 rounded-full ring-2 ring-background"),
+                                cls="relative inline-block"
+                            ),
+                            # Badge with count
+                            Div(
+                                Avatar(AvatarFallback("MN")),
+                                Span("5", cls="absolute bottom-0 right-0 size-4 bg-red-500 rounded-full ring-2 ring-background flex items-center justify-center text-[8px] font-bold text-white"),
+                                cls="relative inline-block"
+                            ),
+                            cls="flex gap-4 items-center"
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Avatar from Initials (composition example)
+                    Div(
+                        H3("Avatar from Initials", cls="text-lg font-medium mb-2"),
+                        P("Use colored backgrounds for initials:", cls="text-sm text-muted-foreground mb-2"),
+                        Div(
+                            Avatar(AvatarFallback("JD", cls="bg-red-600 dark:bg-red-500 text-white font-semibold")),
+                            Avatar(AvatarFallback("AS", cls="bg-blue-600 dark:bg-blue-500 text-white font-semibold")),
+                            Avatar(AvatarFallback("PQ", cls="bg-green-600 dark:bg-green-500 text-white font-semibold")),
+                            Avatar(AvatarFallback("MN", cls="bg-purple-600 dark:bg-purple-500 text-white font-semibold")),
+                            Avatar(AvatarFallback("XY", cls="bg-orange-600 dark:bg-orange-500 text-white font-semibold")),
+                            cls="flex gap-4 items-center"
+                        ),
+                        cls="mb-6",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
             # Separator examples
             Div(
                 H2("Separators", cls="text-2xl font-semibold mb-4"),

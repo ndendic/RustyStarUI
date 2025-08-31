@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **✨ New Components**
+  - Added `Avatar` component with image fallback support using Datastar reactivity
+  - Added `Accordion` component with collapsible content sections
+  - Added `Toggle` and `ToggleGroup` components for toggle button functionality
+  - Added `Progress` component with determinate and indeterminate states
+  - Added `Separator` component for visual content separation
+
+- **📚 Documentation Site**
+  - Launched comprehensive documentation site with live component previews
+  - Added interactive component playground with code examples
+  - Implemented syntax highlighting for code snippets
+  - Created component API reference documentation
+
+### Changed
+- **🎨 Avatar Component Design**
+  - Simplified Avatar API to match ShadCN's minimalist approach (4 core components)
+  - Moved complex patterns (groups, badges, colored initials) to composition examples
+  - Reduced component size from 256 lines to 107 lines for better maintainability
+  
+- **🔧 Tabs Component Refactor**
+  - Made Tabs component more semantic with id-based approach
+  - Improved accessibility with proper ARIA attributes
+  - Enhanced keyboard navigation support
+
+- **🔥 Live Reload & Build System**
+  - Rewrote watchdog implementation for better CSS change detection
+  - Enhanced file watcher to properly track CSS modifications during development
+  - Fixed hot-reload reliability for style changes
+  - Improved CSS build pipeline for faster development feedback
+
+### Fixed
+- **🐛 Component Issues**
+  - Fixed Avatar fallback mechanism to properly show on image load errors
+  - Resolved Datastar attribute handling in Avatar components
+  - Fixed contrast issues with auto-generated avatar colors in light/dark modes
+  
+- **🔄 Development Experience**
+  - Fixed live reload not triggering on CSS changes
+  - Resolved watchdog file system event handling for style updates
+  - Fixed CSS compilation race conditions during hot reload
+
 ## [0.1.7] - 2025-08-30
 
 ### Added
