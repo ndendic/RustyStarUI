@@ -92,7 +92,7 @@ def create_dev_reload_route() -> WebSocketRoute:
 def DevReloadJs(**kwargs):
     """Generate unified development reload JavaScript."""
     from starhtml.xtend import Script
-    
+
     js_code = """(() => {
     if (!['localhost', '127.0.0.1'].includes(location.hostname)) return;
 
@@ -166,5 +166,5 @@ def DevReloadJs(**kwargs):
 
     connect();
 })();"""
-    
+
     return Script(js_code)
