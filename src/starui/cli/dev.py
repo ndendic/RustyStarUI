@@ -132,8 +132,9 @@ def dev_command(
             debug,
         )
 
-        # Collect wrapper files for cleanup
-        temp_files.extend(app_path.parent.glob(f"{app_path.stem}_dev*.py"))
+        # Collect wrapper files for cleanup (now in temp dir)
+        temp_dir = Path(tempfile.gettempdir())
+        temp_files.extend(temp_dir.glob(f"starui_dev_{app_path.stem}_*.py"))
         temp_files.extend(config.css_output_absolute.parent.glob("tmp*.css"))
 
         success(f"Server running at http://localhost:{app_port}")
