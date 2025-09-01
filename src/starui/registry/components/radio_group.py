@@ -9,7 +9,7 @@ from starhtml import P as HTMLP
 from starhtml import Span as HTMLSpan
 from starhtml.datastar import ds_class, ds_on_change, ds_signals, value
 
-from .utils import cn, inject_signals, make_injectable
+from .utils import cn
 
 _radio_group_ids = count(1)
 
@@ -27,7 +27,10 @@ def RadioGroup(
     signal = signal or f"radio_{next(_radio_group_ids)}"
     group_name = f"radio_group_{signal}"
 
-    processed_children = inject_signals(children, signal, group_name, initial_value)
+    processed_children = [
+        child(signal, group_name, initial_value) if callable(child) else child
+        for child in children
+    ]
 
     return Div(
         *processed_children,
@@ -51,7 +54,7 @@ def RadioGroupItem(
     indicator_cls: str = "",
     **attrs: Any,
 ) -> FT:
-    def _inject_signal(signal, group_name, default_value=None):
+    def create_item(signal, group_name, default_value=None):
         radio_id = f"radio_{str(uuid4())[:8]}"
         filtered_attrs = {k: v for k, v in attrs.items() if k != "name"}
 
@@ -110,7 +113,7 @@ def RadioGroupItem(
             data_slot="radio-container",
         )
 
-    return make_injectable(_inject_signal)
+    return create_item
 
 
 def RadioGroupWithLabel(

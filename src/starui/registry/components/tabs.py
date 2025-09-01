@@ -5,7 +5,7 @@ from starhtml import FT, Div
 from starhtml import Button as HTMLButton
 from starhtml.datastar import ds_on_click, ds_show, ds_signals, value
 
-from .utils import cn, inject_signals, make_injectable
+from .utils import cn
 
 TabsVariant = Literal["default", "plain"]
 
@@ -22,7 +22,10 @@ def Tabs(
     signal = attrs.pop("signal", None)
     if not signal:
         signal = f"tabs_{next(_tab_ids)}"
-    processed_children = inject_signals(children, signal, default_id, variant)
+    processed_children = [
+        child(signal, default_id, variant) if callable(child) else child
+        for child in children
+    ]
     return Div(
         *processed_children,
         ds_signals({signal: value(default_id)}),
@@ -33,8 +36,11 @@ def Tabs(
 
 
 def TabsList(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
-    def _inject_signal(signal, default_id=None, variant="default"):
-        processed_children = inject_signals(children, signal, default_id, variant)
+    def create_list(signal, default_id=None, variant="default"):
+        processed_children = [
+            child(signal, default_id, variant) if callable(child) else child
+            for child in children
+        ]
 
         base_classes = {
             "plain": "text-muted-foreground inline-flex h-9 w-fit items-center p-[3px] justify-start gap-4 rounded-none bg-transparent px-2 md:px-0",
@@ -49,7 +55,7 @@ def TabsList(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
             **attrs,
         )
 
-    return make_injectable(_inject_signal)
+    return create_list
 
 
 def TabsTrigger(
@@ -60,7 +66,7 @@ def TabsTrigger(
     cls: str = "",
     **attrs,
 ) -> FT:
-    def _inject_signal(signal, default_id=None, variant="default"):
+    def create_trigger(signal, default_id=None, variant="default"):
         is_active = default_id == id
 
         base = (
@@ -99,11 +105,11 @@ def TabsTrigger(
             },
         )
 
-    return make_injectable(_inject_signal)
+    return create_trigger
 
 
 def TabsContent(*children, id: str, class_name: str = "", cls: str = "", **attrs) -> FT:
-    def _inject_signal(signal, default_id=None, variant="default"):
+    def create_content(signal, default_id=None, variant="default"):
         return Div(
             *children,
             ds_show(f"${signal} === '{id}'"),
@@ -117,4 +123,4 @@ def TabsContent(*children, id: str, class_name: str = "", cls: str = "", **attrs
             **attrs,
         )
 
-    return make_injectable(_inject_signal)
+    return create_content

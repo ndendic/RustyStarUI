@@ -742,6 +742,59 @@ def index():
                     cls="flex flex-wrap gap-4 mb-8",
                 ),
             ),
+            # Dropdown Menu examples
+            Div(
+                H2("Dropdown Menus", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic dropdown
+                    DropdownMenu(
+                        DropdownMenuTrigger("Open Menu"),
+                        DropdownMenuContent(
+                            DropdownMenuLabel("My Account"),
+                            DropdownMenuSeparator(),
+                            DropdownMenuItem("Profile", DropdownMenuShortcut("⇧⌘P")),
+                            DropdownMenuItem("Billing", DropdownMenuShortcut("⌘B")),
+                            DropdownMenuItem("Settings", DropdownMenuShortcut("⌘S")),
+                            DropdownMenuSeparator(),
+                            DropdownMenuItem("Log out", DropdownMenuShortcut("⇧⌘Q"), variant="destructive"),
+                        ),
+                    ),
+                    # Dropdown with checkboxes
+                    DropdownMenu(
+                        DropdownMenuTrigger("Options", variant="secondary"),
+                        DropdownMenuContent(
+                            DropdownMenuLabel("Appearance"),
+                            DropdownMenuSeparator(),
+                            DropdownMenuCheckboxItem("Status Bar", checked_signal="statusBar"),
+                            DropdownMenuCheckboxItem("Activity Bar", checked_signal="activityBar", disabled=True),
+                            DropdownMenuCheckboxItem("Panel", checked_signal="panel"),
+                        ),
+                        signal="checkbox_dropdown",
+                    ),
+                    # Dropdown with radio items
+                    DropdownMenu(
+                        DropdownMenuTrigger("Select Position", variant="outline"),
+                        DropdownMenuContent(
+                            DropdownMenuLabel("Position"),
+                            DropdownMenuSeparator(),
+                            DropdownMenuRadioGroup(
+                                DropdownMenuRadioItem("Top", value="top", value_signal="position"),
+                                DropdownMenuRadioItem("Bottom", value="bottom", value_signal="position"),
+                                DropdownMenuRadioItem("Right", value="right", value_signal="position"),
+                                value_signal="position",
+                            ),
+                        ),
+                        signal="radio_dropdown",
+                    ),
+                    ds_signals({
+                        "statusBar": True,
+                        "activityBar": False,
+                        "panel": False,
+                        "position": value("bottom"),
+                    }),
+                    cls="flex flex-wrap gap-4 mb-8",
+                ),
+            ),
             # HoverCard examples
             Div(
                 H2("Hover Cards", cls="text-2xl font-semibold mb-4"),
