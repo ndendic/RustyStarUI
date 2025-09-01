@@ -4,13 +4,15 @@ from starhtml import (
     FT,
     Caption,
     Div,
-    Table as HTMLTable,
     Tbody,
     Td,
     Tfoot,
     Th,
     Thead,
     Tr,
+)
+from starhtml import (
+    Table as HTMLTable,
 )
 
 from .utils import cn
@@ -22,9 +24,7 @@ def Table(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table container with overflow handling and proper border styling."""
     classes = cn("w-full caption-bottom text-sm", class_name, cls)
-    
     return Div(
         HTMLTable(
             *children,
@@ -43,8 +43,7 @@ def TableHeader(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table header with border styling."""
-    classes = cn("[&_tr]:border-b", class_name, cls)
+    classes = cn("[&_tr]:border-b [&_tr]:border-input", class_name, cls)
     return Thead(
         *children,
         data_slot="table-header",
@@ -59,7 +58,6 @@ def TableBody(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table body with last row border handling."""
     classes = cn("[&_tr:last-child]:border-0", class_name, cls)
     return Tbody(
         *children,
@@ -75,9 +73,8 @@ def TableFooter(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table footer with background and border styling."""
     classes = cn(
-        "bg-muted/50 border-t font-medium [&>tr]:last:border-b-0",
+        "bg-muted/50 border-t border-input font-medium [&>tr]:last:border-b-0",
         class_name,
         cls
     )
@@ -96,16 +93,15 @@ def TableRow(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table row with hover and selection states."""
     classes = cn(
-        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b border-input transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         class_name,
         cls
     )
-    
+
     if selected:
         attrs["data_state"] = "selected"
-    
+
     return Tr(
         *children,
         data_slot="table-row",
@@ -120,7 +116,6 @@ def TableHead(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table header cell with proper padding and font styling."""
     classes = cn(
         "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         class_name,
@@ -140,7 +135,6 @@ def TableCell(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table cell with proper styling and text size."""
     classes = cn(
         "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         class_name,
@@ -160,7 +154,6 @@ def TableCaption(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    """Table caption with muted text styling."""
     classes = cn("mt-4 text-sm text-muted-foreground", class_name, cls)
     return Caption(
         *children,
