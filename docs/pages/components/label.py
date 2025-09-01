@@ -344,6 +344,7 @@ Label(
         list(examples()),
         cli_command="star add label",
         hero_example=hero_example,
+        component_slug="label",
         api_reference={
             "props": [
                 {

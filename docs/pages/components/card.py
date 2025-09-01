@@ -363,6 +363,7 @@ def create_card_docs():
         list(examples()),
         cli_command="star add card",
         hero_example=hero_example,
+        component_slug="card",
         api_reference={
             "components": [
                 {

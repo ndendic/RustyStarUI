@@ -374,6 +374,7 @@ def create_tabs_docs():
         list(examples()),
         cli_command="star add tabs",
         hero_example=hero_example,
+        component_slug="tabs",
         api_reference={
             "props": [
                 {

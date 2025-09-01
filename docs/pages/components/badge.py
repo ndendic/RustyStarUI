@@ -319,6 +319,7 @@ Badge("20+", variant="outline", cls="h-5 min-w-[1.25rem] rounded-full px-1 font-
         list(examples()),
         cli_command="star add badge",
         hero_example=hero_example,
+        component_slug="badge",
         api_reference={
             "props": [
                 {
