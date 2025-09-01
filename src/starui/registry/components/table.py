@@ -26,14 +26,9 @@ def Table(
 ) -> FT:
     classes = cn("w-full caption-bottom text-sm", class_name, cls)
     return Div(
-        HTMLTable(
-            *children,
-            data_slot="table",
-            cls=classes,
-            **attrs
-        ),
+        HTMLTable(*children, data_slot="table", cls=classes, **attrs),
         data_slot="table-container",
-        cls="relative w-full overflow-x-auto"
+        cls="relative w-full overflow-x-auto",
     )
 
 
@@ -44,12 +39,7 @@ def TableHeader(
     **attrs: Any,
 ) -> FT:
     classes = cn("[&_tr]:border-b [&_tr]:border-input", class_name, cls)
-    return Thead(
-        *children,
-        data_slot="table-header",
-        cls=classes,
-        **attrs
-    )
+    return Thead(*children, data_slot="table-header", cls=classes, **attrs)
 
 
 def TableBody(
@@ -59,12 +49,7 @@ def TableBody(
     **attrs: Any,
 ) -> FT:
     classes = cn("[&_tr:last-child]:border-0", class_name, cls)
-    return Tbody(
-        *children,
-        data_slot="table-body",
-        cls=classes,
-        **attrs
-    )
+    return Tbody(*children, data_slot="table-body", cls=classes, **attrs)
 
 
 def TableFooter(
@@ -76,14 +61,9 @@ def TableFooter(
     classes = cn(
         "bg-muted/50 border-t border-input font-medium [&>tr]:last:border-b-0",
         class_name,
-        cls
+        cls,
     )
-    return Tfoot(
-        *children,
-        data_slot="table-footer",
-        cls=classes,
-        **attrs
-    )
+    return Tfoot(*children, data_slot="table-footer", cls=classes, **attrs)
 
 
 def TableRow(
@@ -96,18 +76,13 @@ def TableRow(
     classes = cn(
         "border-b border-input transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         class_name,
-        cls
+        cls,
     )
 
     if selected:
         attrs["data_state"] = "selected"
 
-    return Tr(
-        *children,
-        data_slot="table-row",
-        cls=classes,
-        **attrs
-    )
+    return Tr(*children, data_slot="table-row", cls=classes, **attrs)
 
 
 def TableHead(
@@ -119,14 +94,9 @@ def TableHead(
     classes = cn(
         "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         class_name,
-        cls
+        cls,
     )
-    return Th(
-        *children,
-        data_slot="table-head",
-        cls=classes,
-        **attrs
-    )
+    return Th(*children, data_slot="table-head", cls=classes, **attrs)
 
 
 def TableCell(
@@ -138,14 +108,9 @@ def TableCell(
     classes = cn(
         "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         class_name,
-        cls
+        cls,
     )
-    return Td(
-        *children,
-        data_slot="table-cell",
-        cls=classes,
-        **attrs
-    )
+    return Td(*children, data_slot="table-cell", cls=classes, **attrs)
 
 
 def TableCaption(
@@ -155,9 +120,4 @@ def TableCaption(
     **attrs: Any,
 ) -> FT:
     classes = cn("mt-4 text-sm text-muted-foreground", class_name, cls)
-    return Caption(
-        *children,
-        data_slot="table-caption",
-        cls=classes,
-        **attrs
-    )
+    return Caption(*children, data_slot="table-caption", cls=classes, **attrs)
