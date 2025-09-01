@@ -1493,6 +1493,148 @@ def index():
                     cls="p-4 border rounded-lg mb-8",
                 ),
             ),
+            # Table examples
+            Div(
+                H2("Tables", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic table
+                    Div(
+                        H3("Basic Table", cls="text-lg font-medium mb-2"),
+                        Table(
+                            TableHeader(
+                                TableRow(
+                                    TableHead("Invoice"),
+                                    TableHead("Status"),
+                                    TableHead("Method"),
+                                    TableHead("Amount", cls="text-right"),
+                                )
+                            ),
+                            TableBody(
+                                TableRow(
+                                    TableCell("INV001"),
+                                    TableCell(Badge("Paid", variant="secondary")),
+                                    TableCell("Credit Card"),
+                                    TableCell("$250.00", cls="text-right"),
+                                ),
+                                TableRow(
+                                    TableCell("INV002"),
+                                    TableCell(Badge("Pending", variant="outline")),
+                                    TableCell("PayPal"),
+                                    TableCell("$150.00", cls="text-right"),
+                                ),
+                                TableRow(
+                                    TableCell("INV003"),
+                                    TableCell(Badge("Unpaid", variant="destructive")),
+                                    TableCell("Bank Transfer"),
+                                    TableCell("$350.00", cls="text-right"),
+                                ),
+                                TableRow(
+                                    TableCell("INV004"),
+                                    TableCell(Badge("Paid", variant="secondary")),
+                                    TableCell("Credit Card"),
+                                    TableCell("$450.00", cls="text-right"),
+                                ),
+                            ),
+                            TableFooter(
+                                TableRow(
+                                    TableCell("Total", colspan="3", cls="font-medium"),
+                                    TableCell("$1,200.00", cls="text-right font-medium"),
+                                )
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="mb-8",
+                    ),
+                    # Table with selection
+                    Div(
+                        H3("Table with Selection", cls="text-lg font-medium mb-2"),
+                        Table(
+                            TableCaption("A list of users with selection capabilities."),
+                            TableHeader(
+                                TableRow(
+                                    TableHead("Select"),
+                                    TableHead("Name"),
+                                    TableHead("Email"),
+                                    TableHead("Role"),
+                                    TableHead("Actions"),
+                                )
+                            ),
+                            TableBody(
+                                TableRow(
+                                    TableCell(Checkbox(signal="user_1")),
+                                    TableCell("John Doe"),
+                                    TableCell("john@example.com"),
+                                    TableCell(Badge("Admin")),
+                                    TableCell(
+                                        Button("Edit", variant="ghost", size="sm"),
+                                        cls="space-x-2",
+                                    ),
+                                ),
+                                TableRow(
+                                    TableCell(Checkbox(signal="user_2", checked=True)),
+                                    TableCell("Jane Smith"),
+                                    TableCell("jane@example.com"),
+                                    TableCell(Badge("User", variant="secondary")),
+                                    TableCell(
+                                        Button("Edit", variant="ghost", size="sm"),
+                                        cls="space-x-2",
+                                    ),
+                                    selected=True,
+                                ),
+                                TableRow(
+                                    TableCell(Checkbox(signal="user_3")),
+                                    TableCell("Bob Johnson"),
+                                    TableCell("bob@example.com"),
+                                    TableCell(Badge("User", variant="secondary")),
+                                    TableCell(
+                                        Button("Edit", variant="ghost", size="sm"),
+                                        cls="space-x-2",
+                                    ),
+                                ),
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="mb-8",
+                    ),
+                    # Compact table
+                    Div(
+                        H3("Compact Table", cls="text-lg font-medium mb-2"),
+                        Table(
+                            TableHeader(
+                                TableRow(
+                                    TableHead("Product"),
+                                    TableHead("Price"),
+                                    TableHead("Stock"),
+                                    TableHead("Category"),
+                                )
+                            ),
+                            TableBody(
+                                TableRow(
+                                    TableCell("Laptop"),
+                                    TableCell("$999"),
+                                    TableCell("12"),
+                                    TableCell("Electronics"),
+                                ),
+                                TableRow(
+                                    TableCell("Mouse"),
+                                    TableCell("$29"),
+                                    TableCell("45"),
+                                    TableCell("Electronics"),
+                                ),
+                                TableRow(
+                                    TableCell("Keyboard"),
+                                    TableCell("$79"),
+                                    TableCell("8"),
+                                    TableCell("Electronics"),
+                                ),
+                            ),
+                            cls="text-xs [&_th]:h-8 [&_td]:p-1 [&_th]:p-1",
+                        ),
+                        cls="mb-8",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
             # Form with validation example
             Div(
                 H2(

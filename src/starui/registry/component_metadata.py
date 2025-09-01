@@ -90,6 +90,7 @@ COMPONENT_REGISTRY = {
         ["utils"],
         css_imports=['@plugin "@tailwindcss/typography";'],
     ),
+    "table": _component("table", "Data display in rows and columns", ["utils"]),
     "utils": _component("utils", "Class name utilities"),
 }
 
