@@ -4,16 +4,20 @@ from starhtml import FT, Div
 from starhtml.datastar import ds_position, ds_ref
 
 from .button import Button
-from .utils import cn, inject_signals, make_injectable
+from .utils import cn
 
 
 def Popover(*children, cls="relative inline-block", **attrs):
     signal = f"popover_{uuid4().hex[:8]}"
-    return Div(*inject_signals(children, signal), cls=cls, **attrs)
+    return Div(
+        *[child(signal) if callable(child) else child for child in children],
+        cls=cls,
+        **attrs,
+    )
 
 
 def PopoverTrigger(*children, variant="default", cls="", **attrs):
-    def _inject_signal(signal):
+    def create(signal):
         return Button(
             *children,
             ds_ref(f"{signal}Trigger"),
@@ -25,11 +29,11 @@ def PopoverTrigger(*children, variant="default", cls="", **attrs):
             **attrs,
         )
 
-    return make_injectable(_inject_signal)
+    return create
 
 
 def PopoverContent(*children, cls="", side="bottom", align="center", **attrs):
-    def _inject_signal(signal):
+    def create_content(signal):
         placement = f"{side}-{align}" if align != "center" else side
 
         def process_element(element):
@@ -73,7 +77,7 @@ def PopoverContent(*children, cls="", side="bottom", align="center", **attrs):
             **attrs,
         )
 
-    return make_injectable(_inject_signal)
+    return create_content
 
 
 def PopoverClose(*children, cls="", variant="ghost", size="sm", **attrs):

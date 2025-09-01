@@ -4,7 +4,7 @@ from uuid import uuid4
 from starhtml import FT, Button, Div, Icon
 from starhtml.datastar import ds_on_click, ds_show, ds_signals, value
 
-from .utils import cn, inject_signals, make_injectable
+from .utils import cn
 
 AccordionType = Literal["single", "multiple"]
 
@@ -31,7 +31,10 @@ def Accordion(
         case ("multiple", val):
             initial_value = value(val)
 
-    processed_children = inject_signals(children, signal, type, collapsible)
+    processed_children = [
+        child(signal, type, collapsible) if callable(child) else child
+        for child in children
+    ]
 
     return Div(
         *processed_children,
@@ -50,8 +53,11 @@ def AccordionItem(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    def _inject_signal(signal, type="single", collapsible=False):
-        processed_children = inject_signals(children, signal, type, collapsible, value)
+    def create_item(signal, type="single", collapsible=False):
+        processed_children = [
+            child(signal, type, collapsible, value) if callable(child) else child
+            for child in children
+        ]
         return Div(
             *processed_children,
             data_value=value,
@@ -59,7 +65,7 @@ def AccordionItem(
             **attrs,
         )
 
-    return make_injectable(_inject_signal)
+    return create_item
 
 
 def AccordionTrigger(
@@ -68,7 +74,7 @@ def AccordionTrigger(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    def _inject_signal(signal, type="single", collapsible=False, item_value=None):
+    def create_trigger(signal, type="single", collapsible=False, item_value=None):
         if not item_value:
             raise ValueError("AccordionTrigger must be used inside AccordionItem")
 
@@ -109,7 +115,7 @@ def AccordionTrigger(
             cls="flex",
         )
 
-    return make_injectable(_inject_signal)
+    return create_trigger
 
 
 def AccordionContent(
@@ -118,7 +124,7 @@ def AccordionContent(
     cls: str = "",
     **attrs: Any,
 ) -> FT:
-    def _inject_signal(signal, type="single", collapsible=False, item_value=None):
+    def create_content(signal, type="single", collapsible=False, item_value=None):
         if not item_value:
             raise ValueError("AccordionContent must be used inside AccordionItem")
 
@@ -138,4 +144,4 @@ def AccordionContent(
             **attrs,
         )
 
-    return make_injectable(_inject_signal)
+    return create_content

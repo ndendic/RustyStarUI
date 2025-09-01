@@ -66,6 +66,9 @@ COMPONENT_REGISTRY = {
     "breadcrumb": _component("breadcrumb", "Breadcrumb navigation", ["utils"]),
     "card": _component("card", "Card container", ["utils"]),
     "checkbox": _component("checkbox", "Checkbox input", ["utils"]),
+    "dropdown_menu": _component(
+        "dropdown_menu", "Dropdown menu with items", ["utils", "button"], ["position"]
+    ),
     "hover_card": _component(
         "hover_card", "Hover card with content", ["utils"], ["position"]
     ),
