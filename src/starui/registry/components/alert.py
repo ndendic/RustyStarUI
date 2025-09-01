@@ -1,6 +1,6 @@
 from typing import Literal
 
-from starhtml import FT, Div
+from rusty_tags import Div, HtmlString
 
 from .utils import cn, cva
 
@@ -27,7 +27,7 @@ def Alert(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         role="alert",
@@ -47,7 +47,7 @@ def AlertTitle(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         data_slot="alert-title",
@@ -65,7 +65,7 @@ def AlertDescription(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         data_slot="alert-description",

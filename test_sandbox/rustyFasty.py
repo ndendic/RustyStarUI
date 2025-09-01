@@ -1,34 +1,73 @@
 #!/usr/bin/env python3
 # Import starhtml first, then override with our custom components
-from starhtml import *
-from starhtml.datastar import value
+# from starhtml import *
+# from starhtml.datastar import value
 
+from rusty_tags import *
+from rusty_tags import Input as HTMLInput
+from rusty_tags import Label as HTMLLabel
+from rusty_tags.datastar import Signals
+from starui import ThemeToggle
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 # Import all registry components at once (this will override starhtml components)
+from starlette.staticfiles import StaticFiles
 from registry_loader import *
 
+# from starui.registry.components.accordion import Accordion, AccordionItem, AccordionTrigger, AccordionContent
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 
-app, rt = star_app(
-    live=True,
-    hdrs=(        
+def fouc_script(
+    storage_key="theme",
+    cls="dark",
+    system_match="(prefers-color-scheme: dark)",
+    use_data_theme=False,
+    default_theme="light",
+):
+    """Generate theme FOUC prevention script."""
+    if use_data_theme:
+        return Script(
+            f"const useAlt=localStorage.{storage_key}==='{cls}'||"
+            f"(!('{storage_key}' in localStorage)&&window.matchMedia('{system_match}').matches);"
+            f"document.documentElement.setAttribute('data-theme',useAlt?'{cls}':'{default_theme}');"
+        )
+    else:
+        return Script(
+            f"document.documentElement.classList.toggle('{cls}',"
+            f"localStorage.{storage_key}==='{cls}'||"
+            f"(!('{storage_key}' in localStorage)&&window.matchMedia('{system_match}').matches));"
+        )
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="test_sandbox/static"), name="static")
+
+
+hdrs=(        
         fouc_script(use_data_theme=True),
-        styles,        
-        position_handler(),  # Enhanced handler is now built-in
-    ),
-    htmlkw=dict(lang="en", dir="ltr"),
-    bodykw=dict(cls="min-h-screen bg-background text-foreground"),
-    static_path="test_sandbox/",
-)
+        styles,
+        Script(src=f"https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js", type="module"),
+        # Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/all.min.js', defer=''),
+        # position_handler(),  # Enhanced handler is now built-in
+    )
+htmlkw=dict(lang="en", dir="ltr")
+bodykw=dict(cls="min-h-screen bg-background text-foreground")
+page = create_template(hdrs=hdrs, htmlkw=htmlkw, bodykw=bodykw)
 
-
-@rt("/")
+@app.get("/")
+@page(title="RustyStarUi Component Test", wrap_in=HTMLResponse)
 def index():
     return Div(
         # Theme toggle in top-right corner
-        Div(ThemeToggle(), cls="absolute top-4 right-4"),
+        Div(ThemeToggle(), cls="absolute top-4 right-4"),        
         # Main content container
         Div(
             H1("StarUI Component Test", cls="text-4xl font-bold mb-8"),
+            HTMLLabel(
+                HTMLInput(type='checkbox', name='switch', role='switch', cls='input'),
+                'Airplane Mode',
+                cls='label'
+            ),
+
             # Button variants
             Div(
                 H2("Buttons", cls="text-2xl font-semibold mb-4"),
@@ -52,7 +91,7 @@ def index():
                     Badge("Secondary", variant="secondary"),
                     Badge("Destructive", variant="destructive"),
                     Badge("Outline", variant="outline"),
-                    Badge("Clickable", ds_on_click("alert('Badge clicked!')").attrs),
+                    Badge("Clickable", on_click="alert('Badge clicked!')", cls="cursor-pointer"),
                     cls="flex flex-wrap gap-2 mb-8",
                 ),
             ),
@@ -63,7 +102,7 @@ def index():
                     Div(
                         Label("Text Input", for_="text-input"),
                         Input(
-                            **ds_bind("name").attrs,
+                            bind="name",
                             id="text-input",
                             placeholder="Enter text...",
                         ),
@@ -72,7 +111,7 @@ def index():
                     Div(
                         Label("Email Input", for_="email-input"),
                         Input(
-                            ds_bind("email").attrs,
+                            bind="email",
                             id="email-input",
                             type="email",
                             placeholder="email@example.com",
@@ -152,6 +191,7 @@ def index():
                 ),
                 cls="mb-8",
             ),
+    
             # Tabs example - Default variant (boxed style)
             Div(
                 H2("Tabs - Default Variant", cls="text-2xl font-semibold mb-4"),
@@ -256,43 +296,44 @@ def index():
                 ),
             ),
             # Sheet example
-            Div(
-                H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
-                Sheet(
-                    SheetTrigger("Open Sheet", signal="demo_sheet"),
-                    SheetContent(
-                        SheetHeader(
-                            SheetTitle("Sheet Title", signal="demo_sheet"),
-                            SheetDescription(
-                                "This is a sheet description.", signal="demo_sheet"
-                            ),
-                        ),
-                        Div(
-                            P(
-                                "Sheet content goes here. Press ESC or click outside to close."
-                            ),
-                            Input(placeholder="Type something..."),
-                            cls="p-6 space-y-4",
-                        ),
-                        SheetFooter(
-                            Button(
-                                "Cancel",
-                                ds_on_click("$demo_sheet_open = false"),
-                                variant="outline",
-                            ),
-                            Button("Save Changes"),
-                        ),
-                        signal="demo_sheet",
-                        side="right",
-                        size="md",
-                    ),
-                    signal="demo_sheet",
-                    side="right",
-                    size="md",
-                    modal=True,
-                ),
-                cls="mb-8",
-            ),
+            # Div(
+            #     H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
+            #     Sheet(
+            #         SheetTrigger("Open Sheet", signal="demo_sheet"),
+            #         SheetContent(
+            #             SheetHeader(
+            #                 SheetTitle("Sheet Title", signal="demo_sheet"),
+            #                 SheetDescription(
+            #                     "This is a sheet description.", signal="demo_sheet"
+            #                 ),
+            #             ),
+            #             Div(
+            #                 P(
+            #                     "Sheet content goes here. Press ESC or click outside to close."
+            #                 ),
+            #                 Input(placeholder="Type something..."),
+            #                 cls="p-6 space-y-4",
+            #             ),
+            #             SheetFooter(
+            #                 Button(
+            #                     "Cancel",
+            #                     on_click="$demo_sheet_open = false",
+            #                     variant="outline",
+            #                 ),
+            #                 Button("Save Changes"),
+            #             ),
+            #             signal="demo_sheet",
+            #             side="right",
+            #             size="md",
+            #         ),
+            #         signal="demo_sheet",
+            #         side="right",
+            #         size="md",
+            #         modal=True,
+            #     ),
+            #     cls="mb-8",
+            # ),
+            
             # Dialog example
             Div(
                 H2("Dialog (Modal)", cls="text-2xl font-semibold mb-4"),
@@ -530,6 +571,7 @@ def index():
             Div(
                 H2("Switches", cls="text-2xl font-semibold mb-4"),
                 Div(
+                    Label("Switches", Input(type="checkbox", name="switch", role="switch", cls="input"),cls="label"),
                     SwitchWithLabel(
                         "Enable notifications",
                         signal="switch_notifications",
@@ -787,11 +829,11 @@ def index():
                         ),
                         signal="radio_dropdown",
                     ),
-                    ds_signals({
+                    signals= Signals({
                         "statusBar": True,
                         "activityBar": False,
                         "panel": False,
-                        "position": value("bottom"),
+                        "position": "bottom",
                     }),
                     cls="flex flex-wrap gap-4 mb-8",
                 ),
@@ -1069,27 +1111,27 @@ def index():
                         ),
                         Accordion(
                             AccordionItem(
-                                AccordionTrigger("Is it accessible?", value="item-1"),
                                 AccordionContent(
                                     "Yes. It adheres to the WAI-ARIA design pattern.",
                                     value="item-1",
                                 ),
+                                summary="Is it accessible?",
                                 value="item-1",
                             ),
                             AccordionItem(
-                                AccordionTrigger("Is it styled?", value="item-2"),
                                 AccordionContent(
                                     "Yes. It comes with default styles that matches the other components' aesthetic.",
                                     value="item-2",
                                 ),
+                                summary="Is it styled?",
                                 value="item-2",
                             ),
-                            AccordionItem(
-                                AccordionTrigger("Is it animated?", value="item-3"),
+                            AccordionItem(                              
                                 AccordionContent(
                                     "Yes. It's animated by default, but you can disable it if you prefer.",
                                     value="item-3",
                                 ),
+                                summary="Is it animated?",
                                 value="item-3",
                             ),
                             type="single",
@@ -1105,9 +1147,7 @@ def index():
                         P("Multiple selection:", cls="text-sm font-medium mb-2"),
                         Accordion(
                             AccordionItem(
-                                AccordionTrigger(
-                                    "Getting Started", value="getting-started"
-                                ),
+                                
                                 AccordionContent(
                                     Div(
                                         P(
@@ -1123,10 +1163,10 @@ def index():
                                     ),
                                     value="getting-started",
                                 ),
+                                summary="Getting Started",
                                 value="getting-started",
                             ),
                             AccordionItem(
-                                AccordionTrigger("Features", value="features"),
                                 AccordionContent(
                                     Div(
                                         P(
@@ -1143,10 +1183,10 @@ def index():
                                     ),
                                     value="features",
                                 ),
+                                summary="Features",
                                 value="features",
                             ),
                             AccordionItem(
-                                AccordionTrigger("Pricing", value="pricing"),
                                 AccordionContent(
                                     Div(
                                         P(
@@ -1170,6 +1210,7 @@ def index():
                                     ),
                                     value="pricing",
                                 ),
+                                summary="Pricing",
                                 value="pricing",
                             ),
                             type="multiple",
@@ -1394,8 +1435,8 @@ def index():
                         H3("Loading State Toggle", cls="text-lg font-medium mb-2"),
                         Div(
                             Button(
-                                ds_text("$loading ? 'Stop Loading' : 'Start Loading'"),
-                                ds_on_click("$loading = !$loading"),
+                                text="$loading ? 'Stop Loading' : 'Start Loading'",
+                                on_click="$loading = !$loading",
                                 variant="outline",
                                 cls="mb-4",
                             ),
@@ -1404,7 +1445,7 @@ def index():
                                 Skeleton(cls="h-6 w-48 mb-2"),
                                 Skeleton(cls="h-4 w-64 mb-4"),
                                 Skeleton(cls="h-20 w-full"),
-                                ds_show("$loading"),
+                                show="$loading",
                             ),
                             Div(
                                 H4("Content Loaded!", cls="text-lg font-semibold mb-2"),
@@ -1413,9 +1454,9 @@ def index():
                                     "This is the actual content that would load.",
                                     cls="p-4 bg-muted rounded-lg",
                                 ),
-                                ds_show("!$loading"),
+                                show="!$loading",
                             ),
-                            ds_signals(loading=True),
+                            signals= Signals(loading=True),
                             cls="p-4 border rounded-lg",
                         ),
                         cls="mb-6",
@@ -1446,14 +1487,14 @@ def index():
                         Div(
                             Progress(progress_value=35, signal="demo_progress"),
                             Div(
-                                Button("Increase", ds_on_click("$demo_progress = Math.min(100, $demo_progress + 10)")),
-                                Button("Decrease", ds_on_click("$demo_progress = Math.max(0, $demo_progress - 10)")),
-                                Button("Reset", ds_on_click("$demo_progress = 0")),
+                                Button("Increase", on_click="$demo_progress = Math.min(100, $demo_progress + 10)"),
+                                Button("Decrease", on_click="$demo_progress = Math.max(0, $demo_progress - 10)"),
+                                Button("Reset", on_click="$demo_progress = 0"),
                                 cls="flex gap-2 mt-4",
                             ),
                             P(
                                 Span("Current: "),
-                                Span(ds_text("$demo_progress"), cls="font-bold"),
+                                Span(text="$demo_progress", cls="font-bold"),
                                 Span("%"),
                                 cls="mt-2 text-sm text-muted-foreground",
                             ),
@@ -1468,7 +1509,7 @@ def index():
                             Div(
                                 Button(
                                     "Start", 
-                                    ds_on_click("""
+                                    on_click="""
                                         if (!window.autoProgressInterval) {
                                             $auto_progress = 0;
                                             window.autoProgressInterval = setInterval(() => {
@@ -1480,35 +1521,35 @@ def index():
                                                 }
                                             }, 100);
                                         }
-                                    """),
+                                    """ ,
                                     variant="default"
                                 ),
                                 Button(
                                     "Stop", 
-                                    ds_on_click("""
+                                    on_click="""
                                         if (window.autoProgressInterval) {
                                             clearInterval(window.autoProgressInterval);
                                             window.autoProgressInterval = null;
                                         }
-                                    """),
+                                    """,
                                     variant="destructive"
                                 ),
                                 Button(
                                     "Reset", 
-                                    ds_on_click("""
+                                    on_click="""
                                         if (window.autoProgressInterval) {
                                             clearInterval(window.autoProgressInterval);
                                             window.autoProgressInterval = null;
                                         }
                                         $auto_progress = 0;
-                                    """),
+                                    """,
                                     variant="secondary"
                                 ),
                                 cls="flex gap-2 mt-4",
                             ),
                             P(
                                 Span("Progress: "),
-                                Span(ds_text("$auto_progress"), cls="font-bold"),
+                                Span(text="$auto_progress", cls="font-bold"),
                                 Span("%"),
                                 cls="mt-2 text-sm text-muted-foreground",
                             ),
@@ -1534,16 +1575,16 @@ def index():
                 Div(
                     Div(
                         Span("Count: ", cls="font-semibold"),
-                        Span(ds_text("$count")),
+                        Span(text="$count"),
                         cls="text-xl mb-4",
                     ),
                     Div(
-                        Button("-", ds_on_click("$count--"), variant="outline"),
-                        Button("Reset", ds_on_click("$count = 0"), variant="secondary"),
-                        Button("+", ds_on_click("$count++"), variant="outline"),
+                        Button("-", on_click="$count--", variant="outline"),
+                        Button("Reset", on_click="$count = 0", variant="secondary"),
+                        Button("+", on_click="$count++", variant="outline"),
                         cls="flex gap-2",
                     ),
-                    ds_signals(count=0),
+                    signals= Signals(count=0),
                     cls="p-4 border rounded-lg mb-8",
                 ),
             ),
@@ -1698,11 +1739,11 @@ def index():
                     Div(
                         Label("Name", for_="name"),
                         Input(
-                            ds_bind("name"), id="name", placeholder="Enter your name"
+                            bind="name", id="name", placeholder="Enter your name"
                         ),
                         Span(
                             "Name is required",
-                            ds_show("$submitted && !$name"),
+                            show="$submitted && !$name",
                             cls="text-sm text-destructive",
                         ),
                         cls="space-y-2",
@@ -1710,38 +1751,34 @@ def index():
                     Div(
                         Label("Email", for_="email"),
                         Input(
-                            ds_bind("email"),
+                            bind="email",
                             id="email",
                             type="email",
                             placeholder="email@example.com",
                         ),
                         Span(
                             "Invalid email",
-                            ds_show("$email && !$email.includes('@')"),
+                            show="$email && !$email.includes('@')",
                             cls="text-sm text-destructive",
                         ),
                         cls="space-y-2",
                     ),
                     Button(
                         "Submit",
-                        ds_on_click("$submitted = true"),
-                        ds_class(
-                            opacity_50="!$name || !$email || !$email.includes('@')"
-                        ),
+                        on_click="$submitted = true",
+                        data_class={
+                            "opacity-50": "!$name || !$email || !$email.includes('@')"
+                        },
                         type="submit",
                     ),
-                    ds_signals(name=value(""), email=value(""), submitted=False),
-                    ds_on_submit(
-                        "event.preventDefault(); if($name && $email.includes('@')) alert('Form submitted!')"
-                    ),
+                    signals= Signals(name="", email="", submitted=False),
+                    on_submit="event.preventDefault(); if($name && $email.includes('@')) alert('Form submitted!')",
                     cls="space-y-4 max-w-md",
                 ),
             ),
+            
             cls="container mx-auto p-8",
         ),
         cls="min-h-screen relative",
     )
 
-
-if __name__ == "__main__":
-    serve(port=5004)

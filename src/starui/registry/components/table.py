@@ -1,7 +1,7 @@
 from typing import Any
 
-from starhtml import (
-    FT,
+from rusty_tags import (
+    HtmlString,
     Caption,
     Div,
     Tbody,
@@ -11,7 +11,7 @@ from starhtml import (
     Thead,
     Tr,
 )
-from starhtml import (
+from rusty_tags import (
     Table as HTMLTable,
 )
 
@@ -23,7 +23,7 @@ def Table(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn("w-full caption-bottom text-sm", class_name, cls)
     return Div(
         HTMLTable(*children, data_slot="table", cls=classes, **attrs),
@@ -37,7 +37,7 @@ def TableHeader(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn("[&_tr]:border-b [&_tr]:border-input", class_name, cls)
     return Thead(*children, data_slot="table-header", cls=classes, **attrs)
 
@@ -47,7 +47,7 @@ def TableBody(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn("[&_tr:last-child]:border-0", class_name, cls)
     return Tbody(*children, data_slot="table-body", cls=classes, **attrs)
 
@@ -57,7 +57,7 @@ def TableFooter(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn(
         "bg-muted/50 border-t border-input font-medium [&>tr]:last:border-b-0",
         class_name,
@@ -72,7 +72,7 @@ def TableRow(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn(
         "border-b border-input transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         class_name,
@@ -90,7 +90,7 @@ def TableHead(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn(
         "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         class_name,
@@ -104,7 +104,7 @@ def TableCell(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn(
         "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         class_name,
@@ -118,6 +118,6 @@ def TableCaption(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn("mt-4 text-sm text-muted-foreground", class_name, cls)
     return Caption(*children, data_slot="table-caption", cls=classes, **attrs)

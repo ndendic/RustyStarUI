@@ -1,7 +1,8 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div, Img
+from rusty_tags import Div, HtmlString, Img
+from rusty_tags.datastar import Signals
 from starhtml.datastar import ds_on, ds_show, ds_signals
 
 from .utils import cn
@@ -12,7 +13,7 @@ def Avatar(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     """Avatar container component."""
     return Div(
         *children,
@@ -33,7 +34,7 @@ def AvatarImage(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     """Avatar image component."""
     return Img(
         src=src,
@@ -50,7 +51,7 @@ def AvatarFallback(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     """Avatar fallback component."""
     has_bg = any("bg-" in str(c) for c in [class_name, cls])
 
@@ -74,7 +75,7 @@ def AvatarWithFallback(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     """Avatar with automatic fallback on image load error."""
     if not src:
         return Avatar(
@@ -86,10 +87,9 @@ def AvatarWithFallback(
     signal = f"avatar_{str(uuid4())[:8]}_error"
 
     return Avatar(
-        ds_signals(**{signal: False}),
         Img(
-            ds_show(f"!${signal}"),
-            ds_on("error", f"${signal} = true"),
+            show=f"!${signal}",
+            on_error=f"${signal} = true",
             src=src,
             alt=alt,
             loading="lazy",
@@ -98,10 +98,11 @@ def AvatarWithFallback(
         ),
         Div(
             fallback,
-            ds_show(f"${signal}"),
+            show=f"${signal}",
             cls="flex size-full items-center justify-center rounded-full bg-muted",
             data_slot="avatar-fallback",
         ),
+        signals=Signals(**{signal: False}),
         cls=cn(class_name, cls),
         **attrs,
     )

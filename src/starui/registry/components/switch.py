@@ -1,12 +1,12 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div
-from starhtml import Button as HTMLButton
-from starhtml import Label as HTMLLabel
-from starhtml import P as HTMLP
-from starhtml import Span as HTMLSpan
-from starhtml.datastar import ds_class, ds_on_click, ds_signals
+from rusty_tags import Div, HtmlString
+from rusty_tags import Input as HTMLInput
+from rusty_tags import Label as HTMLLabel
+from rusty_tags import P as HTMLP
+from rusty_tags import Span as HTMLSpan
+from rusty_tags.datastar import Signals
 
 from .utils import cn
 
@@ -19,32 +19,23 @@ def Switch(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
-    signal = signal or f"switch_{str(uuid4())[:8]}"
+) -> HtmlString:
+    signal = signal or f'switch_{str(uuid4())[:8]}'
     switch_id = attrs.pop("id", f"switch_{str(uuid4())[:8]}")
 
     return Div(
-        HTMLButton(
+        HTMLInput(
             HTMLSpan(
-                ds_class(
-                    **{
-                        "translate-x-3.5": f"${signal}",
-                        "translate-x-0": f"!${signal}",
-                        "dark:bg-primary-foreground": f"${signal}",
-                        "dark:bg-white": f"!${signal}",
-                    }
-                ),
+                data_class=f"{{'translate-x-3.5': ${signal},'translate-x-0': !${signal},'dark:bg-primary-foreground': ${signal},'dark:bg-white': !${signal},}}",
                 cls="pointer-events-none block size-4 rounded-full bg-white ring-0 transition-transform",
                 data_slot="switch-thumb",
             ),
-            ds_on_click(f"${signal} = !${signal}"),
-            ds_class(
-                **{
-                    "bg-primary": f"${signal}",
-                    "bg-input": f"!${signal}",
-                }
-            ),
-            type="button",
+            on_click=f"${signal} = !${signal}",
+            data_class={
+                "bg-primary": f"${signal}",
+                "bg-input": f"!${signal}",
+            },
+            type="checkbox",
             role="switch",
             id=switch_id,
             disabled=disabled,
@@ -61,7 +52,7 @@ def Switch(
             ),
             **attrs,
         ),
-        ds_signals(**{signal: checked or False}),
+        signals=Signals({signal: checked or False}),
     )
 
 
@@ -78,7 +69,7 @@ def SwitchWithLabel(
     label_cls: str = "",
     switch_cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"switch_{str(uuid4())[:8]}"
     switch_id = f"switch_{str(uuid4())[:8]}"
 
@@ -86,7 +77,7 @@ def SwitchWithLabel(
         Div(
             HTMLLabel(
                 label,
-                required and HTMLSpan(" *", cls="text-destructive") or None,
+                HTMLSpan(" *", cls="text-destructive") if required else None,
                 for_=switch_id,
                 cls=cn(
                     "text-sm font-medium",

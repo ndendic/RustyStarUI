@@ -1,9 +1,9 @@
 from typing import Any, Literal
 from uuid import uuid4
 
-from starhtml import FT, Div
-from starhtml import Button as HTMLButton
-from starhtml.datastar import ds_on_click, ds_signals, value
+from rusty_tags import Button as HTMLButton
+from rusty_tags import Div, HtmlString
+from rusty_tags.datastar import Signals
 
 from .toggle import toggle_variants
 from .utils import cn
@@ -23,11 +23,11 @@ def ToggleGroup(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"toggle_group_{str(uuid4())[:8]}"
     value_signal = f"{signal}_value"
 
-    initial_value = value("") if type == "single" else value([])
+    initial_value = "" if type == "single" else []
 
     processed_children = []
     for i, child in enumerate(children):
@@ -51,7 +51,7 @@ def ToggleGroup(
 
     return Div(
         *processed_children,
-        ds_signals(**{value_signal: initial_value}),
+        signals=Signals(**{value_signal: initial_value}),
         data_slot="toggle-group",
         data_variant=variant,
         data_size=size,
@@ -80,7 +80,7 @@ def ToggleGroupItem(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     value_signal = f"{group_signal}_value"
     item_id = attrs.pop("id", f"toggle_item_{str(uuid4())[:8]}")
     aria_label = aria_label or attrs.pop("aria_label", None)
@@ -100,7 +100,7 @@ def ToggleGroupItem(
 
     return HTMLButton(
         *children,
-        ds_on_click(click_handler) if not disabled else None,
+        **(({"on_click": click_handler} if not disabled else {})),
         type="button",
         role="radio" if type == "single" else "checkbox",
         id=item_id,
@@ -137,7 +137,7 @@ def SingleToggleGroup(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return ToggleGroup(
         *children,
         type="single",
@@ -160,7 +160,7 @@ def MultipleToggleGroup(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return ToggleGroup(
         *children,
         type="multiple",

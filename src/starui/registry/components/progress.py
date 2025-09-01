@@ -3,8 +3,8 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div
-from starhtml.datastar import ds_signals, ds_style, value
+from rusty_tags import Div, HtmlString
+from rusty_tags.datastar import Signals
 
 from .utils import cn
 
@@ -16,7 +16,7 @@ def Progress(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"progress_{str(uuid4())[:8]}"
 
     initial_percentage = max(
@@ -35,12 +35,12 @@ def Progress(
     )
 
     return Div(
-        ds_signals({signal: value(initial_percentage)}),
         Div(
-            ds_style(width=f"${signal} + '%'"),
+            style_={"width": f"${signal} + '%'"},
             cls="bg-primary h-full transition-all duration-300 ease-out",
-            style=f"width: {initial_percentage}%",
+            style=f"'width: {initial_percentage}%'",
         ),
+        signals=Signals({signal: initial_percentage}),
         role="progressbar",
         aria_valuemin="0",
         aria_valuemax=str(max_value),

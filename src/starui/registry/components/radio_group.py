@@ -2,12 +2,12 @@ from itertools import count
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div
-from starhtml import Input as HTMLInput
-from starhtml import Label as HTMLLabel
-from starhtml import P as HTMLP
-from starhtml import Span as HTMLSpan
-from starhtml.datastar import ds_class, ds_on_change, ds_signals, value
+from rusty_tags import HtmlString, Div
+from rusty_tags import Input as HTMLInput
+from rusty_tags import Label as HTMLLabel
+from rusty_tags import P as HTMLP
+from rusty_tags import Span as HTMLSpan
+from rusty_tags.datastar import Signals
 
 from .utils import cn
 
@@ -23,7 +23,7 @@ def RadioGroup(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"radio_{next(_radio_group_ids)}"
     group_name = f"radio_group_{signal}"
 
@@ -34,7 +34,7 @@ def RadioGroup(
 
     return Div(
         *processed_children,
-        ds_signals({signal: value(initial_value or "")}),
+        signals=Signals({signal: initial_value or ""}),
         cls=cn("grid gap-2", class_name, cls),
         data_slot="radio-group",
         data_radio_signal=signal,
@@ -53,13 +53,13 @@ def RadioGroupItem(
     cls: str = "",
     indicator_cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     def create_item(signal, group_name, default_value=None):
         radio_id = f"radio_{str(uuid4())[:8]}"
         filtered_attrs = {k: v for k, v in attrs.items() if k != "name"}
 
         radio_input = HTMLInput(
-            ds_on_change(f"${signal} = '{value}'"),
+            on_change=f"${signal} = '{value}'",
             type="radio",
             id=radio_id,
             value=value,
@@ -73,10 +73,7 @@ def RadioGroupItem(
         visual_radio = Div(
             Div(
                 Div(cls="size-2 rounded-full bg-primary"),
-                ds_class(
-                    opacity_100=f"${signal} === '{value}'",
-                    opacity_0=f"${signal} !== '{value}'",
-                ),
+                show=f"${signal} === '{value}'",
                 cls=cn(
                     "absolute inset-0 flex items-center justify-center",
                     indicator_cls,
@@ -130,7 +127,7 @@ def RadioGroupWithLabel(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     base_id = str(uuid4())[:8]
     signal = signal or f"radio_{base_id}"
     name = name or f"radio_group_{signal}"

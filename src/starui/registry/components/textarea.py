@@ -1,11 +1,10 @@
 from typing import Any, Literal
 
-from starhtml import FT, Div
-from starhtml import Label as HTMLLabel
-from starhtml import P as HTMLP
-from starhtml import Span as HTMLSpan
-from starhtml import Textarea as HTMLTextarea
-from starhtml.datastar import ds_bind
+from rusty_tags import HtmlString, Div
+from rusty_tags import Label as HTMLLabel
+from rusty_tags import P as HTMLP
+from rusty_tags import Span as HTMLSpan
+from rusty_tags import Textarea as HTMLTextarea
 
 from .utils import cn
 
@@ -31,7 +30,7 @@ def Textarea(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     resize_classes = {
         "none": "resize-none",
         "both": "resize",
@@ -79,7 +78,7 @@ def Textarea(
     }
 
     if signal:
-        datastar_attrs = (*datastar_attrs, ds_bind(signal))
+        textarea_attrs["bind"] = signal
 
     return HTMLTextarea(*datastar_attrs, **textarea_attrs)
 
@@ -101,7 +100,7 @@ def TextareaWithLabel(
     textarea_cls: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     if not id:
         import uuid
 

@@ -1,10 +1,10 @@
 [project]
-name = "starui"
+name = "RustyStarUi"
 version = "0.1.8"
-description = "Python-first UI component library for Datastar/StarHTML applications"
+description = "Python-first UI component library for Datastar applications"
 readme = "README.md"
 requires-python = ">=3.12"
-keywords = ["ui", "components", "tailwind", "datastar", "starhtml", "fasthtml"]
+keywords = ["ui", "components", "tailwind", "datastar"]
 authors = [
     {name = "firefly"}
 ]
@@ -25,6 +25,7 @@ dependencies = [
     "rich>=13.7.0,<14.0.0",
     "starhtml==0.1.15",
     "websockets>=12.0.0,<13.0.0",
+    "rusty-tags>=0.5.1",
 ]
 
 # Optional dependencies for development - using dependency-groups below for UV compatibility
@@ -132,4 +133,5 @@ dev = [
     "ruff>=0.12.8",
     "build>=1.0.0",
     "twine>=4.0.0",
+    "fastapi>=0.116.1",
 ]

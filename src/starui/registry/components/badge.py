@@ -1,7 +1,7 @@
 from typing import Literal
 
-from starhtml import FT, A, Span
-from starhtml import Button as HTMLButton
+from rusty_tags import A, HtmlString, Span
+from rusty_tags import Button as HTMLButton
 
 from .utils import cn, cva
 
@@ -32,7 +32,7 @@ def Badge(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     classes = cn(badge_variants(variant=variant), class_name, cls)
 
     if href:

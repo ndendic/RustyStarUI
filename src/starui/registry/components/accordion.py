@@ -1,10 +1,10 @@
 from typing import Any, Literal
 from uuid import uuid4
 
-from starhtml import FT, Button, Div, Icon
-from starhtml.datastar import ds_on_click, ds_show, ds_signals, value
+from rusty_tags import Button, Div, HtmlString, Section, Details, Summary, Svg, Path
+from rusty_tags.datastar import Signals
 
-from .utils import cn
+from .utils import Icon, cn
 
 AccordionType = Literal["single", "multiple"]
 
@@ -15,53 +15,69 @@ def Accordion(
     collapsible: bool = False,
     default_value: str | list[str] | None = None,
     signal: str = "",
-    class_name: str = "",
-    cls: str = "",
+    cls: str = "accordion",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"accordion_{uuid4().hex[:8]}"
 
     match (type, default_value):
         case ("single", _):
-            initial_value = value(default_value or "")
+            initial_value = default_value or ""
         case ("multiple", None):
-            initial_value = value([])
+            initial_value = []
         case ("multiple", str() as val):
-            initial_value = value([val])
+            initial_value = [val]
         case ("multiple", val):
-            initial_value = value(val)
+            initial_value = val
 
     processed_children = [
         child(signal, type, collapsible) if callable(child) else child
         for child in children
     ]
 
-    return Div(
+    return Section(
         *processed_children,
-        ds_signals(**{signal: initial_value}),
+        signals=Signals(**{signal: initial_value}),
         data_type=type,
         data_collapsible=str(collapsible).lower(),
-        cls=cn("w-full", class_name, cls),
+        cls=cls,
         **attrs,
     )
 
 
 def AccordionItem(
     *children: Any,
+    summary: str | Any,
     value: str,
-    class_name: str = "",
-    cls: str = "",
+    cls: str = "group border-b last:border-b-0",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     def create_item(signal, type="single", collapsible=False):
         processed_children = [
             child(signal, type, collapsible, value) if callable(child) else child
             for child in children
         ]
-        return Div(
+        return Details(
+            Summary(
+                summary,
+                Svg(
+                    Path(d='m6 9 6 6 6-6'),
+                    xmlns='http://www.w3.org/2000/svg',
+                    width='24',
+                    height='24',
+                    viewbox='0 0 24 24',
+                    fill='none',
+                    stroke='currentColor',
+                    stroke_width='2',
+                    stroke_linecap='round',
+                    stroke_linejoin='round',
+                    cls='text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200 group-open:rotate-180'
+                ),
+                cls='flex flex-1 items-start justify-between gap-4 py-4 text-left text-sm font-medium hover:underline'
+            ),
             *processed_children,
             data_value=value,
-            cls=cn("border-b", class_name, cls),
+            cls=cls,
             **attrs,
         )
 
@@ -73,7 +89,7 @@ def AccordionTrigger(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     def create_trigger(signal, type="single", collapsible=False, item_value=None):
         if not item_value:
             raise ValueError("AccordionTrigger must be used inside AccordionItem")
@@ -95,25 +111,12 @@ def AccordionTrigger(
             )
             is_open_expr = f"${signal}.includes('{item_value}')"
 
-        return Div(
-            Button(
-                *children,
-                Icon(
-                    "lucide:chevron-down",
-                    cls="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-                    data_attr_style=f"({is_open_expr}) ? 'transform: rotate(180deg)' : 'transform: rotate(0deg)'",
-                ),
-                ds_on_click(click_expr),
-                type="button",
-                cls=cn(
-                    "flex w-full flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline text-left",
-                    class_name,
-                    cls,
-                ),
+        return Details(
+                Summary(*children),
+                on_click=click_expr,
+                cls="group border-b last:border-b-0",
                 **attrs,
-            ),
-            cls="flex",
-        )
+            )
 
     return create_trigger
 
@@ -123,7 +126,7 @@ def AccordionContent(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     def create_content(signal, type="single", collapsible=False, item_value=None):
         if not item_value:
             raise ValueError("AccordionContent must be used inside AccordionItem")
@@ -134,12 +137,12 @@ def AccordionContent(
             else f"${signal}.includes('{item_value}')"
         )
 
-        return Div(
+        return Summary(
             Div(
                 *children,
                 cls=cn("pb-4 pt-0", class_name),
             ),
-            ds_show(show_expr),
+            show=show_expr,
             cls=cn("overflow-hidden text-sm", cls),
             **attrs,
         )

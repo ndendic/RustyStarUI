@@ -1,8 +1,8 @@
 from typing import Literal
 
-from starhtml import FT, Div, P, Span
-from starhtml import H2 as HTMLH2
-from starhtml.datastar import ds_effect, ds_on_click, ds_on_keydown, ds_show, ds_signals
+from rusty_tags import HtmlString, Div, P, Span
+from rusty_tags import H2 as HTMLH2
+from rusty_tags.datastar import Signals
 
 from .utils import cn
 
@@ -18,22 +18,22 @@ def Sheet(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     signal_open = f"{signal}_open"
 
     scroll_lock = (
-        Div(ds_effect(f"document.body.style.overflow = ${signal_open} ? 'hidden' : ''"))
+        Div(effect=f"document.body.style.overflow = ${signal_open} ? 'hidden' : ''")
         if modal
         else None
     )
 
     return Div(
         *children,
-        ds_signals(**{signal_open: default_open}),
-        ds_on_keydown(f"evt.key === 'Escape' && (${signal_open} = false)", "window")
+        scroll_lock,
+        signals=Signals(**{signal_open: default_open}),
+        on_keydown=(f"evt.key === 'Escape' && (${signal_open} = false)", "window")
         if modal
         else None,
-        scroll_lock,
         data_sheet_root=signal,
         data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
         cls=cn("relative", class_name, cls),
@@ -48,7 +48,7 @@ def SheetTrigger(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     from .button import Button
 
     signal_open = f"{signal}_open"
@@ -56,7 +56,7 @@ def SheetTrigger(
 
     return Button(
         *children,
-        ds_on_click(f"${signal_open} = true"),
+        on_click=f"${signal_open} = true",
         id=f"{signal}-trigger",
         aria_expanded=f"${{{signal_open}}}",
         aria_haspopup="dialog",
@@ -78,7 +78,7 @@ def SheetContent(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     signal_open = f"{signal}_open"
     content_id = f"{signal}-content"
 
@@ -120,8 +120,8 @@ def SheetContent(
 
     overlay = (
         Div(
-            ds_show(f"${signal_open}"),
-            ds_on_click(f"${signal_open} = false"),
+            show=f"${signal_open}",
+            on_click=f"${signal_open} = false",
             cls="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-in fade-in-0",
             data_sheet_role="overlay",
         )
@@ -132,7 +132,7 @@ def SheetContent(
     content_panel = Div(
         close_button or None,
         *children,
-        ds_show(f"${signal_open}"),
+        show=f"${signal_open}",
         id=content_id,
         role="dialog",
         aria_modal="true" if modal else None,
@@ -165,14 +165,14 @@ def SheetClose(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     from .button import Button
 
     signal_open = f"{signal}_open"
 
     return Button(
         *children,
-        ds_on_click(f"${signal_open} = false"),
+        on_click=f"${signal_open} = false",
         data_sheet_role="close",
         variant=variant,
         size=size,
@@ -181,7 +181,7 @@ def SheetClose(
     )
 
 
-def SheetHeader(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
+def SheetHeader(*children, class_name: str = "", cls: str = "", **attrs) -> HtmlString:
     return Div(
         *children,
         data_sheet_role="header",
@@ -190,7 +190,7 @@ def SheetHeader(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
     )
 
 
-def SheetFooter(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
+def SheetFooter(*children, class_name: str = "", cls: str = "", **attrs) -> HtmlString:
     return Div(
         *children,
         data_sheet_role="footer",
@@ -205,7 +205,7 @@ def SheetFooter(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
 
 def SheetTitle(
     *children, signal: str, class_name: str = "", cls: str = "", **attrs
-) -> FT:
+) -> HtmlString:
     content_id = f"{signal}-content"
 
     return HTMLH2(
@@ -219,7 +219,7 @@ def SheetTitle(
 
 def SheetDescription(
     *children, signal: str, class_name: str = "", cls: str = "", **attrs
-) -> FT:
+) -> HtmlString:
     content_id = f"{signal}-content"
 
     return P(

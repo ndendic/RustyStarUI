@@ -1,17 +1,16 @@
 from typing import Any, Literal
 from uuid import uuid4
 
-from starhtml import FT, Div, Hr, Icon, Span
-from starhtml import Button as HTMLButton
-from starhtml.datastar import ds_on_click, ds_position, ds_ref, ds_show
+from rusty_tags import HtmlString, Div, Hr, Span
+from rusty_tags import Button as HTMLButton
 
 from .button import Button
-from .utils import cn
+from .utils import Icon, cn
 
 
 def DropdownMenu(
     *children, signal: str | None = None, cls: str = "", **attrs: Any
-) -> FT:
+) -> HtmlString:
     signal = signal or f"dropdown_{uuid4().hex[:8]}"
     return Div(
         *[child(signal) if callable(child) else child for child in children],
@@ -48,7 +47,7 @@ def DropdownMenuTrigger(
 
         return Button(
             *children,
-            ds_ref(f"{signal}Trigger"),
+            ref=f"{signal}Trigger",
             variant=variant,
             size=size,
             popovertarget=f"{signal}-content",
@@ -76,15 +75,15 @@ def DropdownMenuContent(
 
         return Div(
             *[child(signal) if callable(child) else child for child in children],
-            ds_ref(f"{signal}Content"),
-            ds_position(
-                anchor=f"{signal}-trigger",
-                placement=placement,
-                offset=side_offset,
-                flip=True,
-                shift=True,
-                hide=True,
-            ),
+            ref=f"{signal}Content",
+            position={
+                "anchor": f"{signal}-trigger",
+                "placement": placement,
+                "offset": side_offset,
+                "flip": True,
+                "shift": True,
+                "hide": True,
+            },
             popover="auto",
             id=f"{signal}-content",
             role="menu",
@@ -125,7 +124,7 @@ def DropdownMenuItem(
 
         return HTMLButton(
             *children,
-            *([ds_on_click("; ".join(handlers))] if handlers and not disabled else []),
+            **({"on_click": "; ".join(handlers)} if handlers and not disabled else {}),
             cls=cn(
                 "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5",
                 "text-sm outline-none transition-colors",
@@ -166,11 +165,11 @@ def DropdownMenuCheckboxItem(
         return HTMLButton(
             Span(
                 Icon("lucide:check"),
-                ds_show(f"${checked_signal}"),
+                show=f"${checked_signal}",
                 cls="absolute left-2 flex size-3.5 items-center justify-center",
             ),
             *children,
-            *([ds_on_click(h) for h in handlers] if handlers else []),
+            **(({"on_click": handlers[0]} if handlers else {})),
             cls=cn(
                 "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm",
                 "py-1.5 pr-2 pl-8 text-sm outline-none transition-colors",
@@ -227,11 +226,11 @@ def DropdownMenuRadioItem(
         return HTMLButton(
             Span(
                 Icon("lucide:circle", cls="size-2 fill-current"),
-                ds_show(f"${value_signal} === '{value}'"),
+                show=f"${value_signal} === '{value}'",
                 cls="absolute left-2 flex size-3.5 items-center justify-center",
             ),
             *children,
-            *([ds_on_click(h) for h in handlers] if handlers else []),
+            **(({"on_click": handlers[0]} if handlers else {})),
             cls=cn(
                 "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm",
                 "py-1.5 pr-2 pl-8 text-sm outline-none transition-colors",
@@ -279,7 +278,7 @@ def DropdownMenuShortcut(
     cls: str = "",
     class_name: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Span(
         *children,
         cls=cn(
@@ -296,7 +295,7 @@ def DropdownMenuGroup(
     cls: str = "",
     class_name: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         role="group",
@@ -311,7 +310,7 @@ def DropdownMenuSub(
     cls: str = "",
     class_name: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"dropdown_sub_{uuid4().hex[:8]}"
     return Div(
         *children,
@@ -327,11 +326,11 @@ def DropdownMenuSubTrigger(
     cls: str = "",
     class_name: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return HTMLButton(
         *children,
         Icon("lucide:chevron-right", cls="ml-auto size-4"),
-        ds_on_click(f"${signal}_open = !${signal}_open"),
+        on_click=f"${signal}_open = !${signal}_open",
         cls=cn(
             "flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5",
             "text-sm outline-none transition-colors",
@@ -357,10 +356,10 @@ def DropdownMenuSubContent(
     cls: str = "",
     class_name: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
-        ds_show(f"${signal}_open"),
+        show=f"${signal}_open",
         cls=cn(
             "absolute left-full top-0 ml-1 z-50",
             "min-w-[8rem] overflow-hidden rounded-md border border-input",

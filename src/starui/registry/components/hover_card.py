@@ -1,15 +1,8 @@
 from typing import Literal
 from uuid import uuid4
 
-from starhtml import Div
-from starhtml.datastar import (
-    ds_on_mouseenter,
-    ds_on_mouseleave,
-    ds_position,
-    ds_ref,
-    ds_show,
-    ds_signals,
-)
+from rusty_tags import Div, HtmlString
+from rusty_tags.datastar import Signals
 
 from .utils import cn
 
@@ -24,7 +17,7 @@ def HoverCard(
     signal = signal or f"hover_card_{uuid4().hex[:8]}"
     return Div(
         *children,
-        ds_signals({f"{signal}_open": default_open}),
+        signals=Signals({f"{signal}_open": default_open}),
         cls=cn("relative inline-block", cls),
         **attrs,
     )
@@ -42,19 +35,19 @@ def HoverCardTrigger(
 
     return Div(
         *children,
-        ds_ref(f"{signal}Trigger"),
-        ds_on_mouseenter(f"""
+        ref=f"{signal}Trigger",
+        on_mouseenter=f"""
             clearTimeout(window.hoverTimer_{signal});
             window.hoverTimer_{signal} = setTimeout(() => {{
                 ${signal}_open = true;
             }}, {hover_delay});
-        """),
-        ds_on_mouseleave(f"""
+        """,
+        on_mouseleave=f"""
             clearTimeout(window.hoverTimer_{signal});
             window.hoverTimer_{signal} = setTimeout(() => {{
                 ${signal}_open = false;
             }}, {hide_delay});
-        """),
+        """,
         aria_expanded=f"${signal}_open",
         aria_haspopup="dialog",
         aria_describedby=f"{signal}-content",
@@ -78,25 +71,23 @@ def HoverCardContent(
 
     return Div(
         *children,
-        ds_ref(f"{signal}Content"),
-        ds_show(f"${signal}_open"),
-        ds_position(
-            anchor=f"{signal}-trigger",
-            placement=placement,
-            offset=8,
-            flip=True,
-            shift=True,
-            hide=True,
-        ),
-        ds_on_mouseenter(
-            f"clearTimeout(window.hoverTimer_{signal}); ${signal}_open = true;"
-        ),
-        ds_on_mouseleave(f"""
+        ref=f"{signal}Content",
+        show=f"${signal}_open",
+        position={
+            "anchor": f"{signal}-trigger",
+            "placement": placement,
+            "offset": 8,
+            "flip": True,
+            "shift": True,
+            "hide": True,
+        },
+        on_mouseenter=f"clearTimeout(window.hoverTimer_{signal}); ${signal}_open = true;",
+        on_mouseleave=f"""
             clearTimeout(window.hoverTimer_{signal});
             window.hoverTimer_{signal} = setTimeout(() => {{
                 ${signal}_open = false;
             }}, {hide_delay});
-        """),
+        """,
         id=f"{signal}-content",
         role="dialog",
         aria_labelledby=f"{signal}-trigger",

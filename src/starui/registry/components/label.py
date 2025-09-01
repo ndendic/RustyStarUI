@@ -1,5 +1,5 @@
-from starhtml import FT
-from starhtml import Label as HtmlLabel
+from rusty_tags import HtmlString
+from rusty_tags import Label as HtmlLabel
 
 from .utils import cn
 
@@ -9,7 +9,7 @@ def Label(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     return HtmlLabel(
         *children,
         data_slot="label",

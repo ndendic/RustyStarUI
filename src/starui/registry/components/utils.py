@@ -1,6 +1,12 @@
 from collections.abc import Callable
 from typing import Any
 
+from rusty_tags import CustomTag, HtmlString
+
+
+def Icon(icon: str, **attrs) -> HtmlString:
+    """Iconify icon element. Usage: Icon("lucide:home", cls="h-4 w-4")"""
+    return CustomTag("iconify-icon", icon=icon, **attrs)
 
 def cn(*classes: Any) -> str:
     result_classes: list[str] = []

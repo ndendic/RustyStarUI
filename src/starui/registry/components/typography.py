@@ -1,22 +1,22 @@
 from typing import Literal
 
-from starhtml import FT, Div, Ol, Ul
-from starhtml import H1 as HTMLH1
-from starhtml import H2 as HTMLH2
-from starhtml import H3 as HTMLH3
-from starhtml import H4 as HTMLH4
-from starhtml import H5 as HTMLH5
-from starhtml import H6 as HTMLH6
-from starhtml import Blockquote as HTMLBlockquote
-from starhtml import Code as HTMLCode
-from starhtml import Em as HTMLEm
-from starhtml import Figcaption as HTMLFigcaption
-from starhtml import Figure as HTMLFigure
-from starhtml import Hr as HTMLHr
-from starhtml import Kbd as HTMLKbd
-from starhtml import Mark as HTMLMark
-from starhtml import P as HTMLP
-from starhtml import Strong as HTMLStrong
+from rusty_tags import HtmlString, Div, Ol, Ul
+from rusty_tags import H1 as HTMLH1
+from rusty_tags import H2 as HTMLH2
+from rusty_tags import H3 as HTMLH3
+from rusty_tags import H4 as HTMLH4
+from rusty_tags import H5 as HTMLH5
+from rusty_tags import H6 as HTMLH6
+from rusty_tags import Blockquote as HTMLBlockquote
+from rusty_tags import Code as HTMLCode
+from rusty_tags import Em as HTMLEm
+from rusty_tags import Figcaption as HTMLFigcaption
+from rusty_tags import Figure as HTMLFigure
+from rusty_tags import Hr as HTMLHr
+from rusty_tags import Kbd as HTMLKbd
+from rusty_tags import Mark as HTMLMark
+from rusty_tags import P as HTMLP
+from rusty_tags import Strong as HTMLStrong
 
 from .utils import cn, cva
 
@@ -78,7 +78,7 @@ prose_variants = cva(
 )
 
 
-def Display(*children, class_name="", cls="", **attrs) -> FT:
+def Display(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLH1(
         *children,
         cls=cn("text-6xl font-extrabold leading-none mb-8 first:mt-0", class_name, cls),
@@ -86,13 +86,13 @@ def Display(*children, class_name="", cls="", **attrs) -> FT:
     )
 
 
-def H1(*children, class_name="", cls="", **attrs) -> FT:
+def H1(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLH1(
         *children, cls=cn(heading_variants(level="h1"), class_name, cls), **attrs
     )
 
 
-def H2(*children, section=False, class_name="", cls="", **attrs) -> FT:
+def H2(*children, section=False, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLH2(
         *children,
         cls=cn(
@@ -102,59 +102,59 @@ def H2(*children, section=False, class_name="", cls="", **attrs) -> FT:
     )
 
 
-def H3(*children, class_name="", cls="", **attrs) -> FT:
+def H3(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLH3(
         *children, cls=cn(heading_variants(level="h3"), class_name, cls), **attrs
     )
 
 
-def H4(*children, class_name="", cls="", **attrs) -> FT:
+def H4(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLH4(
         *children, cls=cn(heading_variants(level="h4"), class_name, cls), **attrs
     )
 
 
-def H5(*children, class_name="", cls="", **attrs) -> FT:
+def H5(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLH5(
         *children, cls=cn(heading_variants(level="h5"), class_name, cls), **attrs
     )
 
 
-def H6(*children, class_name="", cls="", **attrs) -> FT:
+def H6(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLH6(
         *children, cls=cn(heading_variants(level="h6"), class_name, cls), **attrs
     )
 
 
-def P(*children, class_name="", cls="", **attrs) -> FT:
+def P(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLP(
         *children, cls=cn(text_variants(variant="body"), class_name, cls), **attrs
     )
 
 
-def Lead(*children, class_name="", cls="", **attrs) -> FT:
+def Lead(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLP(
         *children, cls=cn(text_variants(variant="lead"), class_name, cls), **attrs
     )
 
 
-def Large(*children, class_name="", cls="", **attrs) -> FT:
+def Large(*children, class_name="", cls="", **attrs) -> HtmlString:
     return Div(
         *children, cls=cn(text_variants(variant="large"), class_name, cls), **attrs
     )
 
 
-def Small(*children, class_name="", cls="", **attrs) -> FT:
+def Small(*children, class_name="", cls="", **attrs) -> HtmlString:
     return Div(*children, cls=cn("text-sm font-medium", class_name, cls), **attrs)
 
 
-def Muted(*children, class_name="", cls="", **attrs) -> FT:
+def Muted(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLP(
         *children, cls=cn(text_variants(variant="muted"), class_name, cls), **attrs
     )
 
 
-def Subtitle(*children, class_name="", cls="", **attrs) -> FT:
+def Subtitle(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLP(
         *children,
         cls=cn("text-lg leading-relaxed text-muted-foreground mb-6", class_name, cls),
@@ -162,7 +162,7 @@ def Subtitle(*children, class_name="", cls="", **attrs) -> FT:
     )
 
 
-def Caption(*children, class_name="", cls="", **attrs) -> FT:
+def Caption(*children, class_name="", cls="", **attrs) -> HtmlString:
     return Div(
         *children,
         cls=cn(
@@ -174,13 +174,13 @@ def Caption(*children, class_name="", cls="", **attrs) -> FT:
     )
 
 
-def Text(*children, variant="body", class_name="", cls="", **attrs) -> FT:
+def Text(*children, variant="body", class_name="", cls="", **attrs) -> HtmlString:
     return HTMLP(
         *children, cls=cn(text_variants(variant=variant), class_name, cls), **attrs
     )
 
 
-def InlineCode(*children, class_name="", cls="", **attrs) -> FT:
+def InlineCode(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLCode(
         *children,
         cls=cn(
@@ -192,24 +192,24 @@ def InlineCode(*children, class_name="", cls="", **attrs) -> FT:
     )
 
 
-def Blockquote(*children, class_name="", cls="", **attrs) -> FT:
+def Blockquote(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLBlockquote(
         *children, cls=cn("mt-6 border-l-2 pl-6 italic", class_name, cls), **attrs
     )
 
 
-def List(*children, ordered=False, class_name="", cls="", **attrs) -> FT:
+def List(*children, ordered=False, class_name="", cls="", **attrs) -> HtmlString:
     classes = cn(
         "my-6 ml-6", "list-decimal" if ordered else "list-disc", class_name, cls
     )
     return (Ol if ordered else Ul)(*children, cls=classes, **attrs)
 
 
-def Prose(*children, size: ProseSize = "base", class_name="", cls="", **attrs) -> FT:
+def Prose(*children, size: ProseSize = "base", class_name="", cls="", **attrs) -> HtmlString:
     return Div(*children, cls=cn(prose_variants(size=size), class_name, cls), **attrs)
 
 
-def Kbd(*children, class_name="", cls="", **attrs) -> FT:
+def Kbd(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLKbd(
         *children,
         cls=cn(
@@ -221,7 +221,7 @@ def Kbd(*children, class_name="", cls="", **attrs) -> FT:
     )
 
 
-def Mark(*children, class_name="", cls="", **attrs) -> FT:
+def Mark(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLMark(
         *children,
         cls=cn(
@@ -231,23 +231,23 @@ def Mark(*children, class_name="", cls="", **attrs) -> FT:
     )
 
 
-def Strong(*children, class_name="", cls="", **attrs) -> FT:
+def Strong(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLStrong(*children, cls=cn("font-semibold", class_name, cls), **attrs)
 
 
-def Em(*children, class_name="", cls="", **attrs) -> FT:
+def Em(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLEm(*children, cls=cn("italic", class_name, cls), **attrs)
 
 
-def Hr(class_name="", cls="", **attrs) -> FT:
+def Hr(class_name="", cls="", **attrs) -> HtmlString:
     return HTMLHr(cls=cn("my-8 border-0 h-px bg-border", class_name, cls), **attrs)
 
 
-def Figure(*children, class_name="", cls="", **attrs) -> FT:
+def Figure(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLFigure(*children, cls=cn("my-8 space-y-3", class_name, cls), **attrs)
 
 
-def Figcaption(*children, class_name="", cls="", **attrs) -> FT:
+def Figcaption(*children, class_name="", cls="", **attrs) -> HtmlString:
     return HTMLFigcaption(
         *children,
         cls=cn("text-sm text-muted-foreground text-center italic", class_name, cls),

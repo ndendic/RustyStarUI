@@ -1,22 +1,21 @@
 from typing import Any, Literal
 
-from starhtml import (
-    FT,
+from rusty_tags import (
+    HtmlString,
     Div,
-    Icon,
     Span,
 )
-from starhtml import H2 as HTMLH2
-from starhtml import (
+from rusty_tags import H2 as HTMLH2
+from rusty_tags import (
     Button as BaseButton,
 )
-from starhtml import (
+from rusty_tags import (
     Dialog as HTMLDialog,
 )
-from starhtml import P as HTMLP
-from starhtml.datastar import ds_effect, ds_on_click, ds_on_close, ds_ref, ds_signals
+from rusty_tags import P as HTMLP
+from rusty_tags.datastar import Signals
 
-from .utils import cn, cva
+from .utils import Icon, cn, cva
 
 DialogSize = Literal["sm", "md", "lg", "xl", "full"]
 
@@ -39,35 +38,33 @@ dialog_variants = cva(
 
 
 def Dialog(
-    trigger: FT,
-    content: FT,
+    trigger: HtmlString,
+    content: HtmlString,
     ref_id: str,
     modal: bool = True,
     size: DialogSize = "md",
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal_name = f"{ref_id}_open"
 
     classes = cn(dialog_variants(size=size), class_name, cls)
 
-    dialog_attrs = [ds_ref(ref_id), ds_on_close(f"${signal_name} = false")]
+    dialog_attrs = {"ref": ref_id, "on_close": f"${signal_name} = false"}
 
     if modal:
-        dialog_attrs.append(
-            ds_on_click(f"""
+        dialog_attrs["on_click"] = f"""
             evt.target === evt.currentTarget &&
             (${ref_id}.close(), ${signal_name} = false)
-        """)
-        )
+        """
 
-    dialog_element = HTMLDialog(content, *dialog_attrs, id=ref_id, cls=classes, **attrs)
+    dialog_element = HTMLDialog(content, **dialog_attrs, id=ref_id, cls=classes, **attrs)
 
     scroll_lock = Div(
-        ds_signals(**{signal_name: False}),
-        ds_effect(f"document.body.style.overflow = ${signal_name} ? 'hidden' : ''"),
-        style="display: none;",
+        signals=Signals(**{signal_name: False}),
+        effect=f"document.body.style.overflow = ${signal_name} ? 'hidden' : ''",
+        style="'display: none;'",
     )
 
     return Div(trigger, dialog_element, scroll_lock)
@@ -81,7 +78,7 @@ def DialogTrigger(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     from .button import Button
 
     method = "showModal" if modal else "show"
@@ -89,7 +86,7 @@ def DialogTrigger(
 
     return Button(
         *children,
-        ds_on_click(f"${ref_id}.{method}(), ${signal_name} = true"),
+        on_click=f"${ref_id}.{method}(), ${signal_name} = true",
         type="button",
         aria_haspopup="dialog",
         variant=variant,
@@ -104,16 +101,14 @@ def DialogContent(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     content_children = list(children)
 
     if show_close_button:
         close_button = BaseButton(
             Icon("lucide:x", cls="h-4 w-4"),
             Span("Close", cls="sr-only"),
-            ds_on_click(
-                "$[evt.target.closest('dialog').id + '_open'] = false, evt.target.closest('dialog').close()"
-            ),
+            on_click="$[evt.target.closest('dialog').id + '_open'] = false, evt.target.closest('dialog').close()",
             cls="absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none ring-offset-background focus:ring-ring",
             type="button",
             aria_label="Close",
@@ -134,7 +129,7 @@ def DialogClose(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     from .button import Button
 
     close_expr = (
@@ -145,7 +140,7 @@ def DialogClose(
 
     return Button(
         *children,
-        ds_on_click(close_expr),
+        on_click=close_expr,
         cls=cn("", class_name, cls),
         type="button",
         variant=variant,
@@ -158,7 +153,7 @@ def DialogHeader(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         cls=cn("flex flex-col gap-2 text-center sm:text-left", class_name, cls),
@@ -171,7 +166,7 @@ def DialogFooter(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         cls=cn(
@@ -188,7 +183,7 @@ def DialogTitle(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return HTMLH2(
         *children,
         cls=cn("text-lg leading-none font-semibold text-foreground", class_name, cls),
@@ -201,7 +196,7 @@ def DialogDescription(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return HTMLP(
         *children,
         cls=cn("text-muted-foreground text-sm", class_name, cls),

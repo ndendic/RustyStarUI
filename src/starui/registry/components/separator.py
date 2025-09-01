@@ -1,6 +1,6 @@
 from typing import Any, Literal
 
-from starhtml import FT, Div
+from rusty_tags import HtmlString, Div
 
 from .utils import cn
 
@@ -11,7 +11,7 @@ def Separator(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     combined_classes = (cls + " " + class_name).split()
 
     has_custom_size = any(c.startswith(("h-", "w-")) for c in combined_classes)

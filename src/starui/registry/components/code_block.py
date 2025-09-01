@@ -1,6 +1,6 @@
 from typing import Any
 
-from starhtml import Code, Div, NotStr
+from rusty_tags import Code, Div, HtmlString
 
 try:
     from starlighter import highlight
@@ -24,7 +24,7 @@ def CodeBlock(
     highlighted_html = highlight(code, language)
     classes = cn("code-container", class_name, cls)
 
-    return Div(NotStr(highlighted_html), cls=classes, **attrs)
+    return Div(HtmlString(highlighted_html), cls=classes, **attrs)
 
 
 def InlineCode(text: str, class_name: str = "", cls: str = "", **attrs: Any):

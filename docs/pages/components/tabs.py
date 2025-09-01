@@ -9,7 +9,7 @@ CATEGORY = "ui"
 ORDER = 30
 STATUS = "stable"
 
-from starhtml import Div, P, H2, H3, H4, Pre, Code, Button as HTMLButton
+from rusty_tags import Div, P, H2, H3, H4, Pre, Code, Button as HTMLButton
 from starui.registry.components.tabs import Tabs, TabsList, TabsTrigger, TabsContent
 from starui.registry.components.button import Button
 from widgets.component_preview import ComponentPreview

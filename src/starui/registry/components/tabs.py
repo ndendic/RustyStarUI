@@ -1,9 +1,9 @@
 from itertools import count
 from typing import Literal
 
-from starhtml import FT, Div
-from starhtml import Button as HTMLButton
-from starhtml.datastar import ds_on_click, ds_show, ds_signals, value
+from rusty_tags import Button as HTMLButton
+from rusty_tags import Div, HtmlString
+from rusty_tags.datastar import Signals
 
 from .utils import cn
 
@@ -18,7 +18,7 @@ def Tabs(
     variant: TabsVariant = "default",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     signal = attrs.pop("signal", None)
     if not signal:
         signal = f"tabs_{next(_tab_ids)}"
@@ -28,14 +28,14 @@ def Tabs(
     ]
     return Div(
         *processed_children,
-        ds_signals({signal: value(default_id)}),
+        signals=Signals(**{signal: default_id}),
         data_slot="tabs",
         cls=cn("w-full", cls),
         **attrs,
     )
 
 
-def TabsList(*children, class_name: str = "", cls: str = "", **attrs) -> FT:
+def TabsList(*children, class_name: str = "", cls: str = "", **attrs) -> HtmlString:
     def create_list(signal, default_id=None, variant="default"):
         processed_children = [
             child(signal, default_id, variant) if callable(child) else child
@@ -65,7 +65,7 @@ def TabsTrigger(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     def create_trigger(signal, default_id=None, variant="default"):
         is_active = default_id == id
 
@@ -84,7 +84,7 @@ def TabsTrigger(
 
         return HTMLButton(
             *children,
-            ds_on_click(f"${signal} = '{id}'"),
+            on_click=f"${signal} = '{id}'",
             disabled=disabled,
             type="button",
             role="tab",
@@ -108,18 +108,18 @@ def TabsTrigger(
     return create_trigger
 
 
-def TabsContent(*children, id: str, class_name: str = "", cls: str = "", **attrs) -> FT:
+def TabsContent(*children, id: str, class_name: str = "", cls: str = "", **attrs) -> HtmlString:
     def create_content(signal, default_id=None, variant="default"):
         return Div(
             *children,
-            ds_show(f"${signal} === '{id}'"),
+            show=f"${signal} === '{id}'",
             data_slot="tabs-content",
             role="tabpanel",
             id=f"panel-{id}",
             aria_labelledby=id,
             tabindex="0",
             cls=cn("mt-2 outline-none overflow-x-auto", class_name, cls),
-            style=None if default_id == id else "display: none",
+            # style=None if default_id == id else "'display: none'",
             **attrs,
         )
 

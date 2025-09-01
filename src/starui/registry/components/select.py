@@ -1,23 +1,13 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div, Icon, Span
-from starhtml import Button as HTMLButton
-from starhtml import Label as HTMLLabel
-from starhtml import P as HTMLP
-from starhtml.datastar import (
-    ds_class,
-    ds_on_click,
-    ds_on_toggle,
-    ds_position,
-    ds_ref,
-    ds_show,
-    ds_signals,
-    ds_text,
-    value,
-)
+from rusty_tags import Button as HTMLButton
+from rusty_tags import Div, HtmlString, Span
+from rusty_tags import Label as HTMLLabel
+from rusty_tags import P as HTMLP
+from rusty_tags.datastar import Signals
 
-from .utils import cn
+from .utils import Icon, cn
 
 
 def Select(
@@ -26,14 +16,14 @@ def Select(
     signal: str | None = None,
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"select_{uuid4().hex[:8]}"
     return Div(
         *children,
-        ds_signals(
+        signals=Signals(
             {
-                f"{signal}_value": value(initial_value or ""),
-                f"{signal}_label": value(""),
+                f"{signal}_value": initial_value or "",
+                f"{signal}_label": "",
                 f"{signal}_open": False,
             }
         ),
@@ -48,14 +38,14 @@ def SelectTrigger(
     width: str = "w-[180px]",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or "select"
     trigger_id = attrs.pop("id", f"{signal}-trigger")
 
     return HTMLButton(
         *children,
         Icon("lucide:chevron-down", cls="size-4 shrink-0 opacity-50"),
-        ds_ref(f"{signal}Trigger"),
+        ref=f"{signal}Trigger",
         popovertarget=f"{signal}-content",
         popoveraction="toggle",
         type="button",
@@ -86,11 +76,11 @@ def SelectValue(
     signal: str | None = None,
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or "select"
     return Span(
-        ds_text(f"${signal}_label || '{placeholder}'"),
-        ds_class(text_muted_foreground=f"!${signal}_label"),
+        text=f"${signal}_label || '{placeholder}'",
+        data_class={"text-muted-foreground": f"!${signal}_label"},
         cls=cn("pointer-events-none", cls),
         **attrs,
     )
@@ -101,29 +91,29 @@ def SelectContent(
     signal: str | None = None,
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or "select"
 
     return Div(
         Div(*children, cls="p-1 max-h-[300px] overflow-auto"),
-        ds_ref(f"{signal}Content"),
-        ds_on_toggle(f"""
+        ref=f"{signal}Content",
+        on_toggle=f"""
             if (event.newState === 'open') {{
                 const trigger = document.getElementById('{signal}-trigger');
                 if (trigger) {{
                     el.style.minWidth = trigger.offsetWidth + 'px';
                 }}
             }}
-        """),
-        ds_position(
-            anchor=f"{signal}-trigger",
-            placement="bottom",
-            offset=4,
-            flip=True,
-            shift=True,
-            hide=True,
-            auto_size=True,
-        ),
+        """,
+        position={
+            "anchor": f"{signal}-trigger",
+            "placement": "bottom",
+            "offset": 4,
+            "flip": True,
+            "shift": True,
+            "hide": True,
+            "auto_size": True,
+        },
         popover="auto",
         id=f"{signal}-content",
         role="listbox",
@@ -144,7 +134,7 @@ def SelectItem(
     disabled: bool = False,
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     label = label or value
     signal = signal or "select"
 
@@ -152,18 +142,10 @@ def SelectItem(
         Span(label),
         Span(
             Icon("lucide:check", cls="h-4 w-4"),
-            ds_show(f"${signal}_value === '{value}'"),
+            show=f"${signal}_value === '{value}'",
             cls="absolute right-2 flex h-3.5 w-3.5 items-center justify-center",
         ),
-        *(
-            ()
-            if disabled
-            else [
-                ds_on_click(
-                    f"${signal}_value='{value}';${signal}_label='{label}';document.getElementById('{signal}-content').hidePopover()"
-                )
-            ]
-        ),
+        **({"on_click": f"${signal}_value='{value}';${signal}_label='{label}';document.getElementById('{signal}-content').hidePopover()"} if not disabled else {}),
         role="option",
         data_value=value,
         data_selected=f"${signal}_value === '{value}'",
@@ -183,7 +165,7 @@ def SelectGroup(
     label: str | None = None,
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         SelectLabel(label) if label else "",
         *children,
@@ -196,7 +178,7 @@ def SelectLabel(
     text: str,
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         text,
         cls=cn("text-muted-foreground px-2 py-1.5 text-xs", cls),
@@ -219,7 +201,7 @@ def SelectWithLabel(
     select_cls: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     # Generate signal if not provided
     if not signal:
         signal = f"select_{uuid4().hex[:8]}"

@@ -1,7 +1,7 @@
 from typing import Any, Literal
 
-from starhtml import FT
-from starhtml import Button as HTMLButton
+from rusty_tags import Button as HTMLButton
+from rusty_tags import HtmlString
 
 from .utils import cn, cva
 
@@ -44,6 +44,6 @@ def Button(
     type: Literal["button", "submit", "reset"] = "button",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     classes = cn(button_variants(variant=variant, size=size), class_name, cls)
     return HTMLButton(*children, cls=classes, disabled=disabled, type=type, **attrs)

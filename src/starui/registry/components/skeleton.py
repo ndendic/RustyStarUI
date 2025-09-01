@@ -1,4 +1,4 @@
-from starhtml import FT, Div
+from rusty_tags import HtmlString, Div
 
 from .utils import cn
 
@@ -8,7 +8,7 @@ def Skeleton(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         data_slot="skeleton",

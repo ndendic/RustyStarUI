@@ -1,10 +1,10 @@
 from typing import Any, Literal
 
-from starhtml import FT, Div
-from starhtml import H2 as HTMLH2
-from starhtml import Dialog as HTMLDialog
-from starhtml import P as HTMLP
-from starhtml.datastar import ds_effect, ds_on_click, ds_on_close, ds_ref, ds_signals
+from rusty_tags import H2 as HTMLH2
+from rusty_tags import Dialog as HTMLDialog
+from rusty_tags import Div, HtmlString
+from rusty_tags import P as HTMLP
+from rusty_tags.datastar import Signals
 
 from .utils import cn
 
@@ -12,13 +12,13 @@ AlertDialogVariant = Literal["default", "destructive"]
 
 
 def AlertDialog(
-    trigger: FT,
-    content: FT,
+    trigger: HtmlString,
+    content: HtmlString,
     ref_id: str,
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal_name = f"{ref_id}_open"
 
     classes = cn(
@@ -29,21 +29,21 @@ def AlertDialog(
 
     dialog_element = HTMLDialog(
         content,
-        ds_ref(ref_id),
-        ds_on_close(f"${signal_name} = false"),
-        ds_on_click(f"""
+        ref=ref_id,
+        on_close=f"${signal_name} = false",
+        on_click=f"""
             evt.target === evt.currentTarget &&
             (${ref_id}.close(), ${signal_name} = false)
-        """),
+        """,
         id=ref_id,
         cls=classes,
         **attrs,
     )
 
     scroll_lock = Div(
-        ds_signals(**{signal_name: False}),
-        ds_effect(f"document.body.style.overflow = ${signal_name} ? 'hidden' : ''"),
-        style="display: none;",
+        signals=Signals(**{signal_name: False}),
+        effect=f"document.body.style.overflow = ${signal_name} ? 'hidden' : ''",
+        style="'display: none;'",
     )
 
     return Div(trigger, dialog_element, scroll_lock)
@@ -56,12 +56,12 @@ def AlertDialogTrigger(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     from .button import Button
 
     return Button(
         *children,
-        ds_on_click(f"${ref_id}.showModal(), ${ref_id}_open = true"),
+        on_click=f"${ref_id}.showModal(), ${ref_id}_open = true",
         aria_haspopup="dialog",
         variant=variant,
         cls=cn(class_name, cls),
@@ -74,7 +74,7 @@ def AlertDialogContent(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         cls=cn("relative p-6", class_name, cls),
@@ -87,10 +87,10 @@ def AlertDialogHeader(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
-        cls=cn("flex flex-col gap-2 text-center sm:text-left", class_name, cls),
+        cls=cn("flex flex-col gap-2 text-center sm:text-leHtmlString", class_name, cls),
         **attrs,
     )
 
@@ -100,7 +100,7 @@ def AlertDialogFooter(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return Div(
         *children,
         cls=cn(
@@ -117,7 +117,7 @@ def AlertDialogTitle(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return HTMLH2(
         *children,
         cls=cn("text-lg leading-none font-semibold text-foreground", class_name, cls),
@@ -130,7 +130,7 @@ def AlertDialogDescription(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     return HTMLP(
         *children,
         cls=cn("text-muted-foreground text-sm", class_name, cls),
@@ -146,7 +146,7 @@ def AlertDialogAction(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     from .button import Button
 
     close_expr = f"${ref_id}_open = false, ${ref_id}.close()"
@@ -155,7 +155,7 @@ def AlertDialogAction(
 
     return Button(
         *children,
-        ds_on_click(close_expr),
+        on_click=close_expr,
         variant="destructive" if variant == "destructive" else "default",
         cls=cn(class_name, cls),
         **attrs,
@@ -168,12 +168,12 @@ def AlertDialogCancel(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     from .button import Button
 
     return Button(
         *children,
-        ds_on_click(f"${ref_id}_open = false, ${ref_id}.close()"),
+        on_click=f"${ref_id}_open = false, ${ref_id}.close()",
         variant="outline",
         cls=cn(class_name, cls),
         **attrs,

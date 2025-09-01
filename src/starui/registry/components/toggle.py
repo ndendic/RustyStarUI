@@ -1,9 +1,9 @@
 from typing import Any, Literal
 from uuid import uuid4
 
-from starhtml import FT, Div
-from starhtml import Button as HTMLButton
-from starhtml.datastar import ds_on_click, ds_signals
+from rusty_tags import HtmlString, Div
+from rusty_tags import Button as HTMLButton
+from rusty_tags.datastar import Signals
 
 from .utils import cn, cva
 
@@ -44,14 +44,14 @@ def Toggle(
     class_name: str = "",
     cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"toggle_{str(uuid4())[:8]}"
     toggle_id = attrs.pop("id", f"toggle_{str(uuid4())[:8]}")
 
     return Div(
         HTMLButton(
             *children,
-            ds_on_click(f"${signal} = !${signal}") if not disabled else None,
+            **(({"on_click": f"${signal} = !${signal}"} if not disabled else {})),
             type="button",
             id=toggle_id,
             disabled=disabled,
@@ -67,5 +67,5 @@ def Toggle(
             ),
             **attrs,
         ),
-        ds_signals(**{signal: pressed}),
+        signals=Signals(**{signal: pressed}),
     )

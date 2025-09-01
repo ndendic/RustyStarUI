@@ -1,7 +1,6 @@
 from uuid import uuid4
 
-from starhtml import FT, Div
-from starhtml.datastar import ds_position, ds_ref
+from rusty_tags import HtmlString, Div
 
 from .button import Button
 from .utils import cn
@@ -20,7 +19,7 @@ def PopoverTrigger(*children, variant="default", cls="", **attrs):
     def create(signal):
         return Button(
             *children,
-            ds_ref(f"{signal}Trigger"),
+            ref=f"{signal}Trigger",
             variant=variant,
             popovertarget=f"{signal}-content",
             popoveraction="toggle",
@@ -48,7 +47,7 @@ def PopoverContent(*children, cls="", side="bottom", align="center", **attrs):
                 processed_children = tuple(
                     process_element(child) for child in element.children
                 )
-                return FT(element.tag, processed_children, element.attrs)
+                return HtmlString(element.tag, processed_children, element.attrs)
 
             return element
 
@@ -56,15 +55,15 @@ def PopoverContent(*children, cls="", side="bottom", align="center", **attrs):
 
         return Div(
             *processed_children,
-            ds_ref(f"{signal}Content"),
-            ds_position(
-                anchor=f"{signal}-trigger",
-                placement=placement,
-                offset=8,
-                flip=True,
-                shift=True,
-                hide=True,
-            ),
+            ref=f"{signal}Content",
+            position={
+                "anchor": f"{signal}-trigger",
+                "placement": placement,
+                "offset": 8,
+                "flip": True,
+                "shift": True,
+                "hide": True,
+            },
             popover="auto",
             id=f"{signal}-content",
             role="dialog",

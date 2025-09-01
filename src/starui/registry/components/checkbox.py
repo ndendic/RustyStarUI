@@ -1,14 +1,14 @@
 from typing import Any
 from uuid import uuid4
 
-from starhtml import FT, Div, Icon
-from starhtml import Input as HTMLInput
-from starhtml import Label as HTMLLabel
-from starhtml import P as HTMLP
-from starhtml import Span as HTMLSpan
-from starhtml.datastar import ds_bind, ds_class, ds_signals
+from rusty_tags import Div, HtmlString
+from rusty_tags import Input as HTMLInput
+from rusty_tags import Label as HTMLLabel
+from rusty_tags import P as HTMLP
+from rusty_tags import Span as HTMLSpan
+from rusty_tags.datastar import Signals
 
-from .utils import cn
+from .utils import Icon, cn
 
 
 def Checkbox(
@@ -22,12 +22,12 @@ def Checkbox(
     cls: str = "",
     indicator_cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     signal = signal or f"checkbox_{str(uuid4())[:8]}"
 
     return Div(
         HTMLInput(
-            ds_bind(signal),
+            bind=signal,
             type="checkbox",
             name=name,
             value=value or "on",
@@ -50,19 +50,14 @@ def Checkbox(
         ),
         HTMLSpan(
             Icon("lucide:check"),
-            ds_class(
-                **{
-                    "opacity-100": f"${signal}",
-                    "opacity-0": f"!${signal}",
-                }
-            ),
+            show=f"${signal}",
             data_slot="checkbox-indicator",
             cls=cn(
                 "absolute inset-0 flex items-center justify-center text-background text-sm transition-opacity pointer-events-none",
                 indicator_cls,
             ),
         ),
-        ds_signals(**{signal: checked or False}),
+        signals=Signals(**{signal: checked or False}),
         cls="relative inline-block",
     )
 
@@ -83,7 +78,7 @@ def CheckboxWithLabel(
     checkbox_cls: str = "",
     indicator_cls: str = "",
     **attrs: Any,
-) -> FT:
+) -> HtmlString:
     checkbox_id = f"checkbox_{str(uuid4())[:8]}"
 
     return Div(

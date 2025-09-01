@@ -1,9 +1,9 @@
 from typing import Literal
 
-from starhtml import FT, Div, Span
-from starhtml import Input as HTMLInput
-from starhtml import Label as HTMLLabel
-from starhtml import P as HTMLP
+from rusty_tags import HtmlString, Div, Span
+from rusty_tags import Input as HTMLInput
+from rusty_tags import Label as HTMLLabel
+from rusty_tags import P as HTMLP
 
 from .utils import cn
 
@@ -44,7 +44,7 @@ def Input(
     class_name: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     classes = cn(
         "flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none",
         "border-input",
@@ -105,7 +105,7 @@ def InputWithLabel(
     input_cls: str = "",
     cls: str = "",
     **attrs,
-) -> FT:
+) -> HtmlString:
     if not id:
         import uuid
 

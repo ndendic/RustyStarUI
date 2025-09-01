@@ -1,7 +1,7 @@
-from starhtml import Div, FT, Icon, Span
-from starhtml.datastar import ds_on_click, ds_text, ds_signals, ds_show, ds_class, if_, toggle
+from rusty_tags import Div, HtmlString, Span
+from rusty_tags.datastar import Signals, if_, toggle
 from starui.registry.components.button import Button
-from starui.registry.components.utils import cn
+from starui.registry.components.utils import Icon, cn
 from starui.registry.components.code_block import CodeBlock as BaseCodeBlock
 
 
@@ -13,7 +13,7 @@ def CodeBlock(
     default_collapsed: bool = False,
     cls: str = "",
     **attrs
-) -> FT:
+) -> HtmlString:
     code_id = f"code_{abs(hash(code))}"
     collapsed_signal = f"collapsed_{code_id}"
     
@@ -29,19 +29,19 @@ def CodeBlock(
                 _chevron_button(collapsed_signal) if collapsible else Div(cls="w-6"),
                 Span(language, cls="text-xs font-medium text-muted-foreground"),
                 _copy_button(code_id, code) if show_copy else Div(cls="w-8"),
-                collapsible and ds_on_click(toggle(collapsed_signal)),
+                **({"on_click": toggle(collapsed_signal)} if collapsible else {}),
                 cls=header_cls
             ),
             Div(
                 BaseCodeBlock(code, language, cls="font-mono text-sm !border-0 !border-none"),
-                ds_class(**{
+                data_class={
                     "max-h-0": f"${collapsed_signal}",
                     "overflow-hidden": f"${collapsed_signal}",
                     "max-h-[2000px]": f"!${collapsed_signal}"
-                }),
+                },
                 cls="transition-all duration-300 ease-in-out"
             ),
-            ds_signals({
+            signals=Signals({
                 collapsed_signal: default_collapsed,
                 f"copied_{code_id}": False
             }),
@@ -53,17 +53,17 @@ def CodeBlock(
 
 
 
-def _chevron_button(collapsed_signal: str) -> FT:
+def _chevron_button(collapsed_signal: str) -> HtmlString:
     return Div(
         Span(
             Icon("lucide:chevron-up", cls="h-4 w-4"),
-            ds_class(**{
+            data_class={
                 "rotate-180": f"${collapsed_signal}",
                 "rotate-0": f"!${collapsed_signal}"
-            }),
+            },
             cls="inline-block transition-transform duration-300"
         ),
-        ds_on_click(f"evt.stopPropagation(); {toggle(collapsed_signal)}"),
+        on_click=f"evt.stopPropagation(); {toggle(collapsed_signal)}",
         role="button",
         tabindex="0",
         aria_label="Toggle code block",
@@ -71,14 +71,14 @@ def _chevron_button(collapsed_signal: str) -> FT:
     )
 
 
-def _copy_button(code_id: str, code: str) -> FT:
+def _copy_button(code_id: str, code: str) -> HtmlString:
     signal = f"copied_{code_id}"
     
     return Button(
-        Span(Icon("lucide:check", cls="h-3 w-3"), ds_show(f"${signal}")),
-        Span(Icon("lucide:copy", cls="h-3 w-3"), ds_show(f"!${signal}")),
-        Span(ds_text(f"${signal} ? 'Copied!' : 'Copy'"), cls="sr-only"),
-        ds_on_click(f'evt.stopPropagation(); @clipboard(evt.target.closest(".group").querySelector("code").textContent, "{signal}", 2000)'),
+        Span(Icon("lucide:check", cls="h-3 w-3"), show=f"${signal}"),
+        Span(Icon("lucide:copy", cls="h-3 w-3"), show=f"!${signal}"),
+        Span(text=f"${signal} ? 'Copied!' : 'Copy'", cls="sr-only"),
+        on_click=f'evt.stopPropagation(); @clipboard(evt.target.closest(".group").querySelector("code").textContent, "{signal}", 2000)',
         variant="ghost",
         size="sm",
         cls="h-5 w-5 p-0 text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200",
