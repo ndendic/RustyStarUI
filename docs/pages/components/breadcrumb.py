@@ -271,6 +271,7 @@ def create_breadcrumb_docs():
         list(examples()),
         cli_command="star add breadcrumb",
         hero_example=hero_example,
+        component_slug="breadcrumb",
         api_reference={
             "components": [
                 {

@@ -417,170 +417,85 @@ def get_component_markdown(component_name: str):
 
 def _extract_component_data(module, component_name: str) -> dict:
     """Extract structured data from a component module for markdown generation."""
+    import ast
+    import inspect
+    import re
+    
+    examples_func = getattr(module, "examples", None)
+    if not examples_func:
+        return {}
+    
     try:
-        # Get the create_docs function
+        examples_data = _parse_component_previews_from_source(inspect.getsource(examples_func))
+        
         create_docs_func = getattr(module, f"create_{component_name}_docs", None)
         if not create_docs_func:
-            return {}
+            return {"examples_data": examples_data}
         
-        # For now, we need a way to get the data without executing the function
-        # Let's look for the data directly in the function or module
-        # This is a bit hacky but allows us to extract the data systematically
-        
-        import inspect
         source = inspect.getsource(create_docs_func)
         
-        # Extract structured data from the function
-        data = {}
+        hero_match = re.search(r'hero_example\s*=\s*ComponentPreview\(.*?[\'\"]{3}(.*?)[\'\"]{3}', source, re.DOTALL)
+        hero_example_code = hero_match.group(1).strip() if hero_match else None
         
-        # Look for examples_data assignment
-        if "examples_data = [" in source:
-            # Execute the function in a controlled way to get the data
-            # This is safe since it's our own component code
-            import ast
-            tree = ast.parse(source)
+        api_reference = getattr(module, 'api_reference', None)
+        if not api_reference and 'api_reference=' in source:
+            try:
+                tree = ast.parse(source)
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.Call):
+                        for kw in getattr(node, 'keywords', []):
+                            if kw.arg == 'api_reference':
+                                api_reference = ast.literal_eval(kw.value)
+                                break
+            except:
+                api_reference = None
+        
+        return {
+            "examples_data": examples_data,
+            "hero_example_code": hero_example_code,
+            "api_reference": api_reference
+        }
+    
+    except Exception:
+        return {"examples_data": []}
+
+
+def _parse_component_previews_from_source(source: str) -> list[dict]:
+    """Parse ComponentPreview calls from source code to extract titles, descriptions, and code."""
+    import re
+    
+    examples = []
+    blocks = re.split(r'yield\s+ComponentPreview\s*\(', source)[1:]  # Skip content before first yield
+    
+    for block in blocks:
+        paren_count = 1
+        end_pos = 0
+        for i, char in enumerate(block):
+            if char == '(':
+                paren_count += 1
+            elif char == ')':
+                paren_count -= 1
+                if paren_count == 0:
+                    end_pos = i
+                    break
+        
+        if not end_pos:
+            continue
             
-            # Find examples_data, hero_example_code, usage_code, api_reference
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Assign):
-                    if any(isinstance(target, ast.Name) and target.id == 'examples_data' for target in node.targets):
-                        # Extract the examples_data value by executing the function
-                        # We'll do this in a safer way by calling the module attributes directly
-                        break
+        call = block[:end_pos]
         
-        # Fallback: try to call the function and introspect it
-        # For button specifically, we know the structure
-        if component_name == "button":
-            data = {
-                "examples_data": [
-                    {
-                        "title": "Button Sizes", 
-                        "description": "Different sizes including icon-only buttons",
-                        "code": '''Button("Small", size="sm")
-Button("Default") 
-Button("Large", size="lg")
-Button(Icon("lucide:chevron-right", cls="h-4 w-4"), variant="outline", size="icon")'''
-                    },
-                    {
-                        "title": "Buttons with Icons",
-                        "description": "Buttons enhanced with icons for better UX", 
-                        "code": '''Button(Icon("lucide:mail", cls="mr-2 h-4 w-4"), "Login with Email")
-Button(Icon("lucide:loader-2", cls="mr-2 h-4 w-4 animate-spin"), "Please wait", disabled=True)'''
-                    },
-                    {
-                        "title": "Interactive Counter",
-                        "description": "Button that updates state on click using Datastar",
-                        "code": '''Div(
-    Button("Click me!", ds_on_click("$count++")),
-    P("Clicked: ", Span(ds_text("$count"), cls="font-bold text-blue-600")),
-    ds_signals(count=0)
-)'''
-                    },
-                    {
-                        "title": "Toggle Visibility", 
-                        "description": "Show/hide content with smooth transitions and dynamic button text",
-                        "code": '''Div(
-    Button(
-        ds_text("$expanded ? 'Hide Details' : 'Show Details'"),
-        ds_on_click(toggle("expanded")),
-        variant="outline"
-    ),
-    Div(
-        Div(
-            P("✨ Here are some additional details!", cls="font-medium"),
-            P("This content smoothly fades in and out.", cls="text-sm text-muted-foreground"),
-            ds_show("$expanded"),
-            cls="transition-all duration-300 ease-in-out"
-        ),
-        cls="mt-4 min-h-[60px] flex items-center justify-center"
-    ),
-    ds_signals(expanded=False)
-)'''
-                    },
-                    {
-                        "title": "Form Integration",
-                        "description": "Button state controlled by form input",
-                        "code": '''Div(
-    Div(
-        Label("Name:", cls="block text-sm font-medium mb-1"),
-        Input(
-            ds_bind("name"),
-            type="text",
-            placeholder="Enter your name",                
-            cls="w-full px-3 py-2 border rounded-md"
-        ),
-        cls="mb-4"
-    ),
-    Button(
-        "Submit",
-        ds_disabled("$name == ''"),
-        ds_on_click("alert(`Hello ${$name}!`)"),
-    ),
-    ds_signals(name=value(""))
-)'''
-                    }
-                ],
-                "hero_example_code": '''Button("Default")
-Button("Secondary", variant="secondary")
-Button("Destructive", variant="destructive")
-Button("Outline", variant="outline")
-Button("Ghost", variant="ghost")
-Button("Link", variant="link")''',
-                "usage_code": """from starui.registry.components.button import Button
-
-# Basic usage
-Button("Click me")
-
-# With variant
-Button("Delete", variant="destructive")
-
-# With icon
-Button(
-    Icon("lucide:save", cls="mr-2 h-4 w-4"),
-    "Save changes"
-)
-
-# Reactive with Datastar
-Button(
-    "Submit",
-    ds_on_click("$handleSubmit()"),
-    ds_disabled("$loading")
-)""",
-                "api_reference": {
-                    "props": [
-                        {
-                            "name": "variant",
-                            "type": "Literal['default', 'secondary', 'destructive', 'outline', 'ghost', 'link']",
-                            "default": "'default'",
-                            "description": "Button visual variant"
-                        },
-                        {
-                            "name": "size", 
-                            "type": "Literal['default', 'sm', 'lg', 'icon']",
-                            "default": "'default'",
-                            "description": "Button size"
-                        },
-                        {
-                            "name": "disabled",
-                            "type": "bool",
-                            "default": "False",
-                            "description": "Whether button is disabled"
-                        },
-                        {
-                            "name": "cls",
-                            "type": "str", 
-                            "default": "''",
-                            "description": "Additional CSS classes"
-                        }
-                    ]
-                }
-            }
+        title_match = re.search(r'title\s*=\s*["\']([^"\']+)["\']', call)
+        desc_match = re.search(r'description\s*=\s*["\']([^"\']*)["\']', call)
+        code_match = re.search(r'[\'\"]{3}(.*?)[\'\"]{3}', call, re.DOTALL)
         
-        return data
-        
-    except Exception as e:
-        print(f"Error extracting component data: {e}")
-        return {}
+        if title_match and code_match:
+            examples.append({
+                "title": title_match.group(1),
+                "description": desc_match.group(1) if desc_match else "",
+                "code": code_match.group(1).strip()
+            })
+    
+    return examples
 
 
 @rt("/installation")
@@ -962,6 +877,36 @@ def discover_components():
 
 
 discover_components()
+
+
+iframe_app, iframe_rt = star_app(
+    title="Component Preview",
+    live=True,
+    hdrs=(
+        fouc_script(use_data_theme=True),
+        Link(rel="stylesheet", href="/static/css/starui.css"),
+        position_handler(),
+    ),
+    htmlkw=dict(lang="en", dir="ltr"),
+    bodykw=dict(cls="min-h-screen bg-background text-foreground"),
+    plugins=get_starhtml_action_plugins(),
+)
+
+@iframe_rt("/{preview_id}")
+def component_preview_iframe(preview_id: str):
+    from widgets.component_preview import IFRAME_PREVIEW_REGISTRY
+    
+    preview_data = IFRAME_PREVIEW_REGISTRY.get(preview_id)
+    if not preview_data:
+        return Div("Preview not found", cls="text-center p-10 text-muted-foreground")
+    
+    return Div(
+        preview_data['content'],
+        cls=f"flex min-h-[350px] w-full items-center justify-center p-10 {preview_data['class']}"
+    )
+
+app.mount("/component-preview-iframe", iframe_app)
+
 
 if __name__ == "__main__":
     serve(port=5002)

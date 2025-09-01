@@ -158,6 +158,7 @@ Alert(
         list(examples()),
         cli_command="star add alert",
         hero_example=hero_example,
+        component_slug="alert",
         api_reference={
             "props": [
                 {

@@ -287,6 +287,7 @@ Input(type="password", placeholder="Enter your password")'''
         list(examples()),
         cli_command="star add input",
         hero_example=hero_example,
+        component_slug="input",
         api_reference={
             "props": [
                 {
