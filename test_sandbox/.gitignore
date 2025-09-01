@@ -1,7 +1,0 @@
-
-# StarUI generated files
-static/css/starui.css
-*.css.map
-
-# StarUI cache
-.starui/

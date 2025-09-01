@@ -66,47 +66,27 @@ def RadioGroupItem(
             name=group_name,
             disabled=disabled,
             data_slot="radio-input",
-            cls="sr-only peer",
+            cls="input",
             **filtered_attrs,
-        )
-
-        visual_radio = Div(
-            Div(
-                Div(cls="size-2 rounded-full bg-primary"),
-                show=f"${signal} === '{value}'",
-                cls=cn(
-                    "absolute inset-0 flex items-center justify-center",
-                    indicator_cls,
-                ),
-                data_slot="radio-indicator",
-            ),
-            cls=cn(
-                "relative aspect-square size-4 shrink-0 rounded-full border transition-all",
-                "border-input bg-background dark:bg-input/30",
-                "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
-                class_name,
-                cls,
-            ),
-            data_slot="radio-visual",
         )
 
         if not label:
             return Div(
                 radio_input,
-                visual_radio,
+                # visual_radio,
                 cls="relative inline-flex items-center",
                 data_slot="radio-container",
             )
 
         return HTMLLabel(
             radio_input,
-            visual_radio,
+            # visual_radio,
             HTMLSpan(
                 label,
                 cls="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
             ),
             for_=radio_id,
-            cls="flex items-center gap-2 cursor-pointer",
+            cls="label flex items-center gap-2 cursor-pointer",
             data_slot="radio-container",
         )
 
@@ -124,7 +104,6 @@ def RadioGroupWithLabel(
     disabled: bool = False,
     required: bool = False,
     orientation: str = "vertical",
-    class_name: str = "",
     cls: str = "",
     **attrs: Any,
 ) -> HtmlString:
@@ -135,14 +114,14 @@ def RadioGroupWithLabel(
 
     radio_group_classes = cn(
         "flex gap-2",
-        "flex-col" if orientation == "vertical" else "flex-row gap-6",
+        "flex-col" if orientation == "vertical" else "flex-row gap-2",
     )
 
     return Div(
         label
         and HTMLLabel(
             label,
-            required and HTMLSpan(" *", cls="text-destructive") or None,
+            required and HTMLSpan("*", cls="text-destructive") or None,
             cls="text-sm font-medium mb-3 block",
             for_=group_id,
         )
@@ -170,6 +149,6 @@ def RadioGroupWithLabel(
         and not error_text
         and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5")
         or None,
-        cls=cn("space-y-1.5", class_name, cls),
+        cls=cn("space-y-1.5", cls),
         **attrs,
     )

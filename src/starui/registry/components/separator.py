@@ -1,6 +1,6 @@
 from typing import Any, Literal
 
-from rusty_tags import HtmlString, Div
+from rusty_tags import Div, HtmlString
 
 from .utils import cn
 
@@ -8,11 +8,10 @@ from .utils import cn
 def Separator(
     orientation: Literal["horizontal", "vertical"] = "horizontal",
     decorative: bool = True,
-    class_name: str = "",
     cls: str = "",
     **attrs: Any,
 ) -> HtmlString:
-    combined_classes = (cls + " " + class_name).split()
+    combined_classes = cls.split()
 
     has_custom_size = any(c.startswith(("h-", "w-")) for c in combined_classes)
     default_size = (
@@ -33,7 +32,6 @@ def Separator(
             "shrink-0",
             default_size,
             default_bg,
-            class_name,
             cls,
         ),
         **attrs,

@@ -25,16 +25,7 @@ def Switch(
 
     return Div(
         HTMLInput(
-            HTMLSpan(
-                data_class=f"{{'translate-x-3.5': ${signal},'translate-x-0': !${signal},'dark:bg-primary-foreground': ${signal},'dark:bg-white': !${signal},}}",
-                cls="pointer-events-none block size-4 rounded-full bg-white ring-0 transition-transform",
-                data_slot="switch-thumb",
-            ),
             on_click=f"${signal} = !${signal}",
-            data_class={
-                "bg-primary": f"${signal}",
-                "bg-input": f"!${signal}",
-            },
             type="checkbox",
             role="switch",
             id=switch_id,
@@ -42,14 +33,7 @@ def Switch(
             aria_checked=f"${{{signal}}}",
             aria_required="true" if required else None,
             data_slot="switch",
-            cls=cn(
-                "peer inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full",
-                "border border-transparent shadow-xs transition-all outline-none",
-                "focus-visible:ring-[3px] focus-visible:border-ring focus-visible:ring-ring/50",
-                "disabled:cursor-not-allowed disabled:opacity-50",
-                class_name,
-                cls,
-            ),
+            cls=cn("input",cls),
             **attrs,
         ),
         signals=Signals({signal: checked or False}),
@@ -64,7 +48,6 @@ def SwitchWithLabel(
     error_text: str | None = None,
     disabled: bool = False,
     required: bool = False,
-    class_name: str = "",
     cls: str = "",
     label_cls: str = "",
     switch_cls: str = "",
@@ -76,25 +59,19 @@ def SwitchWithLabel(
     return Div(
         Div(
             HTMLLabel(
-                label,
-                HTMLSpan(" *", cls="text-destructive") if required else None,
-                for_=switch_id,
-                cls=cn(
-                    "text-sm font-medium",
-                    "cursor-pointer"
-                    if not disabled
-                    else "cursor-not-allowed opacity-50",
-                    label_cls,
+                Switch(
+                    checked=checked,
+                    signal=signal,
+                    disabled=disabled,
+                    required=required,
+                    cls=switch_cls,
+                    aria_invalid="true" if error_text else None,
+                    id=switch_id,
                 ),
-            ),
-            Switch(
-                checked=checked,
-                signal=signal,
-                disabled=disabled,
-                required=required,
-                cls=switch_cls,
-                aria_invalid="true" if error_text else None,
-                id=switch_id,
+                label,
+                HTMLSpan("*", cls="text-destructive") if required else None,
+                for_=switch_id,
+                cls=cn("label",label_cls),
             ),
             cls="flex items-center gap-3",
         ),
@@ -103,6 +80,6 @@ def SwitchWithLabel(
         and not error_text
         and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5")
         or None,
-        cls=cn("space-y-1.5", class_name, cls),
+        cls=cn("space-y-1.5", cls),
         **attrs,
     )
