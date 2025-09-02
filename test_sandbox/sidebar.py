@@ -1,98 +1,89 @@
 from rusty_tags import *
+from starui.registry.components.utils import Icon
+from starui.registry.components.button import Button
+from functools import cached_property
+from pydantic import BaseModel
+
+
+def SidebarButton(
+    label: str,
+    on_click: str | None = None,
+    icon: str | None = None,
+    variant='ghost',
+    size="sm",
+    cls="w-full justify-start",
+    **attrs
+) -> HtmlString:
+    return Li(
+            A(Icon(icon) if icon else None, label, on_click=DS.get(on_click), variant=variant, size=size, cls=cls, **attrs),
+        ).render()
+
+
+class SidebarBtn(BaseModel):
+    label: str
+    on_click: str | None = None
+    icon: str | None = None
+
+    def __str__(self):
+        return SidebarButton(
+            self.label,
+            self.on_click,
+            self.icon,
+            variant='ghost',
+            size='sm',
+            cls='w-full justify-start align-middle',
+        )
+
+class Sidebar():
+    buttons: AttrDict
+    components: AttrDict
+
+    def __init__(self):
+        self.buttons = AttrDict()
+        self.components = AttrDict()
+    
+    @cached_property
+    def all_buttons(self):
+        return [btn for btn in self.buttons.values()]
+    
+    @cached_property
+    def all_components(self):
+        return [btn for btn in self.components.values()]
+
+sidebar_buttons = Sidebar()
+sidebar_buttons.buttons.home = SidebarBtn(label="Home", on_click="/", icon="lucide:home")
+sidebar_buttons.components.buttons = SidebarBtn(label="Buttons", on_click="/cmds/component.buttons/general")
+sidebar_buttons.components.badges = SidebarBtn(label="Badges", on_click="/cmds/component.badges/general")
+sidebar_buttons.components.inputs = SidebarBtn(label="Inputs", on_click="/cmds/component.inputs/general")
+sidebar_buttons.components.cards = SidebarBtn(label="Cards", on_click="/cmds/component.cards/general")
+sidebar_buttons.components.alerts = SidebarBtn(label="Alerts", on_click="/cmds/component.alerts/general")
+sidebar_buttons.components.dialogs = SidebarBtn(label="Dialogs", on_click="/cmds/component.dialogs/general")
+sidebar_buttons.components.radios = SidebarBtn(label="Radios", on_click="/cmds/component.radios/general")
+sidebar_buttons.components.tabs = SidebarBtn(label="Tabs", on_click="/cmds/component.tabs/general")
+sidebar_buttons.components.breadcrumb = SidebarBtn(label="Breadcrumb", on_click="/cmds/component.breadcrumb/general")
+sidebar_buttons.components.switches = SidebarBtn(label="Switches", on_click="/cmds/component.switches/general")
+sidebar_buttons.components.textareas = SidebarBtn(label="Textareas", on_click="/cmds/component.textareas/general")
+sidebar_buttons.components.selects = SidebarBtn(label="Selects", on_click="/cmds/component.selects/general")
+sidebar_buttons.components.popovers = SidebarBtn(label="Popovers", on_click="/cmds/component.popovers/general")
+sidebar_buttons.components.tables = SidebarBtn(label="Tables", on_click="/cmds/component.tables/general")
+
 
 sidebar = Aside(
     Nav(
         Section(
             Div(
                 H3('Getting started', id='group-label-content-1'),
-                Ul(
-                    Li(
-                        A(
-                            Svg(
-                                Path(d='m7 11 2-2-2-2'),
-                                Path(d='M11 13h4'),
-                                Rect(width='18', height='18', x='3', y='3', rx='2', ry='2'),
-                                xmlns='http://www.w3.org/2000/svg',
-                                width='24',
-                                height='24',
-                                viewbox='0 0 24 24',
-                                fill='none',
-                                stroke='currentColor',
-                                stroke_width='2',
-                                stroke_linecap='round',
-                                stroke_linejoin='round'
-                            ),
-                            Span('Playground'),
-                            href='#'
-                        )
-                    ),
-                    Li(
-                        A(
-                            Svg(
-                                Path(d='M12 8V4H8'),
-                                Rect(width='16', height='12', x='4', y='8', rx='2'),
-                                Path(d='M2 14h2'),
-                                Path(d='M20 14h2'),
-                                Path(d='M15 13v2'),
-                                Path(d='M9 13v2'),
-                                xmlns='http://www.w3.org/2000/svg',
-                                width='24',
-                                height='24',
-                                viewbox='0 0 24 24',
-                                fill='none',
-                                stroke='currentColor',
-                                stroke_width='2',
-                                stroke_linecap='round',
-                                stroke_linejoin='round'
-                            ),
-                            Span('Models'),
-                            href='#'
-                        )
-                    ),
+                Ul(                    
+                    *sidebar_buttons.all_buttons,                    
                     Li(
                         Details(
                             Summary(
-                                Svg(
-                                    Path(d='M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z'),
-                                    Circle(cx='12', cy='12', r='3'),
-                                    xmlns='http://www.w3.org/2000/svg',
-                                    width='24',
-                                    height='24',
-                                    viewbox='0 0 24 24',
-                                    fill='none',
-                                    stroke='currentColor',
-                                    stroke_width='2',
-                                    stroke_linecap='round',
-                                    stroke_linejoin='round'
-                                ),
-                                'Settings',
+                                Icon('lucide:component'),
+                                'Components',
                                 aria_controls='submenu-content-1-3-content'
                             ),
                             Ul(
-                                Li(
-                                    A(
-                                        Span('General'),
-                                        href='#'
-                                    )
-                                ),
-                                Li(
-                                    A(
-                                        Span('Team'),
-                                        href='#'
-                                    )
-                                ),
-                                Li(
-                                    A(
-                                        Span('Billing'),
-                                        href='#'
-                                    )
-                                ),
-                                Li(
-                                    A(
-                                        Span('Limits'),
-                                        href='#'
-                                    )
-                                ),
+                                *sidebar_buttons.all_components,
                                 id='submenu-content-1-3-content'
                             ),
                             id='submenu-content-1-3'
@@ -138,8 +129,8 @@ navbar = Header(
         Select(
             Option('Default', value=''),
             Option('Claude', value='claude'),
-            Option('Doom 64', value='doom-64'),
-            Option('Supabase', value='supabase'),
+            Option('Vercel', value='vercel'),
+            Option('Candyland', value='candy'),
             id='theme-select',
             cls='select h-8 leading-none'
         ),
@@ -204,7 +195,7 @@ navbar = Header(
                 stroke_linecap='round',
                 stroke_linejoin='round'
             ),
-            href='https://github.com/hunvreus/basecoat',
+            href='https://github.com/ndendic/RustyStarUI',
             target='_blank',
             rel='noopener noreferrer',
             data_tooltip='GitHub repository',
