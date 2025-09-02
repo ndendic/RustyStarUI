@@ -45,13 +45,13 @@ def fouc_script(
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="test_sandbox/static"), name="static")
 
-
 hdrs=(        
         fouc_script(use_data_theme=True),
         styles,
         Script(src=f"https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js", type="module"),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/basecoat.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/select.min.js', defer=''),
+        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/popover.min.js', defer=''),
         Script("(() => {\r\n    try {\r\n      const stored = localStorage.getItem('themeMode');\r\n      if (stored ? stored === 'dark'\r\n                  : matchMedia('(prefers-color-scheme: dark)').matches) {\r\n        document.documentElement.classList.add('dark');\r\n      }\r\n    } catch (_) {}\r\n\r\n    const apply = dark => {\r\n      document.documentElement.classList.toggle('dark', dark);\r\n      try { localStorage.setItem('themeMode', dark ? 'dark' : 'light'); } catch (_) {}\r\n    };\r\n\r\n    document.addEventListener('basecoat:theme', (event) => {\r\n      const mode = event.detail?.mode;\r\n      apply(mode === 'dark' ? true\r\n            : mode === 'light' ? false\r\n            : !document.documentElement.classList.contains('dark'));\r\n    });\r\n  })();"),
         # position_handler(),  # Enhanced handler is now built-in
     )
@@ -836,9 +836,9 @@ def popovers(sender: str, *args,**kwargs):
                                 Div(
                                     H3("About this feature", cls="font-semibold mb-2"),
                                     P("This is a popover component that displays rich content in a floating panel.", cls="text-sm text-muted-foreground mb-3"),
-                                    PopoverClose("✕"),
                                 ),
                             ),
+                            
                         ),
                         # Popover with different positioning
                         Popover(
@@ -867,12 +867,53 @@ def popovers(sender: str, *args,**kwargs):
                                         Switch(signal="notif_setting"),
                                         cls="flex justify-between items-center",
                                     ),
-                                    PopoverClose("Done", variant="ghost"),
                                 ),
                             ),
                         ),
                         cls="flex flex-wrap gap-4 mb-8",
                     ),
+Div(
+    Button('Open popover', id='demo-popover-trigger', type='button', aria_expanded='false', aria_controls='demo-popover-popover', cls='btn-outline'),
+    Div(
+        Div(
+            Header(
+                H4('Dimensions', cls='leading-none font-medium'),
+                P('Set the dimensions for the layer.', cls='text-muted-foreground text-sm'),
+                cls='grid gap-1.5'
+            ),
+            Form(
+                Div(
+                    Label('Width', fr='demo-popover-width'),
+                    Input(type='text', id='demo-popover-width', value='100%', autofocus='', cls='col-span-2 h-8'),
+                    cls='grid grid-cols-3 items-center gap-4'
+                ),
+                Div(
+                    Label('Max. width', fr='demo-popover-max-width'),
+                    Input(type='text', id='demo-popover-max-width', value='300px', cls='col-span-2 h-8'),
+                    cls='grid grid-cols-3 items-center gap-4'
+                ),
+                Div(
+                    Label('Height', fr='demo-popover-height'),
+                    Input(type='text', id='demo-popover-height', value='25px', cls='col-span-2 h-8'),
+                    cls='grid grid-cols-3 items-center gap-4'
+                ),
+                Div(
+                    Label('Max. height', fr='demo-popover-max-height'),
+                    Input(type='text', id='demo-popover-max-height', value='none', cls='col-span-2 h-8'),
+                    cls='grid grid-cols-3 items-center gap-4'
+                ),
+                cls='form grid gap-2'
+            ),
+            cls='grid gap-4'
+        ),
+        id='demo-popover-popover',
+        data_popover='',
+        aria_hidden='true',
+        cls='w-80'
+    ),
+    id='demo-popover',
+    cls='popover'
+),
                     cls="container mx-auto p-8",
                     id="content",
                 )                
