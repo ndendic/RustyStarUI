@@ -781,41 +781,41 @@ Div(
                             signal="framework",
                             required=True,
                         ),
-                        # # Select with error state
-                        # SelectWithLabel(
-                        #     "Department",
-                        #     options=["Engineering", "Design", "Marketing", "Sales", "Support"],
-                        #     signal="department",
-                        #     error_text="Please select a valid department",
-                        #     required=True,
-                        # ),
-                        # # Disabled select
-                        # SelectWithLabel(
-                        #     "Plan",
-                        #     options=["Free", "Pro", "Enterprise"],
-                        #     value="Free",
-                        #     disabled=True,
-                        #     helper_text="Upgrade your account to change plans",
-                        # ),
-                        # # Simple select without label
-                        # Div(
-                        #     P("Simple select:", cls="text-sm font-medium mb-2"),
-                        #     Select(
-                        #         SelectTrigger(
-                        #             SelectValue(placeholder="Pick an option", signal="simple_select"),
-                        #             signal="simple_select",
-                        #         ),
-                        #         SelectContent(
-                        #             SelectItem("Option 1", signal="simple_select"),
-                        #             SelectItem("Option 2", signal="simple_select"),
-                        #             SelectItem("Option 3", signal="simple_select"),
-                        #             SelectItem("Disabled", disabled=True, signal="simple_select"),
-                        #             signal="simple_select",
-                        #         ),
-                        #         signal="simple_select",
-                        #     ),
-                        #     cls="p-4 border rounded-lg",
-                        # ),
+                        # Select with error state
+                        SelectWithLabel(
+                            "Department",
+                            options=["Engineering", "Design", "Marketing", "Sales", "Support"],
+                            signal="department",
+                            error_text="Please select a valid department",
+                            required=True,
+                        ),
+                        # Disabled select
+                        SelectWithLabel(
+                            "Plan",
+                            options=["Free", "Pro", "Enterprise"],
+                            value="Free",
+                            disabled=True,
+                            helper_text="Upgrade your account to change plans",
+                        ),
+                        # Simple select without label
+                        Div(
+                            P("Simple select:", cls="text-sm font-medium mb-2"),
+                            Select(
+                                SelectTrigger(
+                                    SelectValue(placeholder="Pick an option", signal="simple_select"),
+                                    signal="simple_select",
+                                ),
+                                SelectContent(
+                                    SelectItem("Option 1", signal="simple_select"),
+                                    SelectItem("Option 2", signal="simple_select"),
+                                    SelectItem("Option 3", signal="simple_select"),
+                                    SelectItem("Disabled", disabled=True, signal="simple_select"),
+                                    signal="simple_select",
+                                ),
+                                signal="simple_select",
+                            ),
+                            cls="p-4 border rounded-lg",
+                        ),
                         cls="space-y-4 mb-8",
                     ),
                     
