@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from starhtml import FT, Button, Div, Icon, Span
 from starhtml.datastar import ds_on_click, ds_show, ds_signals, ds_text, value
@@ -159,13 +159,13 @@ def toast(
             variant: '{variant}',
             timestamp: Date.now()
         }};
-        
+
         ${signal} = [newToast, ...${signal}];
-        
+
         if (${signal}.length > {max_visible}) {{
             ${signal} = ${signal}.slice(0, {max_visible});
         }}
-        
+
         if ({duration} > 0) {{
             setTimeout(() => {{
                 ${signal} = ${signal}.filter(t => t.id !== newToast.id);
