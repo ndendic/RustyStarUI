@@ -10,11 +10,12 @@ def PopoverTrigger(*children, variant="default", cls="", **attrs):
     def create(signal):
         return Button(
             *children,
+            id=f'{signal}-popover-trigger',
+            type='button',
+            aria_expanded='false',
+            aria_controls=f'{signal}-popover-content',
             ref=f"{signal}Trigger",
             variant=variant,
-            aria_expanded="false",
-            aria_controls=f"{signal}-popover",
-            id=f"{signal}-trigger",
             cls=cls,
             **attrs,
         )
@@ -22,17 +23,16 @@ def PopoverTrigger(*children, variant="default", cls="", **attrs):
     return create
 
 
-def PopoverContent(*children, cls="", side="bottom", align="center", **attrs):
+def PopoverContent(*children, cls="", side="bottom", align="start", **attrs):
     def create_content(signal):
         return Div(
             *children,
+            id=f'{signal}-popover-content',
+            data_popover='',
+            aria_hidden='true',
             ref=f"{signal}Content",
             data_side=side,
             data_align=align,
-            popover="auto",
-            data_popover=True,
-            aria_hidden="true",
-            id=f"{signal}-popover",
             cls=cn("w-80",cls),
             **attrs,
         )
@@ -41,7 +41,7 @@ def PopoverContent(*children, cls="", side="bottom", align="center", **attrs):
 
 def Popover(*children, signal: str | None = None, cls="relative inline-block", **attrs):
     id = signal or uuid4().hex[:8]
-    signal = f"popover_{id}"
+    signal = f"popover-{id}"
     processed_children = []
     for c in children:
         if callable(c):
@@ -50,6 +50,8 @@ def Popover(*children, signal: str | None = None, cls="relative inline-block", *
             processed_children.append(c)
     return Div(
         *processed_children,
+        # id=signal,
+        id=f'{signal}-popover',
         cls=cn("popover",cls),
         **attrs,
     )

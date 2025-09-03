@@ -7,6 +7,8 @@ from rusty_tags import *
 from rusty_tags import Input as HTMLInput
 from rusty_tags import Label as HTMLLabel
 from rusty_tags import Button as HTMLButton
+from rusty_tags import Hr as HTMLHr
+
 from rusty_tags.datastar import Signals
 from rusty_tags.starlette import datastar_response, sse_elements, sse_signals
 
@@ -20,7 +22,12 @@ from sidebar import sidebar, navbar, sidebar_buttons, SidebarBtn
 from uuid import uuid4
 # from starui.registry.components.accordion import Accordion, AccordionItem, AccordionTrigger, AccordionContent
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
-
+inspector = Script(src="/static/js/datastar-inspector.js", type="module")
+fonts = [
+    Link(rel='preconnect', href='https://fonts.googleapis.com'),
+    Link(rel='preconnect', href='https://fonts.gstatic.com', crossorigin=''),
+    Link(href='https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap', rel='stylesheet')
+]
 def fouc_script(
     storage_key="theme",
     cls="dark",
@@ -48,16 +55,22 @@ app.mount("/static", StaticFiles(directory="test_sandbox/static"), name="static"
 hdrs=(        
         fouc_script(use_data_theme=True),
         styles,
+        *fonts,
         Script(src=f"https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js", type="module"),
+        # Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/all.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/basecoat.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/select.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/popover.min.js', defer=''),
+        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/dropdown-menu.min.js', defer=''),
+        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/sidebar.min.js', defer=''),
         Script("(() => {\r\n    try {\r\n      const stored = localStorage.getItem('themeMode');\r\n      if (stored ? stored === 'dark'\r\n                  : matchMedia('(prefers-color-scheme: dark)').matches) {\r\n        document.documentElement.classList.add('dark');\r\n      }\r\n    } catch (_) {}\r\n\r\n    const apply = dark => {\r\n      document.documentElement.classList.toggle('dark', dark);\r\n      try { localStorage.setItem('themeMode', dark ? 'dark' : 'light'); } catch (_) {}\r\n    };\r\n\r\n    document.addEventListener('basecoat:theme', (event) => {\r\n      const mode = event.detail?.mode;\r\n      apply(mode === 'dark' ? true\r\n            : mode === 'light' ? false\r\n            : !document.documentElement.classList.contains('dark'));\r\n    });\r\n  })();"),
         # position_handler(),  # Enhanced handler is now built-in
+        inspector,
     )
 htmlkw=dict(lang="en", dir="ltr")
 bodykw=dict(cls="min-h-screen bg-background text-foreground", on_load=DS.get("/updates"))
-page = create_template(hdrs=hdrs, htmlkw=htmlkw, bodykw=bodykw)
+ftrs=(CustomTag("datastar-inspector"),)
+page = create_template(hdrs=hdrs, htmlkw=htmlkw, bodykw=bodykw, ftrs=ftrs)
 
 @app.get("/cmds/{command}/{sender}")
 @datastar_response
@@ -190,6 +203,51 @@ def cards(sender: str, *args,**kwargs):
                             cls="flex gap-2",
                         ),
                         cls="max-w-md mb-8",
+                    ),
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+@on("component.checkbox")
+def checkbox(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
+                    H2("Checkboxes", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        CheckboxWithLabel(
+                            "Accept terms and conditions", signal="terms", required=True
+                        ),
+                        CheckboxWithLabel(
+                            "Subscribe to newsletter",
+                            signal="newsletter",
+                            helper_text="Get weekly updates about new features",
+                        ),
+                        CheckboxWithLabel(
+                            "Enable notifications", signal="notifications", checked=True
+                        ),
+                        CheckboxWithLabel(
+                            "Disabled option",
+                            disabled=True,
+                            helper_text="This option is currently unavailable",
+                        ),
+                        CheckboxWithLabel(
+                            "Error state example",
+                            signal="error_checkbox",
+                            error_text="This field is required",
+                        ),
+                        # Custom styled checkbox with blue background
+                        Div(
+                            CheckboxWithLabel(
+                                "Custom blue checkbox",
+                                signal="blue_checkbox",
+                                helper_text="With custom blue styling when checked",
+                                checkbox_cls="checked:!bg-blue-600 checked:!border-blue-600 dark:checked:!bg-blue-700 dark:checked:!border-blue-700",
+                                indicator_cls="!text-white",
+                            ),
+                            cls="p-4 border rounded-lg",
+                        ),
+                        cls="space-y-4 mb-8",
                     ),
                     cls="container mx-auto p-8",
                     id="content",
@@ -708,54 +766,6 @@ def selects(sender: str, *args,**kwargs):
                             helper_text="Select your country of residence",
                         ),
                         P(text="$country"),
-Div(
-    SelectTrigger(
-        Span('Apple', cls='truncate'),
-        signal='445592',
-    ),
-    Div(
-        Header(
-            Svg(
-                Circle(cx='11', cy='11', r='8'),
-                Path(d='m21 21-4.3-4.3'),
-                xmlns='http://www.w3.org/2000/svg',
-                width='24',
-                height='24',
-                viewbox='0 0 24 24',
-                fill='none',
-                stroke='currentColor',
-                stroke_width='2',
-                stroke_linecap='round',
-                stroke_linejoin='round',
-                cls='lucide lucide-search-icon lucide-search'
-            ),
-            HTMLInput(type='text', value='', placeholder='Search entries...', autocomplete='off', autocorrect='off', spellcheck='false', aria_autocomplete='list', role='combobox', aria_expanded='false', aria_controls='select-445592-listbox', aria_labelledby='select-445592-trigger')
-        ),
-        Div(
-            Div(
-                Div('Fruits', role='heading', id='group-label-select-445592-items-1'),
-                Div('Apple', id='select-445592-items-1-1', role='option', data_value='apple', aria_selected='true'),
-                Div('Banana', id='select-445592-items-1-2', role='option', data_value='banana'),
-                Div('Blueberry', id='select-445592-items-1-3', role='option', data_value='blueberry'),
-                Div('Grapes', id='select-445592-items-1-4', role='option', data_value='pineapple'),
-                Div('Pineapple', id='select-445592-items-1-5', role='option', data_value='pineapple'),
-                role='group',
-                aria_labelledby='group-label-select-445592-items-1'
-            ),
-            role='listbox',
-            id='select-445592-listbox',
-            aria_orientation='vertical',
-            aria_labelledby='select-445592-trigger'
-        ),
-        id='select-445592-popover',
-        data_popover='',
-        aria_hidden='true'
-    ),
-    HTMLInput(type='hidden', name='select-445592-value', value='apple'),
-    id='select-445592',
-    cls='select'
-),
-                        # Select with value/label tuples
                         SelectWithLabel(
                             "Language",
                             options=[
@@ -872,48 +882,6 @@ def popovers(sender: str, *args,**kwargs):
                         ),
                         cls="flex flex-wrap gap-4 mb-8",
                     ),
-Div(
-    Button('Open popover', id='demo-popover-trigger', type='button', aria_expanded='false', aria_controls='demo-popover-popover', cls='btn-outline'),
-    Div(
-        Div(
-            Header(
-                H4('Dimensions', cls='leading-none font-medium'),
-                P('Set the dimensions for the layer.', cls='text-muted-foreground text-sm'),
-                cls='grid gap-1.5'
-            ),
-            Form(
-                Div(
-                    Label('Width', fr='demo-popover-width'),
-                    Input(type='text', id='demo-popover-width', value='100%', autofocus='', cls='col-span-2 h-8'),
-                    cls='grid grid-cols-3 items-center gap-4'
-                ),
-                Div(
-                    Label('Max. width', fr='demo-popover-max-width'),
-                    Input(type='text', id='demo-popover-max-width', value='300px', cls='col-span-2 h-8'),
-                    cls='grid grid-cols-3 items-center gap-4'
-                ),
-                Div(
-                    Label('Height', fr='demo-popover-height'),
-                    Input(type='text', id='demo-popover-height', value='25px', cls='col-span-2 h-8'),
-                    cls='grid grid-cols-3 items-center gap-4'
-                ),
-                Div(
-                    Label('Max. height', fr='demo-popover-max-height'),
-                    Input(type='text', id='demo-popover-max-height', value='none', cls='col-span-2 h-8'),
-                    cls='grid grid-cols-3 items-center gap-4'
-                ),
-                cls='form grid gap-2'
-            ),
-            cls='grid gap-4'
-        ),
-        id='demo-popover-popover',
-        data_popover='',
-        aria_hidden='true',
-        cls='w-80'
-    ),
-    id='demo-popover',
-    cls='popover'
-),
                     cls="container mx-auto p-8",
                     id="content",
                 )                
@@ -1066,61 +1034,10 @@ def tables(sender: str, *args,**kwargs):
                 )                
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
-
-@app.get("/")
-@page(title="RustyStarUi Component Test", wrap_in=HTMLResponse)
-def index():
-    return Div(
-        sidebar,
-        Main(navbar,
-            # Main content container
-            Div(
-                H1("StarUI Component Test", cls="text-4xl font-bold mb-8"),
-
-                Separator(cls="my-4"),
-                # Sheet example
-                Div(
-                    # H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
-                    # Sheet(
-                    #     SheetTrigger("Open Sheet", signal="demo_sheet"),
-                    #     SheetContent(
-                    #         SheetHeader(
-                    #             SheetTitle("Sheet Title", signal="demo_sheet"),
-                    #             SheetDescription(
-                    #                 "This is a sheet description.", signal="demo_sheet"
-                    #             ),
-                    #         ),
-                    #         Div(
-                    #             P(
-                    #                 "Sheet content goes here. Press ESC or click outside to close."
-                    #             ),
-                    #             Input(placeholder="Type something..."),
-                    #             cls="p-6 space-y-4",
-                    #         ),
-                    #         SheetFooter(
-                    #             Button(
-                    #                 "Cancel",
-                    #                 on_click="$demo_sheet_open = false",
-                    #                 variant="outline",
-                    #             ),
-                    #             Button("Save Changes"),
-                    #         ),
-                    #         signal="demo_sheet",
-                    #         side="right",
-                    #         size="md",
-                    #     ),
-                    #     signal="demo_sheet",
-                    #     side="right",
-                    #     size="md",
-                    #     modal=True,
-                    # ),
-                    # cls="mb-8",
-                ),                
-
-
-                Separator(cls="my-4"),
-                # Dropdown Menu examples
-                Div(
+@on("component.dropdown_menu")
+def dropdown_menu(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
                     H2("Dropdown Menus", cls="text-2xl font-semibold mb-4"),
                     Div(
                         # Basic dropdown
@@ -1171,10 +1088,15 @@ def index():
                         }),
                         cls="flex flex-wrap gap-4 mb-8",
                     ),
-                ),
-                Separator(cls="my-4"),
-                # HoverCard examples
-                Div(
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+@on("component.hover_cards")
+def hover_cards(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
                     H2("Hover Cards", cls="text-2xl font-semibold mb-4"),
                     Div(
                         # Basic hover card
@@ -1241,749 +1163,773 @@ def index():
                         ),
                         cls="flex flex-wrap gap-4 mb-8",
                     ),
-                ),
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+# @on("component.cards")
+# def cards(sender: str, *args,**kwargs):
+#     # Button variants
+#     elements = Div(
+#                     H2("Card", cls="text-2xl font-semibold mb-4"),
+#                     
+
+
+#                     cls="container mx-auto p-8",
+#                     id="content",
+#                 )                
+#     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+@app.get("/")
+@page(title="RustyStarUi Component Test", wrap_in=HTMLResponse)
+def index():
+    return Div(
+        sidebar,
+        Main(navbar,
+            # Main content container
+            Div(
+                H1("StarUI Component Test", cls="text-4xl font-bold mb-8"),
+
                 Separator(cls="my-4"),
-                # Checkbox examples
+                # Sheet example
                 Div(
-                    H2("Checkboxes", cls="text-2xl font-semibold mb-4"),
+                    # H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
+                    # Sheet(
+                    #     SheetTrigger("Open Sheet", signal="demo_sheet"),
+                    #     SheetContent(
+                    #         SheetHeader(
+                    #             SheetTitle("Sheet Title", signal="demo_sheet"),
+                    #             SheetDescription(
+                    #                 "This is a sheet description.", signal="demo_sheet"
+                    #             ),
+                    #         ),
+                    #         Div(
+                    #             P(
+                    #                 "Sheet content goes here. Press ESC or click outside to close."
+                    #             ),
+                    #             Input(placeholder="Type something..."),
+                    #             cls="p-6 space-y-4",
+                    #         ),
+                    #         SheetFooter(
+                    #             Button(
+                    #                 "Cancel",
+                    #                 on_click="$demo_sheet_open = false",
+                    #                 variant="outline",
+                    #             ),
+                    #             Button("Save Changes"),
+                    #         ),
+                    #         signal="demo_sheet",
+                    #         side="right",
+                    #         size="md",
+                    #     ),
+                    #     signal="demo_sheet",
+                    #     side="right",
+                    #     size="md",
+                    #     modal=True,
+                    # ),
+                    # cls="mb-8",
+                ),                
+                    
+                Separator(cls="my-4"),
+
+                # Toggle examples
+                Div(
+                    H2("Toggles", cls="text-2xl font-semibold mb-4"),
                     Div(
-                        CheckboxWithLabel(
-                            "Accept terms and conditions", signal="terms", required=True
-                        ),
-                        CheckboxWithLabel(
-                            "Subscribe to newsletter",
-                            signal="newsletter",
-                            helper_text="Get weekly updates about new features",
-                        ),
-                        CheckboxWithLabel(
-                            "Enable notifications", signal="notifications", checked=True
-                        ),
-                        CheckboxWithLabel(
-                            "Disabled option",
-                            disabled=True,
-                            helper_text="This option is currently unavailable",
-                        ),
-                        CheckboxWithLabel(
-                            "Error state example",
-                            signal="error_checkbox",
-                            error_text="This field is required",
-                        ),
-                        # Custom styled checkbox with blue background
+                        # Basic toggles
                         Div(
-                            CheckboxWithLabel(
-                                "Custom blue checkbox",
-                                signal="blue_checkbox",
-                                helper_text="With custom blue styling when checked",
-                                checkbox_cls="checked:!bg-blue-600 checked:!border-blue-600 dark:checked:!bg-blue-700 dark:checked:!border-blue-700",
-                                indicator_cls="!text-white",
+                            P("Basic toggles:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle(Icon("lucide:bold"), signal="toggle_bold"),
+                                Toggle(Icon("lucide:italic"), signal="toggle_italic", pressed=True),
+                                Toggle(Icon("lucide:underline"), signal="toggle_underline"),
+                                Toggle(Icon("lucide:strikethrough"), disabled=True),
+                                cls="flex gap-1",
                             ),
-                            cls="p-4 border rounded-lg",
+                            cls="mb-4",
+                        ),
+                        # Outline variant toggles
+                        Div(
+                            P("Outline variant:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle(Icon("lucide:align-left"), variant="outline", signal="align_left"),
+                                Toggle(Icon("lucide:align-center"), variant="outline", signal="align_center", pressed=True),
+                                Toggle(Icon("lucide:align-right"), variant="outline", signal="align_right"),
+                                Toggle(Icon("lucide:align-justify"), variant="outline", signal="align_justify"),
+                                cls="flex gap-1",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Different sizes
+                        Div(
+                            P("Different sizes:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle("Small", size="sm", variant="outline", signal="size_sm"),
+                                Toggle("Default", size="default", variant="outline", signal="size_default"),
+                                Toggle("Large", size="lg", variant="outline", signal="size_lg"),
+                                cls="flex gap-2 items-center",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Toggle with text
+                        Div(
+                            P("Toggle with text:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle(
+                                    Icon("lucide:wifi"),
+                                    Span("WiFi", cls="ml-1"),
+                                    variant="outline",
+                                    signal="wifi_toggle",
+                                ),
+                                Toggle(
+                                    Icon("lucide:bluetooth"),
+                                    Span("Bluetooth", cls="ml-1"),
+                                    variant="outline",
+                                    signal="bluetooth_toggle",
+                                    pressed=True,
+                                ),
+                                Toggle(
+                                    Icon("lucide:plane"),
+                                    Span("Airplane Mode", cls="ml-1"),
+                                    variant="outline",
+                                    signal="airplane_toggle",
+                                ),
+                                cls="flex gap-2",
+                            ),
+                            cls="mb-4",
                         ),
                         cls="space-y-4 mb-8",
                     ),
                 ),
                 Separator(cls="my-4"),
-                # # Toggle examples
-                # Div(
-                #     H2("Toggles", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         # Basic toggles
-                #         Div(
-                #             P("Basic toggles:", cls="text-sm font-medium mb-2"),
-                #             Div(
-                #                 Toggle(Icon("lucide:bold"), signal="toggle_bold"),
-                #                 Toggle(Icon("lucide:italic"), signal="toggle_italic", pressed=True),
-                #                 Toggle(Icon("lucide:underline"), signal="toggle_underline"),
-                #                 Toggle(Icon("lucide:strikethrough"), disabled=True),
-                #                 cls="flex gap-1",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # Outline variant toggles
-                #         Div(
-                #             P("Outline variant:", cls="text-sm font-medium mb-2"),
-                #             Div(
-                #                 Toggle(Icon("lucide:align-left"), variant="outline", signal="align_left"),
-                #                 Toggle(Icon("lucide:align-center"), variant="outline", signal="align_center", pressed=True),
-                #                 Toggle(Icon("lucide:align-right"), variant="outline", signal="align_right"),
-                #                 Toggle(Icon("lucide:align-justify"), variant="outline", signal="align_justify"),
-                #                 cls="flex gap-1",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # Different sizes
-                #         Div(
-                #             P("Different sizes:", cls="text-sm font-medium mb-2"),
-                #             Div(
-                #                 Toggle("Small", size="sm", variant="outline", signal="size_sm"),
-                #                 Toggle("Default", size="default", variant="outline", signal="size_default"),
-                #                 Toggle("Large", size="lg", variant="outline", signal="size_lg"),
-                #                 cls="flex gap-2 items-center",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # Toggle with text
-                #         Div(
-                #             P("Toggle with text:", cls="text-sm font-medium mb-2"),
-                #             Div(
-                #                 Toggle(
-                #                     Icon("lucide:wifi"),
-                #                     Span("WiFi", cls="ml-1"),
-                #                     variant="outline",
-                #                     signal="wifi_toggle",
-                #                 ),
-                #                 Toggle(
-                #                     Icon("lucide:bluetooth"),
-                #                     Span("Bluetooth", cls="ml-1"),
-                #                     variant="outline",
-                #                     signal="bluetooth_toggle",
-                #                     pressed=True,
-                #                 ),
-                #                 Toggle(
-                #                     Icon("lucide:plane"),
-                #                     Span("Airplane Mode", cls="ml-1"),
-                #                     variant="outline",
-                #                     signal="airplane_toggle",
-                #                 ),
-                #                 cls="flex gap-2",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         cls="space-y-4 mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # # Toggle Group examples
-                # Div(
-                #     H2("Toggle Groups", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         # Single selection toggle group
-                #         Div(
-                #             P("Text formatting (single selection):", cls="text-sm font-medium mb-2"),
-                #             SingleToggleGroup(
-                #                 ("bold", Icon("lucide:bold")),
-                #                 ("italic", Icon("lucide:italic")),
-                #                 ("underline", Icon("lucide:underline")),
-                #                 signal="text_format",
-                #                 variant="outline",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # Multiple selection toggle group
-                #         Div(
-                #             P("Text options (multiple selection):", cls="text-sm font-medium mb-2"),
-                #             MultipleToggleGroup(
-                #                 ("bold", Icon("lucide:bold")),
-                #                 ("italic", Icon("lucide:italic")),
-                #                 ("underline", Icon("lucide:underline")),
-                #                 ("strikethrough", Icon("lucide:strikethrough")),
-                #                 signal="text_options",
-                #                 variant="outline",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # Alignment toggle group
-                #         Div(
-                #             P("Text alignment:", cls="text-sm font-medium mb-2"),
-                #             SingleToggleGroup(
-                #                 ("left", Icon("lucide:align-left")),
-                #                 ("center", Icon("lucide:align-center")),
-                #                 ("right", Icon("lucide:align-right")),
-                #                 ("justify", Icon("lucide:align-justify")),
-                #                 signal="alignment",
-                #                 variant="default",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # Size toggle group
-                #         Div(
-                #             P("Size selection:", cls="text-sm font-medium mb-2"),
-                #             SingleToggleGroup(
-                #                 ("sm", "Small"),
-                #                 ("md", "Medium"),
-                #                 ("lg", "Large"),
-                #                 ("xl", "Extra Large"),
-                #                 signal="size_selection",
-                #                 variant="outline",
-                #                 size="lg",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # View mode toggle group
-                #         Div(
-                #             P("View mode:", cls="text-sm font-medium mb-2"),
-                #             SingleToggleGroup(
-                #                 ("list", Div(Icon("lucide:list"), Span("List", cls="ml-1"))),
-                #                 ("grid", Div(Icon("lucide:layout-grid"), Span("Grid", cls="ml-1"))),
-                #                 ("gallery", Div(Icon("lucide:image"), Span("Gallery", cls="ml-1"))),
-                #                 signal="view_mode",
-                #                 variant="outline",
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         # Disabled toggle group
-                #         Div(
-                #             P("Disabled group:", cls="text-sm font-medium mb-2"),
-                #             SingleToggleGroup(
-                #                 ("option1", "Option 1"),
-                #                 ("option2", "Option 2"),
-                #                 ("option3", "Option 3"),
-                #                 signal="disabled_group",
-                #                 variant="outline",
-                #                 disabled=True,
-                #             ),
-                #             cls="mb-4",
-                #         ),
-                #         cls="space-y-4 mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # # Accordion examples
-                # Div(
-                #     H2("Accordion", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         # Single accordion with collapsible
-                #         Div(
-                #             P(
-                #                 "Single selection (collapsible):",
-                #                 cls="text-sm font-medium mb-2",
-                #             ),
-                #             Accordion(
-                #                 AccordionItem(
-                #                     AccordionContent(
-                #                         "Yes. It adheres to the WAI-ARIA design pattern.",
-                #                         value="item-1",
-                #                     ),
-                #                     summary="Is it accessible?",
-                #                     value="item-1",
-                #                 ),
-                #                 AccordionItem(
-                #                     AccordionContent(
-                #                         "Yes. It comes with default styles that matches the other components' aesthetic.",
-                #                         value="item-2",
-                #                     ),
-                #                     summary="Is it styled?",
-                #                     value="item-2",
-                #                 ),
-                #                 AccordionItem(                              
-                #                     AccordionContent(
-                #                         "Yes. It's animated by default, but you can disable it if you prefer.",
-                #                         value="item-3",
-                #                     ),
-                #                     summary="Is it animated?",
-                #                     value="item-3",
-                #                 ),
-                #                 type="single",
-                #                 collapsible=True,
-                #                 default_value="item-1",
-                #                 signal="accordion_single",
-                #                 cls="w-full",
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Multiple selection accordion
-                #         Div(
-                #             P("Multiple selection:", cls="text-sm font-medium mb-2"),
-                #             Accordion(
-                #                 AccordionItem(
+                # Toggle Group examples
+                Div(
+                    H2("Toggle Groups", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Single selection toggle group
+                        Div(
+                            P("Text formatting (single selection):", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("bold", Icon("lucide:bold")),
+                                ("italic", Icon("lucide:italic")),
+                                ("underline", Icon("lucide:underline")),
+                                signal="text_format",
+                                variant="outline",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Multiple selection toggle group
+                        Div(
+                            P("Text options (multiple selection):", cls="text-sm font-medium mb-2"),
+                            MultipleToggleGroup(
+                                ("bold", Icon("lucide:bold")),
+                                ("italic", Icon("lucide:italic")),
+                                ("underline", Icon("lucide:underline")),
+                                ("strikethrough", Icon("lucide:strikethrough")),
+                                signal="text_options",
+                                variant="outline",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Alignment toggle group
+                        Div(
+                            P("Text alignment:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("left", Icon("lucide:align-left")),
+                                ("center", Icon("lucide:align-center")),
+                                ("right", Icon("lucide:align-right")),
+                                ("justify", Icon("lucide:align-justify")),
+                                signal="alignment",
+                                variant="default",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Size toggle group
+                        Div(
+                            P("Size selection:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("sm", "Small"),
+                                ("md", "Medium"),
+                                ("lg", "Large"),
+                                ("xl", "Extra Large"),
+                                signal="size_selection",
+                                variant="outline",
+                                size="lg",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # View mode toggle group
+                        Div(
+                            P("View mode:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("list", Div(Icon("lucide:list"), Span("List", cls="ml-1"))),
+                                ("grid", Div(Icon("lucide:layout-grid"), Span("Grid", cls="ml-1"))),
+                                ("gallery", Div(Icon("lucide:image"), Span("Gallery", cls="ml-1"))),
+                                signal="view_mode",
+                                variant="outline",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Disabled toggle group
+                        Div(
+                            P("Disabled group:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("option1", "Option 1"),
+                                ("option2", "Option 2"),
+                                ("option3", "Option 3"),
+                                signal="disabled_group",
+                                variant="outline",
+                                disabled=True,
+                            ),
+                            cls="mb-4",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                ),
+                Separator(cls="my-4"),
+                # Accordion examples
+                Div(
+                    H2("Accordion", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Single accordion with collapsible
+                        Div(
+                            P(
+                                "Single selection (collapsible):",
+                                cls="text-sm font-medium mb-2",
+                            ),
+                            Accordion(
+                                AccordionItem(
+                                    AccordionContent(
+                                        "Yes. It adheres to the WAI-ARIA design pattern.",
+                                        value="item-1",
+                                    ),
+                                    summary="Is it accessible?",
+                                    value="item-1",
+                                ),
+                                AccordionItem(
+                                    AccordionContent(
+                                        "Yes. It comes with default styles that matches the other components' aesthetic.",
+                                        value="item-2",
+                                    ),
+                                    summary="Is it styled?",
+                                    value="item-2",
+                                ),
+                                AccordionItem(                              
+                                    AccordionContent(
+                                        "Yes. It's animated by default, but you can disable it if you prefer.",
+                                        value="item-3",
+                                    ),
+                                    summary="Is it animated?",
+                                    value="item-3",
+                                ),
+                                type="single",
+                                collapsible=True,
+                                default_value="item-1",
+                                signal="accordion_single",
+                                cls="w-full",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Multiple selection accordion
+                        Div(
+                            P("Multiple selection:", cls="text-sm font-medium mb-2"),
+                            Accordion(
+                                AccordionItem(
                                     
-                #                     AccordionContent(
-                #                         Div(
-                #                             P(
-                #                                 "To get started with our product, follow these steps:",
-                #                                 cls="mb-2",
-                #                             ),
-                #                             Ul(
-                #                                 Li("1. Sign up for an account"),
-                #                                 Li("2. Complete your profile"),
-                #                                 Li("3. Explore the dashboard"),
-                #                                 cls="list-disc pl-6",
-                #                             ),
-                #                         ),
-                #                         value="getting-started",
-                #                     ),
-                #                     summary="Getting Started",
-                #                     value="getting-started",
-                #                 ),
-                #                 AccordionItem(
-                #                     AccordionContent(
-                #                         Div(
-                #                             P(
-                #                                 "Our platform offers these key features:",
-                #                                 cls="mb-2",
-                #                             ),
-                #                             Ul(
-                #                                 Li("Real-time collaboration"),
-                #                                 Li("Advanced analytics"),
-                #                                 Li("Custom integrations"),
-                #                                 Li("24/7 support"),
-                #                                 cls="list-disc pl-6",
-                #                             ),
-                #                         ),
-                #                         value="features",
-                #                     ),
-                #                     summary="Features",
-                #                     value="features",
-                #                 ),
-                #                 AccordionItem(
-                #                     AccordionContent(
-                #                         Div(
-                #                             P(
-                #                                 "We offer flexible pricing plans:",
-                #                                 cls="mb-2",
-                #                             ),
-                #                             Div(
-                #                                 Div(
-                #                                     "Free: $0/month - Basic features",
-                #                                     cls="py-1",
-                #                                 ),
-                #                                 Div(
-                #                                     "Pro: $29/month - Advanced features",
-                #                                     cls="py-1",
-                #                                 ),
-                #                                 Div(
-                #                                     "Enterprise: Custom - Full access",
-                #                                     cls="py-1",
-                #                                 ),
-                #                             ),
-                #                         ),
-                #                         value="pricing",
-                #                     ),
-                #                     summary="Pricing",
-                #                     value="pricing",
-                #                 ),
-                #                 type="multiple",
-                #                 default_value=["getting-started"],
-                #                 signal="accordion_multiple",
-                #                 cls="w-full",
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         cls="space-y-4 mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # # Avatar examples
-                # Div(
-                #     H2("Avatars", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         # Basic Avatar with image
-                #         Div(
-                #             H3("Basic Avatar", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Avatar(
-                #                     AvatarImage(
-                #                         src="https://github.com/shadcn.png",
-                #                         alt="@shadcn"
-                #                     )
-                #                 ),
-                #                 Avatar(
-                #                     AvatarFallback("CN")
-                #                 ),
-                #                 Avatar(
-                #                     AvatarImage(
-                #                         src="https://avatars.githubusercontent.com/u/1?v=4",
-                #                         alt="User"
-                #                     )
-                #                 ),
-                #                 cls="flex gap-4 items-center"
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Different sizes (composition example)
-                #         Div(
-                #             H3("Avatar Sizes", cls="text-lg font-medium mb-2"),
-                #             P("Use size classes to customize:", cls="text-sm text-muted-foreground mb-2"),
-                #             Div(
-                #                 Avatar(AvatarFallback("XS"), cls="size-6"),
-                #                 Avatar(AvatarFallback("SM"), cls="size-8"),
-                #                 Avatar(AvatarFallback("MD")),  # default size-10
-                #                 Avatar(AvatarFallback("LG"), cls="size-12"),
-                #                 Avatar(AvatarFallback("XL"), cls="size-16"),
-                #                 Avatar(AvatarFallback("2X"), cls="size-20"),
-                #                 cls="flex gap-4 items-center"
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Avatar with automatic fallback
-                #         Div(
-                #             H3("Automatic Fallback", cls="text-lg font-medium mb-2"),
-                #             P("The second avatar will show fallback as the image URL is invalid:", cls="text-sm text-muted-foreground mb-2"),
-                #             Div(
-                #                 AvatarWithFallback(
-                #                     src="https://github.com/shadcn.png",
-                #                     alt="@shadcn",
-                #                     fallback="CN"
-                #                 ),
-                #                 AvatarWithFallback(
-                #                     src="https://invalid-url.com/image.jpg",
-                #                     alt="Invalid",
-                #                     fallback="IN"
-                #                 ),
-                #                 AvatarWithFallback(
-                #                     fallback="NI"
-                #                 ),
-                #                 cls="flex gap-4 items-center"
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Avatar Group (composition example)
-                #         Div(
-                #             H3("Avatar Group", cls="text-lg font-medium mb-2"),
-                #             P("Compose avatars with overlapping styles:", cls="text-sm text-muted-foreground mb-2"),
-                #             Div(
-                #                 Div(
-                #                     Avatar(AvatarFallback("JD")),
-                #                     Avatar(AvatarFallback("AS")),
-                #                     Avatar(AvatarFallback("PQ")),
-                #                     Avatar(AvatarFallback("+2", cls="text-xs font-medium")),
-                #                     cls="flex -space-x-2 [&>*[data-slot=avatar]]:ring-2 [&>*[data-slot=avatar]]:ring-background"
-                #                 ),
-                #                 cls="mb-2"
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Avatar with Badge (composition example)
-                #         Div(
-                #             H3("Avatar with Badge", cls="text-lg font-medium mb-2"),
-                #             P("Compose with absolute positioning:", cls="text-sm text-muted-foreground mb-2"),
-                #             Div(
-                #                 # Green status badge
-                #                 Div(
-                #                     Avatar(AvatarFallback("JD")),
-                #                     Span(cls="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-background"),
-                #                     cls="relative inline-block"
-                #                 ),
-                #                 # Red status badge
-                #                 Div(
-                #                     Avatar(AvatarFallback("AS")),
-                #                     Span(cls="absolute bottom-0 right-0 size-3 bg-red-500 rounded-full ring-2 ring-background"),
-                #                     cls="relative inline-block"
-                #                 ),
-                #                 # Badge with count
-                #                 Div(
-                #                     Avatar(AvatarFallback("MN")),
-                #                     Span("5", cls="absolute bottom-0 right-0 size-4 bg-red-500 rounded-full ring-2 ring-background flex items-center justify-center text-[8px] font-bold text-white"),
-                #                     cls="relative inline-block"
-                #                 ),
-                #                 cls="flex gap-4 items-center"
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Avatar from Initials (composition example)
-                #         Div(
-                #             H3("Avatar from Initials", cls="text-lg font-medium mb-2"),
-                #             P("Use colored backgrounds for initials:", cls="text-sm text-muted-foreground mb-2"),
-                #             Div(
-                #                 Avatar(AvatarFallback("JD", cls="bg-red-600 dark:bg-red-500 text-white font-semibold")),
-                #                 Avatar(AvatarFallback("AS", cls="bg-blue-600 dark:bg-blue-500 text-white font-semibold")),
-                #                 Avatar(AvatarFallback("PQ", cls="bg-green-600 dark:bg-green-500 text-white font-semibold")),
-                #                 Avatar(AvatarFallback("MN", cls="bg-purple-600 dark:bg-purple-500 text-white font-semibold")),
-                #                 Avatar(AvatarFallback("XY", cls="bg-orange-600 dark:bg-orange-500 text-white font-semibold")),
-                #                 cls="flex gap-4 items-center"
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         cls="space-y-4 mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # # Separator examples
-                # Div(
-                #     H2("Separators", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         Div(
-                #             P("Content above separator", cls="mb-4"),
-                #             Separator(),
-                #             P("Content below separator", cls="mt-4"),
-                #             cls="mb-6",
-                #         ),
-                #         Div(
-                #             H3("Vertical Separators", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Span("Left content"),
-                #                 Separator(orientation="vertical", cls="mx-4"),
-                #                 Span("Right content"),
-                #                 cls="flex items-center h-8",
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         Div(
-                #             H3("Custom Styling", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 P("Custom colored separator below:", cls="mb-2"),
-                #                 Separator(cls="bg-red-500 h-0.5"),
-                #                 P("Thicker separator with different color:", cls="mt-4 mb-2"),
-                #                 Separator(cls="bg-blue-500 h-1"),
-                #             ),
-                #         ),
-                #         cls="space-y-4 mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # # Skeleton examples
-                # Div(
-                #     H2("Skeleton", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         # Basic skeleton shapes
-                #         Div(
-                #             H3("Basic Shapes", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Skeleton(cls="h-4 w-64"),  # Text line
-                #                 Skeleton(cls="h-4 w-48"),  # Shorter text line
-                #                 Skeleton(cls="h-4 w-56"),  # Another text line
-                #                 cls="space-y-2 mb-4",
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Card skeleton
-                #         Div(
-                #             H3("Card Skeleton", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Div(
-                #                     Skeleton(cls="h-12 w-12 rounded-full"),  # Avatar
-                #                     Div(
-                #                         Skeleton(cls="h-4 w-32"),  # Name
-                #                         Skeleton(cls="h-3 w-24"),  # Subtitle
-                #                         cls="space-y-2",
-                #                     ),
-                #                     cls="flex items-center space-x-4",
-                #                 ),
-                #                 Skeleton(cls="h-32 w-full mt-4"),  # Content area
-                #                 Skeleton(cls="h-4 w-full mt-4"),  # Footer line
-                #                 cls="p-4 border rounded-lg",
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Article skeleton
-                #         Div(
-                #             H3("Article Skeleton", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Skeleton(cls="h-8 w-3/4 mb-4"),  # Title
-                #                 Skeleton(cls="h-3 w-32 mb-6"),  # Date
-                #                 Div(
-                #                     Skeleton(cls="h-4 w-full"),
-                #                     Skeleton(cls="h-4 w-full"),
-                #                     Skeleton(cls="h-4 w-2/3"),
-                #                     cls="space-y-2 mb-4",
-                #                 ),
-                #                 Skeleton(cls="h-40 w-full"),  # Image placeholder
-                #                 cls="p-4 border rounded-lg",
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Interactive skeleton toggle
-                #         Div(
-                #             H3("Loading State Toggle", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Button(
-                #                     text="$loading ? 'Stop Loading' : 'Start Loading'",
-                #                     on_click="$loading = !$loading",
-                #                     variant="outline",
-                #                     cls="mb-4",
-                #                 ),
-                #                 # Content that toggles based on loading state
-                #                 Div(
-                #                     Skeleton(cls="h-6 w-48 mb-2"),
-                #                     Skeleton(cls="h-4 w-64 mb-4"),
-                #                     Skeleton(cls="h-20 w-full"),
-                #                     show="$loading",
-                #                 ),
-                #                 Div(
-                #                     H4("Content Loaded!", cls="text-lg font-semibold mb-2"),
-                #                     P("This content appears when loading is complete.", cls="mb-4"),
-                #                     Div(
-                #                         "This is the actual content that would load.",
-                #                         cls="p-4 bg-muted rounded-lg",
-                #                     ),
-                #                     show="!$loading",
-                #                 ),
-                #                 signals= Signals(loading=True),
-                #                 cls="p-4 border rounded-lg",
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         cls="space-y-4 mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # # Progress examples
-                # Div(
-                #     H2("Progress", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         # Basic examples
-                #         Div(
-                #             H3("Basic Examples", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 P("Default (25%):", cls="mb-2"),
-                #                 Progress(progress_value=25),
-                #                 P("Half-way (50%):", cls="mt-4 mb-2"),
-                #                 Progress(progress_value=50),
-                #                 P("Complete (100%):", cls="mt-4 mb-2"),
-                #                 Progress(progress_value=100),
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Reactive progress with signals
-                #         Div(
-                #             H3("Interactive Progress", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Progress(progress_value=35, signal="demo_progress"),
-                #                 Div(
-                #                     Button("Increase", on_click="$demo_progress = Math.min(100, $demo_progress + 10)"),
-                #                     Button("Decrease", on_click="$demo_progress = Math.max(0, $demo_progress - 10)"),
-                #                     Button("Reset", on_click="$demo_progress = 0"),
-                #                     cls="flex gap-2 mt-4",
-                #                 ),
-                #                 P(
-                #                     Span("Current: "),
-                #                     Span(text="$demo_progress", cls="font-bold"),
-                #                     Span("%"),
-                #                     cls="mt-2 text-sm text-muted-foreground",
-                #                 ),
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Auto-incrementing progress
-                #         Div(
-                #             H3("Auto-incrementing Progress", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 Progress(progress_value=0, signal="auto_progress"),
-                #                 Div(
-                #                     Button(
-                #                         "Start", 
-                #                         on_click="""
-                #                             if (!window.autoProgressInterval) {
-                #                                 $auto_progress = 0;
-                #                                 window.autoProgressInterval = setInterval(() => {
-                #                                     if ($auto_progress < 100) {
-                #                                         $auto_progress += 2;
-                #                                     } else {
-                #                                         clearInterval(window.autoProgressInterval);
-                #                                         window.autoProgressInterval = null;
-                #                                     }
-                #                                 }, 100);
-                #                             }
-                #                         """ ,
-                #                         variant="default"
-                #                     ),
-                #                     Button(
-                #                         "Stop", 
-                #                         on_click="""
-                #                             if (window.autoProgressInterval) {
-                #                                 clearInterval(window.autoProgressInterval);
-                #                                 window.autoProgressInterval = null;
-                #                             }
-                #                         """,
-                #                         variant="destructive"
-                #                     ),
-                #                     Button(
-                #                         "Reset", 
-                #                         on_click="""
-                #                             if (window.autoProgressInterval) {
-                #                                 clearInterval(window.autoProgressInterval);
-                #                                 window.autoProgressInterval = null;
-                #                             }
-                #                             $auto_progress = 0;
-                #                         """,
-                #                         variant="secondary"
-                #                     ),
-                #                     cls="flex gap-2 mt-4",
-                #                 ),
-                #                 P(
-                #                     Span("Progress: "),
-                #                     Span(text="$auto_progress", cls="font-bold"),
-                #                     Span("%"),
-                #                     cls="mt-2 text-sm text-muted-foreground",
-                #                 ),
-                #             ),
-                #             cls="mb-6",
-                #         ),
-                #         # Custom styling
-                #         Div(
-                #             H3("Custom Styling", cls="text-lg font-medium mb-2"),
-                #             Div(
-                #                 P("Large progress bar:", cls="mb-2"),
-                #                 Progress(progress_value=60, cls="h-4"),
-                #                 P("Custom color:", cls="mt-4 mb-2"),
-                #                 Progress(progress_value=80, class_name="bg-green-200", cls="[&>div]:bg-green-500"),
-                #             ),
-                #         ),
-                #         cls="space-y-4 mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # # Interactive counter with Datastar
-                # Div(
-                #     H2("Interactive Counter (Datastar)", cls="text-2xl font-semibold mb-4"),
-                #     Div(
-                #         Div(
-                #             Span("Count: ", cls="font-semibold"),
-                #             Span(text="$count"),
-                #             cls="text-xl mb-4",
-                #         ),
-                #         Div(
-                #             Button("-", on_click="$count--", variant="outline"),
-                #             Button("Reset", on_click="$count = 0", variant="secondary"),
-                #             Button("+", on_click="$count++", variant="outline"),
-                #             cls="flex gap-2",
-                #         ),
-                #         signals= Signals(count=0),
-                #         cls="p-4 border rounded-lg mb-8",
-                #     ),
-                # ),
-                # Separator(cls="my-4"),
-                # Table examples
+                                    AccordionContent(
+                                        Div(
+                                            P(
+                                                "To get started with our product, follow these steps:",
+                                                cls="mb-2",
+                                            ),
+                                            Ul(
+                                                Li("1. Sign up for an account"),
+                                                Li("2. Complete your profile"),
+                                                Li("3. Explore the dashboard"),
+                                                cls="list-disc pl-6",
+                                            ),
+                                        ),
+                                        value="getting-started",
+                                    ),
+                                    summary="Getting Started",
+                                    value="getting-started",
+                                ),
+                                AccordionItem(
+                                    AccordionContent(
+                                        Div(
+                                            P(
+                                                "Our platform offers these key features:",
+                                                cls="mb-2",
+                                            ),
+                                            Ul(
+                                                Li("Real-time collaboration"),
+                                                Li("Advanced analytics"),
+                                                Li("Custom integrations"),
+                                                Li("24/7 support"),
+                                                cls="list-disc pl-6",
+                                            ),
+                                        ),
+                                        value="features",
+                                    ),
+                                    summary="Features",
+                                    value="features",
+                                ),
+                                AccordionItem(
+                                    AccordionContent(
+                                        Div(
+                                            P(
+                                                "We offer flexible pricing plans:",
+                                                cls="mb-2",
+                                            ),
+                                            Div(
+                                                Div(
+                                                    "Free: $0/month - Basic features",
+                                                    cls="py-1",
+                                                ),
+                                                Div(
+                                                    "Pro: $29/month - Advanced features",
+                                                    cls="py-1",
+                                                ),
+                                                Div(
+                                                    "Enterprise: Custom - Full access",
+                                                    cls="py-1",
+                                                ),
+                                            ),
+                                        ),
+                                        value="pricing",
+                                    ),
+                                    summary="Pricing",
+                                    value="pricing",
+                                ),
+                                type="multiple",
+                                default_value=["getting-started"],
+                                signal="accordion_multiple",
+                                cls="w-full",
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                ),
+                Separator(cls="my-4"),
+                # Avatar examples
+                Div(
+                    H2("Avatars", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Basic Avatar with image
+                        Div(
+                            H3("Basic Avatar", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Avatar(
+                                    AvatarImage(
+                                        src="https://github.com/shadcn.png",
+                                        alt="@shadcn"
+                                    )
+                                ),
+                                Avatar(
+                                    AvatarFallback("CN")
+                                ),
+                                Avatar(
+                                    AvatarImage(
+                                        src="https://avatars.githubusercontent.com/u/1?v=4",
+                                        alt="User"
+                                    )
+                                ),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Different sizes (composition example)
+                        Div(
+                            H3("Avatar Sizes", cls="text-lg font-medium mb-2"),
+                            P("Use size classes to customize:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                Avatar(AvatarFallback("XS"), cls="size-6"),
+                                Avatar(AvatarFallback("SM"), cls="size-8"),
+                                Avatar(AvatarFallback("MD")),  # default size-10
+                                Avatar(AvatarFallback("LG"), cls="size-12"),
+                                Avatar(AvatarFallback("XL"), cls="size-16"),
+                                Avatar(AvatarFallback("2X"), cls="size-20"),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar with automatic fallback
+                        Div(
+                            H3("Automatic Fallback", cls="text-lg font-medium mb-2"),
+                            P("The second avatar will show fallback as the image URL is invalid:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                AvatarWithFallback(
+                                    src="https://github.com/shadcn.png",
+                                    alt="@shadcn",
+                                    fallback="CN"
+                                ),
+                                AvatarWithFallback(
+                                    src="https://invalid-url.com/image.jpg",
+                                    alt="Invalid",
+                                    fallback="IN"
+                                ),
+                                AvatarWithFallback(
+                                    fallback="NI"
+                                ),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar Group (composition example)
+                        Div(
+                            H3("Avatar Group", cls="text-lg font-medium mb-2"),
+                            P("Compose avatars with overlapping styles:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                Div(
+                                    Avatar(AvatarFallback("JD")),
+                                    Avatar(AvatarFallback("AS")),
+                                    Avatar(AvatarFallback("PQ")),
+                                    Avatar(AvatarFallback("+2", cls="text-xs font-medium")),
+                                    cls="flex -space-x-2 [&>*[data-slot=avatar]]:ring-2 [&>*[data-slot=avatar]]:ring-background"
+                                ),
+                                cls="mb-2"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar with Badge (composition example)
+                        Div(
+                            H3("Avatar with Badge", cls="text-lg font-medium mb-2"),
+                            P("Compose with absolute positioning:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                # Green status badge
+                                Div(
+                                    Avatar(AvatarFallback("JD")),
+                                    Span(cls="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-background"),
+                                    cls="relative inline-block"
+                                ),
+                                # Red status badge
+                                Div(
+                                    Avatar(AvatarFallback("AS")),
+                                    Span(cls="absolute bottom-0 right-0 size-3 bg-red-500 rounded-full ring-2 ring-background"),
+                                    cls="relative inline-block"
+                                ),
+                                # Badge with count
+                                Div(
+                                    Avatar(AvatarFallback("MN")),
+                                    Span("5", cls="absolute bottom-0 right-0 size-4 bg-red-500 rounded-full ring-2 ring-background flex items-center justify-center text-[8px] font-bold text-white"),
+                                    cls="relative inline-block"
+                                ),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar from Initials (composition example)
+                        Div(
+                            H3("Avatar from Initials", cls="text-lg font-medium mb-2"),
+                            P("Use colored backgrounds for initials:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                Avatar(AvatarFallback("JD", cls="bg-red-600 dark:bg-red-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("AS", cls="bg-blue-600 dark:bg-blue-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("PQ", cls="bg-green-600 dark:bg-green-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("MN", cls="bg-purple-600 dark:bg-purple-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("XY", cls="bg-orange-600 dark:bg-orange-500 text-white font-semibold")),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                ),
+                Separator(cls="my-4"),
+                # Separator examples
+                Div(
+                    H2("Separators", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        Div(
+                            P("Content above separator", cls="mb-4"),
+                            Separator(),
+                            P("Content below separator", cls="mt-4"),
+                            cls="mb-6",
+                        ),
+                        Div(
+                            H3("Vertical Separators", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Span("Left content"),
+                                Separator(orientation="vertical", cls="mx-4"),
+                                Span("Right content"),
+                                cls="flex items-center h-8",
+                            ),
+                            cls="mb-6",
+                        ),
+                        Div(
+                            H3("Custom Styling", cls="text-lg font-medium mb-2"),
+                            Div(
+                                P("Custom colored separator below:", cls="mb-2"),
+                                Separator(cls="bg-red-500 h-0.5"),
+                                P("Thicker separator with different color:", cls="mt-4 mb-2"),
+                                Separator(cls="bg-blue-500 h-1"),
+                            ),
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                ),
+                Separator(cls="my-4"),
+                # Skeleton examples
+                Div(
+                    H2("Skeleton", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Basic skeleton shapes
+                        Div(
+                            H3("Basic Shapes", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Skeleton(cls="h-4 w-64"),  # Text line
+                                Skeleton(cls="h-4 w-48"),  # Shorter text line
+                                Skeleton(cls="h-4 w-56"),  # Another text line
+                                cls="space-y-2 mb-4",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Card skeleton
+                        Div(
+                            H3("Card Skeleton", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Div(
+                                    Skeleton(cls="h-12 w-12 rounded-full"),  # Avatar
+                                    Div(
+                                        Skeleton(cls="h-4 w-32"),  # Name
+                                        Skeleton(cls="h-3 w-24"),  # Subtitle
+                                        cls="space-y-2",
+                                    ),
+                                    cls="flex items-center space-x-4",
+                                ),
+                                Skeleton(cls="h-32 w-full mt-4"),  # Content area
+                                Skeleton(cls="h-4 w-full mt-4"),  # Footer line
+                                cls="p-4 border rounded-lg",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Article skeleton
+                        Div(
+                            H3("Article Skeleton", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Skeleton(cls="h-8 w-3/4 mb-4"),  # Title
+                                Skeleton(cls="h-3 w-32 mb-6"),  # Date
+                                Div(
+                                    Skeleton(cls="h-4 w-full"),
+                                    Skeleton(cls="h-4 w-full"),
+                                    Skeleton(cls="h-4 w-2/3"),
+                                    cls="space-y-2 mb-4",
+                                ),
+                                Skeleton(cls="h-40 w-full"),  # Image placeholder
+                                cls="p-4 border rounded-lg",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Interactive skeleton toggle
+                        Div(
+                            H3("Loading State Toggle", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Button(
+                                    text="$loading ? 'Stop Loading' : 'Start Loading'",
+                                    on_click="$loading = !$loading",
+                                    variant="outline",
+                                    cls="mb-4",
+                                ),
+                                # Content that toggles based on loading state
+                                Div(
+                                    Skeleton(cls="h-6 w-48 mb-2"),
+                                    Skeleton(cls="h-4 w-64 mb-4"),
+                                    Skeleton(cls="h-20 w-full"),
+                                    show="$loading",
+                                ),
+                                Div(
+                                    H4("Content Loaded!", cls="text-lg font-semibold mb-2"),
+                                    P("This content appears when loading is complete.", cls="mb-4"),
+                                    Div(
+                                        "This is the actual content that would load.",
+                                        cls="p-4 bg-muted rounded-lg",
+                                    ),
+                                    show="!$loading",
+                                ),
+                                signals= Signals(loading=True),
+                                cls="p-4 border rounded-lg",
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                ),
+                Separator(cls="my-4"),
+                # Progress examples
+                Div(
+                    H2("Progress", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Basic examples
+                        Div(
+                            H3("Basic Examples", cls="text-lg font-medium mb-2"),
+                            Div(
+                                P("Default (25%):", cls="mb-2"),
+                                Progress(progress_value=25),
+                                P("Half-way (50%):", cls="mt-4 mb-2"),
+                                Progress(progress_value=50),
+                                P("Complete (100%):", cls="mt-4 mb-2"),
+                                Progress(progress_value=100),
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Reactive progress with signals
+                        Div(
+                            H3("Interactive Progress", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Progress(progress_value=35, signal="demo_progress"),
+                                Div(
+                                    Button("Increase", on_click="$demo_progress = Math.min(100, $demo_progress + 10)"),
+                                    Button("Decrease", on_click="$demo_progress = Math.max(0, $demo_progress - 10)"),
+                                    Button("Reset", on_click="$demo_progress = 0"),
+                                    cls="flex gap-2 mt-4",
+                                ),
+                                P(
+                                    Span("Current: "),
+                                    Span(text="$demo_progress", cls="font-bold"),
+                                    Span("%"),
+                                    cls="mt-2 text-sm text-muted-foreground",
+                                ),
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Auto-incrementing progress
+                        Div(
+                            H3("Auto-incrementing Progress", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Progress(progress_value=0, signal="auto_progress"),
+                                Div(
+                                    Button(
+                                        "Start", 
+                                        on_click="""
+                                            if (!window.autoProgressInterval) {
+                                                $auto_progress = 0;
+                                                window.autoProgressInterval = setInterval(() => {
+                                                    if ($auto_progress < 100) {
+                                                        $auto_progress += 2;
+                                                    } else {
+                                                        clearInterval(window.autoProgressInterval);
+                                                        window.autoProgressInterval = null;
+                                                    }
+                                                }, 100);
+                                            }
+                                        """ ,
+                                        variant="default"
+                                    ),
+                                    Button(
+                                        "Stop", 
+                                        on_click="""
+                                            if (window.autoProgressInterval) {
+                                                clearInterval(window.autoProgressInterval);
+                                                window.autoProgressInterval = null;
+                                            }
+                                        """,
+                                        variant="destructive"
+                                    ),
+                                    Button(
+                                        "Reset", 
+                                        on_click="""
+                                            if (window.autoProgressInterval) {
+                                                clearInterval(window.autoProgressInterval);
+                                                window.autoProgressInterval = null;
+                                            }
+                                            $auto_progress = 0;
+                                        """,
+                                        variant="secondary"
+                                    ),
+                                    cls="flex gap-2 mt-4",
+                                ),
+                                P(
+                                    Span("Progress: "),
+                                    Span(text="$auto_progress", cls="font-bold"),
+                                    Span("%"),
+                                    cls="mt-2 text-sm text-muted-foreground",
+                                ),
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Custom styling
+                        Div(
+                            H3("Custom Styling", cls="text-lg font-medium mb-2"),
+                            Div(
+                                P("Large progress bar:", cls="mb-2"),
+                                Progress(progress_value=60, cls="h-4"),
+                                P("Custom color:", cls="mt-4 mb-2"),
+                                Progress(progress_value=80, class_name="bg-green-200", cls="[&>div]:bg-green-500"),
+                            ),
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                ),
+                Separator(cls="my-4"),
+                # Interactive counter with Datastar
+                Div(
+                    H2("Interactive Counter (Datastar)", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        Div(
+                            Span("Count: ", cls="font-semibold"),
+                            Span(text="$count"),
+                            cls="text-xl mb-4",
+                        ),
+                        Div(
+                            Button("-", on_click="$count--", variant="outline"),
+                            Button("Reset", on_click="$count = 0", variant="secondary"),
+                            Button("+", on_click="$count++", variant="outline"),
+                            cls="flex gap-2",
+                        ),
+                        signals= Signals(count=0),
+                        cls="p-4 border rounded-lg mb-8",
+                    ),
+                ),
 
 
 
-                # Separator(cls="my-4"),
-                # # Form with validation example
-                # Div(
-                #     H2(
-                #         "Form with Validation (Datastar)", cls="text-2xl font-semibold mb-4"
-                #     ),
-                #     Form(
-                #         Div(
-                #             Label("Name", for_="name"),
-                #             Input(
-                #                 bind="name", id="name", placeholder="Enter your name"
-                #             ),
-                #             Span(
-                #                 "Name is required",
-                #                 show="$submitted && !$name",
-                #                 cls="text-sm text-destructive",
-                #             ),
-                #             cls="space-y-2",
-                #         ),
-                #         Div(
-                #             Label("Email", for_="email"),
-                #             Input(
-                #                 bind="email",
-                #                 id="email",
-                #                 type="email",
-                #                 placeholder="email@example.com",
-                #             ),
-                #             Span(
-                #                 "Invalid email",
-                #                 show="$email && !$email.includes('@')",
-                #                 cls="text-sm text-destructive",
-                #             ),
-                #             cls="space-y-2",
-                #         ),
-                #         Button(
-                #             "Submit",
-                #             on_click="$submitted = true",
-                #             data_class={
-                #                 "opacity-50": "!$name || !$email || !$email.includes('@')"
-                #             },
-                #             type="submit",
-                #         ),
-                #         signals= Signals(name="", email="", submitted=False),
-                #         on_submit="event.preventDefault(); if($name && $email.includes('@')) alert('Form submitted!')",
-                #         cls="space-y-4 max-w-md",
-                #     ),
-                # ),
+                Separator(cls="my-4"),
+                # Form with validation example
+                Div(
+                    H2(
+                        "Form with Validation (Datastar)", cls="text-2xl font-semibold mb-4"
+                    ),
+                    Form(
+                        Div(
+                            Label("Name", for_="name"),
+                            Input(
+                                bind="name", id="name", placeholder="Enter your name"
+                            ),
+                            Span(
+                                "Name is required",
+                                show="$submitted && !$name",
+                                cls="text-sm text-destructive",
+                            ),
+                            cls="space-y-2",
+                        ),
+                        Div(
+                            Label("Email", for_="email"),
+                            Input(
+                                bind="email",
+                                id="email",
+                                type="email",
+                                placeholder="email@example.com",
+                            ),
+                            Span(
+                                "Invalid email",
+                                show="$email && !$email.includes('@')",
+                                cls="text-sm text-destructive",
+                            ),
+                            cls="space-y-2",
+                        ),
+                        Button(
+                            "Submit",
+                            on_click="$submitted = true",
+                            # data_class="{'opacity-50': '!$name || !$email || !$email.includes('@')'}",
+                            type="submit",
+                        ),
+                        signals= Signals(name="", email="", submitted=False),
+                        on_submit="event.preventDefault(); if($name && $email.includes('@')) alert('Form submitted!')",
+                        cls="space-y-4 max-w-md",
+                    ),
+                ),
                 
                 cls="container mx-auto p-8",
                 id="content",

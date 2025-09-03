@@ -3,7 +3,7 @@ from starui.registry.components.utils import Icon
 from starui.registry.components.button import Button
 from functools import cached_property
 from pydantic import BaseModel
-
+from rusty_tags import Button as HTMLButton
 
 def SidebarButton(
     label: str,
@@ -52,19 +52,22 @@ class Sidebar():
 
 sidebar_buttons = Sidebar()
 sidebar_buttons.buttons.home = SidebarBtn(label="Home", on_click="/", icon="lucide:home")
-sidebar_buttons.components.buttons = SidebarBtn(label="Buttons", on_click="/cmds/component.buttons/general")
-sidebar_buttons.components.badges = SidebarBtn(label="Badges", on_click="/cmds/component.badges/general")
-sidebar_buttons.components.inputs = SidebarBtn(label="Inputs", on_click="/cmds/component.inputs/general")
-sidebar_buttons.components.cards = SidebarBtn(label="Cards", on_click="/cmds/component.cards/general")
 sidebar_buttons.components.alerts = SidebarBtn(label="Alerts", on_click="/cmds/component.alerts/general")
+sidebar_buttons.components.buttons = SidebarBtn(label="Buttons", on_click="/cmds/component.buttons/general")
+sidebar_buttons.components.breadcrumb = SidebarBtn(label="Breadcrumb", on_click="/cmds/component.breadcrumb/general")
+sidebar_buttons.components.badges = SidebarBtn(label="Badges", on_click="/cmds/component.badges/general")
+sidebar_buttons.components.cards = SidebarBtn(label="Cards", on_click="/cmds/component.cards/general")
+sidebar_buttons.components.checkboxes = SidebarBtn(label="Checkboxes", on_click="/cmds/component.checkbox/general")
+sidebar_buttons.components.dropdown_menu = SidebarBtn(label="Dropdown Menu", on_click="/cmds/component.dropdown_menu/general")
 sidebar_buttons.components.dialogs = SidebarBtn(label="Dialogs", on_click="/cmds/component.dialogs/general")
+sidebar_buttons.components.inputs = SidebarBtn(label="Inputs", on_click="/cmds/component.inputs/general")
 sidebar_buttons.components.radios = SidebarBtn(label="Radios", on_click="/cmds/component.radios/general")
 sidebar_buttons.components.tabs = SidebarBtn(label="Tabs", on_click="/cmds/component.tabs/general")
-sidebar_buttons.components.breadcrumb = SidebarBtn(label="Breadcrumb", on_click="/cmds/component.breadcrumb/general")
 sidebar_buttons.components.switches = SidebarBtn(label="Switches", on_click="/cmds/component.switches/general")
 sidebar_buttons.components.textareas = SidebarBtn(label="Textareas", on_click="/cmds/component.textareas/general")
 sidebar_buttons.components.selects = SidebarBtn(label="Selects", on_click="/cmds/component.selects/general")
 sidebar_buttons.components.popovers = SidebarBtn(label="Popovers", on_click="/cmds/component.popovers/general")
+sidebar_buttons.components.hover_cards = SidebarBtn(label="Hover Cards", on_click="/cmds/component.hover_cards/general")
 sidebar_buttons.components.tables = SidebarBtn(label="Tables", on_click="/cmds/component.tables/general")
 
 
@@ -104,7 +107,7 @@ sidebar = Aside(
 
 navbar = Header(
     Div(
-        Button(
+        HTMLButton(
             Svg(
                 Rect(width='18', height='18', x='3', y='3', rx='2'),
                 Path(d='M9 3v18'),

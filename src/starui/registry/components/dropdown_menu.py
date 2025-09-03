@@ -1,8 +1,8 @@
 from typing import Any, Literal
 from uuid import uuid4
 
-from rusty_tags import HtmlString, Div, Hr, Span
 from rusty_tags import Button as HTMLButton
+from rusty_tags import Div, Hr, HtmlString, Script, Signals, Span
 
 from .button import Button
 from .utils import Icon, cn
@@ -14,7 +14,8 @@ def DropdownMenu(
     signal = signal or f"dropdown_{uuid4().hex[:8]}"
     return Div(
         *[child(signal) if callable(child) else child for child in children],
-        cls=cn("relative inline-block", cls),
+        cls=cn("relative inline-block","dropdown-menu", cls),
+        signals=Signals({f"{signal}_open": False}),
         **attrs,
     )
 
@@ -25,36 +26,24 @@ def DropdownMenuTrigger(
         "default", "destructive", "outline", "secondary", "ghost", "link"
     ] = "outline",
     size: Literal["default", "sm", "lg", "icon"] = "default",
-    as_child: bool = False,
-    cls: str = "",
-    class_name: str = "",
+    cls: str = "btn-outline",
     **attrs: Any,
 ):
     def create(signal):
-        trigger_id = f"{signal}-trigger"
-
-        if as_child and children:
-            child = children[0]
-            if hasattr(child, "attrs"):
-                child.attrs.update(
-                    {
-                        "popovertarget": f"{signal}-content",
-                        "popoveraction": "toggle",
-                        "id": trigger_id,
-                    }
-                )
-            return child
+        trigger_id = f"{signal}dropdown-menu-trigger"
 
         return Button(
             *children,
+            aria_haspopup='menu',
+            aria_controls=f"{signal}-dropdown-menu-popover",
+            # aria_expanded='false',
             ref=f"{signal}Trigger",
             variant=variant,
             size=size,
-            popovertarget=f"{signal}-content",
-            popoveraction="toggle",
             id=trigger_id,
             type="button",
-            cls=cn(class_name, cls),
+            on_click=f"${signal}_open = !${signal}_open",
+            cls=cn(cls),
             **attrs,
         )
 
@@ -71,30 +60,22 @@ def DropdownMenuContent(
     **attrs: Any,
 ):
     def create(signal):
-        placement = f"{side}-{align}" if align != "center" else side
-
         return Div(
-            *[child(signal) if callable(child) else child for child in children],
-            ref=f"{signal}Content",
-            position={
-                "anchor": f"{signal}-trigger",
-                "placement": placement,
-                "offset": side_offset,
-                "flip": True,
-                "shift": True,
-                "hide": True,
-            },
-            popover="auto",
-            id=f"{signal}-content",
-            role="menu",
-            aria_labelledby=f"{signal}-trigger",
-            tabindex="-1",
-            cls=cn(
-                "z-50 min-w-[8rem] overflow-hidden rounded-md border border-input",
-                "bg-popover text-popover-foreground shadow-lg p-1",
-                class_name,
-                cls,
-            ),
+                Div(
+                    *[child(signal) if callable(child) else child for child in children],
+                    role='menu',
+                    id=f'{signal}-dropdown-menu-menu',
+                    aria_labelledby=f'{signal}-dropdown-menu-trigger'
+                ),
+            id=f'{signal}-dropdown-menu-popover',
+            # show=f"${signal}_open",
+            on_intersect=f"${signal}_open = true",
+            data_popover=True,
+            data_side=side,
+            data_align=align,
+            data_side_offset=side_offset,
+            aria_hidden='true',
+            cls=cn('min-w-56', class_name, cls),
             **attrs,
         )
 
@@ -120,7 +101,6 @@ def DropdownMenuItem(
         handlers = []
         if onclick:
             handlers.append(onclick)
-        handlers.append(f"document.getElementById('{signal}-content').hidePopover()")
 
         return HTMLButton(
             *children,
@@ -159,7 +139,6 @@ def DropdownMenuCheckboxItem(
         if not disabled:
             handlers.append(
                 f"${checked_signal} = !${checked_signal}; "
-                f"document.getElementById('{signal}-content').hidePopover()"
             )
 
         return HTMLButton(
@@ -169,7 +148,7 @@ def DropdownMenuCheckboxItem(
                 cls="absolute left-2 flex size-3.5 items-center justify-center",
             ),
             *children,
-            **(({"on_click": handlers[0]} if handlers else {})),
+            **({"on_click": handlers[0]} if handlers else {}),
             cls=cn(
                 "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm",
                 "py-1.5 pr-2 pl-8 text-sm outline-none transition-colors",
@@ -218,10 +197,7 @@ def DropdownMenuRadioItem(
     def create(signal):
         handlers = []
         if not disabled:
-            handlers.append(
-                f"${value_signal} = '{value}'; "
-                f"document.getElementById('{signal}-content').hidePopover()"
-            )
+            handlers.append(f"${value_signal} = '{value}'; ")
 
         return HTMLButton(
             Span(
@@ -230,7 +206,7 @@ def DropdownMenuRadioItem(
                 cls="absolute left-2 flex size-3.5 items-center justify-center",
             ),
             *children,
-            **(({"on_click": handlers[0]} if handlers else {})),
+            **({"on_click": handlers[0]} if handlers else {}),
             cls=cn(
                 "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm",
                 "py-1.5 pr-2 pl-8 text-sm outline-none transition-colors",

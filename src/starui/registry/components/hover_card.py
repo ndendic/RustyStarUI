@@ -71,17 +71,13 @@ def HoverCardContent(
 
     return Div(
         *children,
+        data_popover=True,
+        data_side=side,
+        data_align=align,
+        data_attr_aria_hidden=f"${signal}_open ? 'false' : 'true'",
         ref=f"{signal}Content",
-        show=f"${signal}_open",
-        position={
-            "anchor": f"{signal}-trigger",
-            "placement": placement,
-            "offset": 8,
-            "flip": True,
-            "shift": True,
-            "hide": True,
-        },
-        on_mouseenter=f"clearTimeout(window.hoverTimer_{signal}); ${signal}_open = true;",
+
+        on_click=f"clearTimeout(window.hoverTimer_{signal}); ${signal}_open = true;",
         on_mouseleave=f"""
             clearTimeout(window.hoverTimer_{signal});
             window.hoverTimer_{signal} = setTimeout(() => {{
@@ -93,7 +89,7 @@ def HoverCardContent(
         aria_labelledby=f"{signal}-trigger",
         tabindex="-1",
         cls=cn(
-            "fixed z-50 w-72 max-w-[90vw] pointer-events-auto",
+            "absolute z-50 w-72 max-w-[90vw] pointer-events-auto",
             "rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none dark:border-input",
             cls,
         ),

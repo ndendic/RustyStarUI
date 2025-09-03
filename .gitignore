@@ -99,3 +99,6 @@ PRD.md
 toolbench/
 toolbench-changes.diff
 .mcp.json
+
+# Datastar pro
+datastar-*.js*
