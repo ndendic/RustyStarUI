@@ -52,6 +52,8 @@ class Sidebar():
 
 sidebar_buttons = Sidebar()
 sidebar_buttons.buttons.home = SidebarBtn(label="Home", on_click="/", icon="lucide:home")
+sidebar_buttons.buttons.playground = SidebarBtn(label="Playground", on_click="/cmds/playground/general", icon="lucide:canvas")
+
 sidebar_buttons.components.alerts = SidebarBtn(label="Alerts", on_click="/cmds/component.alerts/general")
 sidebar_buttons.components.buttons = SidebarBtn(label="Buttons", on_click="/cmds/component.buttons/general")
 sidebar_buttons.components.breadcrumb = SidebarBtn(label="Breadcrumb", on_click="/cmds/component.breadcrumb/general")

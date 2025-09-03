@@ -94,6 +94,59 @@ async def event_stream(request: Request, signals: ReadSignals):
         async for update in client.stream():
             yield update
 
+@on("playground")
+def playground(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
+        H2("Playground", cls="text-2xl font-semibold mb-4"),
+        Div(
+            P("Playground here"),
+            Div(
+                Button("Playground", 
+                       popovertarget="playground-popover",
+                       cls='[anchor-name:--pg]'),
+                Div(
+                    Div(
+                        H3("Playground", cls="text-lg font-semibold mb-2"),
+                        P("Playground here"),
+                    ),
+                    popover=True,
+                    cls="border bg-popover rounded-md p-4 mt-2 [position-anchor:--pg] [top:anchor(bottom)] [left:anchor(right)]",
+                    id="playground-popover",
+                ),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                P("Playground here and some long text to see how it wraps and scrolls"),
+                cls="inline-block",
+            ),
+        ),
+        cls="container mx-auto p-8",
+        id="content",
+    )
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+
 @on("component.buttons")
 def buttons(sender: str, *args,**kwargs):
     # Button variants
