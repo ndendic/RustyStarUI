@@ -867,6 +867,127 @@ def index():
                     cls="flex flex-wrap gap-4 mb-8",
                 ),
             ),
+            # Tooltip examples
+            Div(
+                H2("Tooltips", cls="text-2xl font-semibold mb-4"),
+                TooltipProvider(
+                    # Better spacing to prevent unwanted flipping
+                    Div(
+                        P("Basic directional tooltips:", cls="text-sm text-muted-foreground mb-4"),
+                        # Top tooltip centered alone
+                        Div(
+                            Tooltip(
+                                TooltipTrigger(
+                                    Button("Top", variant="outline"),
+                                ),
+                                TooltipContent(
+                                    "This tooltip appears on top",
+                                    side="top",
+                                ),
+                            ),
+                            cls="flex justify-center mb-6"
+                        ),
+                        # Left and Right with ample spacing
+                        Div(
+                            Tooltip(
+                                TooltipTrigger(
+                                    Button("Left", variant="outline"),
+                                ),
+                                TooltipContent(
+                                    "This tooltip appears on left",
+                                    side="left",
+                                ),
+                            ),
+                            Div(cls="w-32"),  # Spacer to prevent collision
+                            Tooltip(
+                                TooltipTrigger(
+                                    Button("Right", variant="outline"),
+                                ),
+                                TooltipContent(
+                                    "This tooltip appears on right",
+                                    side="right",
+                                ),
+                            ),
+                            cls="flex justify-center items-center gap-16 mb-6"
+                        ),
+                        # Bottom tooltip centered alone
+                        Div(
+                            Tooltip(
+                                TooltipTrigger(
+                                    Button("Bottom", variant="outline"),
+                                ),
+                                TooltipContent(
+                                    "This tooltip appears on bottom",
+                                    side="bottom",
+                                ),
+                            ),
+                            cls="flex justify-center mb-6"
+                        ),
+                    ),
+                Div(
+                    P("Tooltip alignments:", cls="text-sm text-muted-foreground mb-2"),
+                    Div(
+                        Tooltip(
+                            TooltipTrigger(
+                                Button("Start", variant="secondary", size="sm"),
+                            ),
+                            TooltipContent(
+                                "Aligned to start of trigger",
+                                side="bottom",
+                                align="start",
+                            ),
+                        ),
+                        Tooltip(
+                            TooltipTrigger(
+                                Button("Center", variant="secondary", size="sm"),
+                            ),
+                            TooltipContent(
+                                "Aligned to center of trigger",
+                                side="bottom",
+                                align="center",
+                            ),
+                        ),
+                        Tooltip(
+                            TooltipTrigger(
+                                Button("End", variant="secondary", size="sm"),
+                            ),
+                            TooltipContent(
+                                "Aligned to end of trigger",
+                                side="bottom",
+                                align="end",
+                            ),
+                        ),
+                        cls="flex gap-2 mb-6",
+                    ),
+                ),
+                Div(
+                    P("Custom delay and focus support:", cls="text-sm text-muted-foreground mb-2"),
+                    Div(
+                        Tooltip(
+                            TooltipTrigger(
+                                Button("Fast tooltip", variant="ghost"),
+                                delay_duration=100,
+                            ),
+                            TooltipContent(
+                                "This appears quickly (100ms delay)",
+                                side="top",
+                            ),
+                        ),
+                        Tooltip(
+                            TooltipTrigger(
+                                Input(placeholder="Focus me for tooltip", cls="w-48"),
+                                delay_duration=500,
+                            ),
+                            TooltipContent(
+                                "Tooltips work on focus too!",
+                                side="bottom",
+                            ),
+                        ),
+                        cls="flex gap-4 mb-8",
+                    ),
+                ),
+            ),
+            ),
             # Checkbox examples
             Div(
                 H2("Checkboxes", cls="text-2xl font-semibold mb-4"),
