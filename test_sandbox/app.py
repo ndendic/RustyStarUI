@@ -5,6 +5,7 @@ from starhtml.datastar import value
 
 # Import all registry components at once (this will override starhtml components)
 from registry_loader import *
+from src.starui.registry.components.toast import Toaster, toast, success_toast, error_toast, warning_toast, info_toast
 
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 
@@ -23,6 +24,8 @@ app, rt = star_app(
 @rt("/")
 def index():
     return Div(
+        # Initialize toast container first so signals are available
+        Toaster(position="bottom-right"),
         # Theme toggle in top-right corner
         Div(ThemeToggle(), cls="absolute top-4 right-4"),
         # Main content container
@@ -1684,6 +1687,109 @@ def index():
                             cls="text-xs [&_th]:h-8 [&_td]:p-1 [&_th]:p-1",
                         ),
                         cls="mb-8",
+                    ),
+                    cls="space-y-4 mb-8",
+                ),
+            ),
+            # Toast examples
+            Div(
+                H2("Toast Notifications", cls="text-2xl font-semibold mb-4"),
+                Div(
+                    # Basic toast triggers
+                    Div(
+                        H3("Basic Toast Types", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Button(
+                                "Default Toast",
+                                ds_on_click(toast('Event has been created', 'Your event is now live')),
+                                variant="outline"
+                            ),
+                            Button(
+                                "Success Toast",
+                                ds_on_click(success_toast('Success!', 'Operation completed successfully')),
+                                variant="outline"
+                            ),
+                            Button(
+                                "Error Toast",
+                                ds_on_click(error_toast('Error!', 'Something went wrong')),
+                                variant="outline"
+                            ),
+                            Button(
+                                "Warning Toast",
+                                ds_on_click(warning_toast('Warning!', 'Please be careful')),
+                                variant="outline"
+                            ),
+                            Button(
+                                "Info Toast",
+                                ds_on_click(info_toast('Info', 'Here is some information')),
+                                variant="outline"
+                            ),
+                            cls="flex flex-wrap gap-2"
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Toast with different durations
+                    Div(
+                        H3("Custom Duration", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Button(
+                                "Quick Toast (1s)",
+                                ds_on_click(toast('Quick!', 'This disappears fast', duration=1000)),
+                                variant="secondary"
+                            ),
+                            Button(
+                                "Long Toast (10s)",
+                                ds_on_click(toast('Long Toast', 'This stays for 10 seconds', duration=10000)),
+                                variant="secondary"
+                            ),
+                            Button(
+                                "Persistent Toast",
+                                ds_on_click(toast('Persistent', 'Click X to dismiss', duration=0)),
+                                variant="secondary"
+                            ),
+                            cls="flex flex-wrap gap-2"
+                        ),
+                        cls="mb-6",
+                    ),
+                    # Multiple toasts
+                    Div(
+                        H3("Multiple Toasts", cls="text-lg font-medium mb-2"),
+                        Div(
+                            Button(
+                                "Spam Toasts",
+                                ds_on_click(f"""
+                                    {info_toast('First toast', 'This is the first one')}
+                                    setTimeout(() => {{ {success_toast('Second toast', 'This is the second one')} }}, 500);
+                                    setTimeout(() => {{ {warning_toast('Third toast', 'This is the third one')} }}, 1000);
+                                """),
+                                variant="destructive"
+                            ),
+                            cls="flex gap-2"
+                        ),
+                        cls="mb-6",
+                    ),
+                    
+                    # Position examples with different toasters
+                    Div(
+                        H3("Different Positions", cls="text-lg font-medium mb-2"),
+                        P("Note: In a real app, you'd have separate toasters for different positions", cls="text-sm text-muted-foreground mb-4"),
+                        Div(
+                            Button(
+                                "Promise Toast",
+                                ds_on_click(f"""
+                                    {toast('Loading...', 'Please wait...')}
+                                    setTimeout(() => {{ {success_toast('Hello John Doe', 'Promise resolved successfully')} }}, 2000);
+                                """),
+                                variant="outline"
+                            ),
+                            Button(
+                                "Rich Colors Demo",
+                                ds_on_click(success_toast('Rich Colors', 'Notice the rich background colors when enabled')),
+                                variant="outline"
+                            ),
+                            cls="flex gap-2"
+                        ),
+                        cls="mb-6",
                     ),
                     cls="space-y-4 mb-8",
                 ),
