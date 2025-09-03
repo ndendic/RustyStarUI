@@ -88,6 +88,9 @@ COMPONENT_REGISTRY = {
     "toggle_group": _component(
         "toggle_group", "Toggle button group", ["utils", "toggle"]
     ),
+    "tooltip": _component(
+        "tooltip", "Hover and focus tooltips", ["utils"], ["position"]
+    ),
     "typography": _component(
         "typography",
         "Typography components with beautiful defaults",
