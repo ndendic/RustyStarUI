@@ -64,6 +64,9 @@ COMPONENT_REGISTRY = {
     "alert": _component("alert", "Alert notifications", ["utils"]),
     "badge": _component("badge", "Badge for labels", ["utils"]),
     "breadcrumb": _component("breadcrumb", "Breadcrumb navigation", ["utils"]),
+    "calendar": _component(
+        "calendar", "Date picker with range and multiple selection", ["utils", "button"]
+    ),
     "card": _component("card", "Card container", ["utils"]),
     "checkbox": _component("checkbox", "Checkbox input", ["utils"]),
     "dropdown_menu": _component(
