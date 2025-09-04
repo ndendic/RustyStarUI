@@ -26,19 +26,19 @@ def examples():
     yield ComponentPreview(
         Div(
             Alert(
-                Icon("lucide:check-circle", width="16", height="16", cls="text-green-600"),
+                Icon("check-circle", width="16", height="16", cls="text-green-600"),
                 AlertTitle("Success"),
                 AlertDescription("Your account has been created successfully!"),
                 cls="mb-4"
             ),
             Alert(
-                Icon("lucide:alert-triangle", width="16", height="16", cls="text-amber-600"),
+                Icon("alert-triangle", width="16", height="16", cls="text-amber-600"),
                 AlertTitle("Warning"),
                 AlertDescription("This action cannot be undone. Please review carefully."),
                 cls="mb-4"
             ),
             Alert(
-                Icon("lucide:info", width="16", height="16", cls="text-blue-600"),
+                Icon("info", width="16", height="16", cls="text-blue-600"),
                 AlertTitle("Information"),
                 AlertDescription("New features are now available in your dashboard.")
             ),
@@ -46,21 +46,21 @@ def examples():
         ),
         '''# Success alert with green styling
 Alert(
-    Icon("lucide:check-circle", width="16", height="16", cls="text-green-600"),
+    Icon("check-circle", width="16", height="16", cls="text-green-600"),
     AlertTitle("Success"),
     AlertDescription("Your account has been created successfully!")
 )
 
 # Warning alert with amber styling  
 Alert(
-    Icon("lucide:alert-triangle", width="16", height="16", cls="text-amber-600"),
+    Icon("alert-triangle", width="16", height="16", cls="text-amber-600"),
     AlertTitle("Warning"),
     AlertDescription("This action cannot be undone. Please review carefully.")
 )
 
 # Info alert with blue styling
 Alert(
-    Icon("lucide:info", width="16", height="16", cls="text-blue-600"),
+    Icon("info", width="16", height="16", cls="text-blue-600"),
     AlertTitle("Information"),
     AlertDescription("New features are now available in your dashboard.")
 )''',
@@ -71,7 +71,7 @@ Alert(
     # Complex content
     yield ComponentPreview(
         Alert(
-            Icon("lucide:alert-circle", width="16", height="16"),
+            Icon("alert-circle", width="16", height="16"),
             AlertTitle("Unable to process payment"),
             AlertDescription(
                 P("There was an issue processing your payment. Please check the following:"),
@@ -85,7 +85,7 @@ Alert(
             variant="destructive"
         ),
         '''Alert(
-    Icon("lucide:alert-circle", width="16", height="16"),
+    Icon("alert-circle", width="16", height="16"),
     AlertTitle("Unable to process payment"),
     AlertDescription(
         P("There was an issue processing your payment. Please check the following:"),
@@ -125,13 +125,13 @@ def create_alert_docs():
     hero_example = ComponentPreview(
         Div(
             Alert(
-                Icon("lucide:terminal", width="16", height="16"),
+                Icon("terminal", width="16", height="16"),
                 AlertTitle("Heads up!"),
                 AlertDescription("You can add components and dependencies to your app using the CLI."),
                 cls="mb-4"
             ),
             Alert(
-                Icon("lucide:alert-circle", width="16", height="16"),
+                Icon("alert-circle", width="16", height="16"),
                 AlertTitle("Error occurred"),
                 AlertDescription("Your session has expired. Please log in again."),
                 variant="destructive"
@@ -139,13 +139,13 @@ def create_alert_docs():
             cls="space-y-4"
         ),
 '''Alert(
-    Icon("lucide:terminal", width="16", height="16"),
+    Icon("terminal", width="16", height="16"),
     AlertTitle("Heads up!"),
     AlertDescription("You can add components and dependencies to your app using the CLI.")
 )
 
 Alert(
-    Icon("lucide:alert-circle", width="16", height="16"),
+    Icon("alert-circle", width="16", height="16"),
     AlertTitle("Error occurred"),
     AlertDescription("Your session has expired. Please log in again."),
     variant="destructive"

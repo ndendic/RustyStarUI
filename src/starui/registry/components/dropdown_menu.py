@@ -143,7 +143,7 @@ def DropdownMenuCheckboxItem(
 
         return HTMLButton(
             Span(
-                Icon("lucide:check"),
+                Icon("check"),
                 show=f"${checked_signal}",
                 cls="absolute left-2 flex size-3.5 items-center justify-center",
             ),
@@ -201,7 +201,7 @@ def DropdownMenuRadioItem(
 
         return HTMLButton(
             Span(
-                Icon("lucide:circle", cls="size-2 fill-current"),
+                Icon("circle", cls="size-2 fill-current"),
                 show=f"${value_signal} === '{value}'",
                 cls="absolute left-2 flex size-3.5 items-center justify-center",
             ),
@@ -305,7 +305,7 @@ def DropdownMenuSubTrigger(
 ) -> HtmlString:
     return HTMLButton(
         *children,
-        Icon("lucide:chevron-right", cls="ml-auto size-4"),
+        Icon("chevron-right", cls="ml-auto size-4"),
         on_click=f"${signal}_open = !${signal}_open",
         cls=cn(
             "flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5",

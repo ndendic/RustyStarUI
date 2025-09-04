@@ -65,7 +65,7 @@ def BreadcrumbPage(*children, class_name: str = "", cls: str = "", **attrs) -> H
 
 
 def BreadcrumbSeparator(*children, class_name: str = "", cls: str = "", **attrs) -> HtmlString:
-    separator_content = children if children else (Icon("lucide:chevron-right"),)
+    separator_content = children if children else (Icon("chevron-right"),)
 
     return HTMLLi(
         *separator_content,
@@ -79,7 +79,7 @@ def BreadcrumbSeparator(*children, class_name: str = "", cls: str = "", **attrs)
 
 def BreadcrumbEllipsis(class_name: str = "", cls: str = "", **attrs) -> HtmlString:
     return HTMLSpan(
-        Icon("lucide:more-horizontal", cls="size-4"),
+        Icon("more-horizontal", cls="size-4"),
         HTMLSpan("More", cls="sr-only"),
         role="presentation",
         aria_hidden="true",

@@ -21,7 +21,7 @@ def MobileMenuButton(**attrs) -> FT:
 def _search_button() -> FT:
     """Create the search button with keyboard shortcuts."""
     return Button(
-        Icon("lucide:search", cls="w-4 h-4 shrink-0"),
+        Icon("search", cls="w-4 h-4 shrink-0"),
         Span("Search...", cls="text-sm text-muted-foreground"),
         Div(
             Kbd("⌘", cls="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground"),
@@ -37,9 +37,9 @@ def _github_dropdown(github_stars: str) -> FT:
     """Create a minimal GitHub dropdown matching docs style."""
     return Popover(
         PopoverTrigger(
-            Icon("lucide:star", width="16", height="16"),
+            Icon("star", width="16", height="16"),
             Span(github_stars, cls="hidden lg:inline-block text-sm"),
-            Icon("lucide:chevron-down", width="12", height="12", cls="ml-1 transition-transform duration-200 group-data-[state=open]:rotate-180"),
+            Icon("chevron-down", width="12", height="12", cls="ml-1 transition-transform duration-200 group-data-[state=open]:rotate-180"),
             variant="ghost",
             cls="h-9 px-3 py-2 gap-1.5 group"
         ),

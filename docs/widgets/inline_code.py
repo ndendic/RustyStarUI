@@ -23,8 +23,8 @@ def InlineCode(
         Div(
             NotStr(highlight(code, language)),
             copy_button and Button(
-                Span(Icon("lucide:check", cls="h-3 w-3"), ds_show(f"${signal}")),
-                Span(Icon("lucide:copy", cls="h-3 w-3"), ds_show(f"!${signal}")),
+                Span(Icon("check", cls="h-3 w-3"), ds_show(f"${signal}")),
+                Span(Icon("copy", cls="h-3 w-3"), ds_show(f"!${signal}")),
                 Span(ds_text(f"${signal} ? 'Copied!' : 'Copy'"), cls="sr-only"),
                 ds_on_click(f'@clipboard(evt.target.closest(".inline-flex").querySelector("code").textContent, "{signal}", 2000)'),
                 variant="ghost",

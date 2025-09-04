@@ -31,7 +31,7 @@ def examples():
         Div(
             Card(
                 CardHeader(
-                    Icon("lucide:rocket", width="24", height="24", cls="text-blue-500 mb-2"),
+                    Icon("rocket", width="24", height="24", cls="text-blue-500 mb-2"),
                     CardTitle("Fast Performance"),
                     CardDescription("Lightning-fast rendering with server-side optimization")
                 ),
@@ -41,7 +41,7 @@ def examples():
             ),
             Card(
                 CardHeader(
-                    Icon("lucide:shield-check", width="24", height="24", cls="text-green-500 mb-2"),
+                    Icon("shield-check", width="24", height="24", cls="text-green-500 mb-2"),
                     CardTitle("Secure by Default"),
                     CardDescription("Enterprise-grade security built into every component")
                 ),
@@ -51,7 +51,7 @@ def examples():
             ),
             Card(
                 CardHeader(
-                    Icon("lucide:code", width="24", height="24", cls="text-purple-500 mb-2"),
+                    Icon("code", width="24", height="24", cls="text-purple-500 mb-2"),
                     CardTitle("Developer Friendly"),
                     CardDescription("Simple Python APIs with full TypeScript support")
                 ),
@@ -63,7 +63,7 @@ def examples():
         ),
         '''Card(
     CardHeader(
-        Icon("lucide:rocket", width="24", height="24"),
+        Icon("rocket", width="24", height="24"),
         CardTitle("Fast Performance"),
         CardDescription("Lightning-fast rendering")
     ),
@@ -272,7 +272,7 @@ def examples():
                 CardContent(
                     Div(
                         Div(
-                            Icon("lucide:check-circle", width="20", height="20", cls="text-green-500"),
+                            Icon("check-circle", width="20", height="20", cls="text-green-500"),
                             Div(
                                 P("Payment successful", cls="font-medium text-sm"),
                                 P("Your payment has been processed successfully.", cls="text-sm text-muted-foreground"),
@@ -289,7 +289,7 @@ def examples():
                 CardContent(
                     Div(
                         Div(
-                            Icon("lucide:alert-circle", width="20", height="20", cls="text-orange-500"),
+                            Icon("alert-circle", width="20", height="20", cls="text-orange-500"),
                             Div(
                                 P("Action required", cls="font-medium text-sm"),
                                 P("Please verify your email address to continue.", cls="text-sm text-muted-foreground"),
@@ -307,7 +307,7 @@ def examples():
         '''Card(
     CardContent(
         Div(
-            Icon("lucide:check-circle", width="20", height="20", cls="text-green-500"),
+            Icon("check-circle", width="20", height="20", cls="text-green-500"),
             Div(
                 P("Payment successful", cls="font-medium"),
                 P("Your payment has been processed.", cls="text-muted-foreground"),

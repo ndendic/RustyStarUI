@@ -29,13 +29,13 @@ def examples():
             Button("Small", size="sm", cls="mr-2"),
             Button("Default", cls="mr-2"),
             Button("Large", size="lg", cls="mr-2"),
-            Button(Icon("lucide:chevron-right", cls="h-4 w-4"), variant="outline", size="icon"),
+            Button(Icon("chevron-right", cls="h-4 w-4"), variant="outline", size="icon"),
             cls="flex items-center gap-2"
         ),
         '''Button("Small", size="sm")
 Button("Default") 
 Button("Large", size="lg")
-Button(Icon("lucide:chevron-right", cls="h-4 w-4"), variant="outline", size="icon")''',
+Button(Icon("chevron-right", cls="h-4 w-4"), variant="outline", size="icon")''',
         title="Button Sizes",
         description="Different sizes including icon-only buttons"
     )
@@ -43,12 +43,12 @@ Button(Icon("lucide:chevron-right", cls="h-4 w-4"), variant="outline", size="ico
     # With icons
     yield ComponentPreview(
         Div(
-            Button(Icon("lucide:mail", cls="mr-2 h-4 w-4"), "Login with Email", cls="mr-2"),
-            Button(Icon("lucide:loader-2", cls="mr-2 h-4 w-4 animate-spin"), "Please wait", disabled=True),
+            Button(Icon("mail", cls="mr-2 h-4 w-4"), "Login with Email", cls="mr-2"),
+            Button(Icon("loader-2", cls="mr-2 h-4 w-4 animate-spin"), "Please wait", disabled=True),
             cls="flex gap-2"
         ),
-        '''Button(Icon("lucide:mail", cls="mr-2 h-4 w-4"), "Login with Email")
-Button(Icon("lucide:loader-2", cls="mr-2 h-4 w-4 animate-spin"), "Please wait", disabled=True)''',
+        '''Button(Icon("mail", cls="mr-2 h-4 w-4"), "Login with Email")
+Button(Icon("loader-2", cls="mr-2 h-4 w-4 animate-spin"), "Please wait", disabled=True)''',
         title="Buttons with Icons",
         description="Buttons enhanced with icons for better UX"
     )

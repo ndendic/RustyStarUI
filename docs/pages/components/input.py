@@ -93,7 +93,7 @@ Div(
             Div(
                 UILabel("Quantity", for_="quantity"),
                 Div(
-                    Icon("lucide:hash", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"),
+                    Icon("hash", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"),
                     Input(type="number", id="quantity", placeholder="Enter quantity", min=1, max=99, step=1, cls="pl-10"),
                     cls="relative"
                 ),
@@ -102,7 +102,7 @@ Div(
             Div(
                 UILabel("Date of Birth", for_="dob"),
                 Div(
-                    Icon("lucide:calendar", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
+                    Icon("calendar", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
                     Input(type="text", id="dob", placeholder="MM/DD/YYYY", cls="pl-10"),
                     cls="relative"
                 ),
@@ -111,7 +111,7 @@ Div(
             Div(
                 UILabel("Appointment Time", for_="time"),
                 Div(
-                    Icon("lucide:clock", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
+                    Icon("clock", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
                     Input(type="text", id="time", placeholder="HH:MM", cls="pl-10"),
                     cls="relative"
                 ),
@@ -120,7 +120,7 @@ Div(
             Div(
                 UILabel("Website", for_="website"),
                 Div(
-                    Icon("lucide:globe", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
+                    Icon("globe", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
                     Input(type="url", id="website", placeholder="https://example.com", cls="pl-10"),
                     cls="relative"
                 ),
@@ -130,25 +130,25 @@ Div(
         ),
         '''# Input with custom icons
 Div(
-    Icon("lucide:hash", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"),
+    Icon("hash", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"),
     Input(type="number", placeholder="Enter quantity", cls="pl-10"),
     cls="relative"
 )
 
 Div(
-    Icon("lucide:calendar", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
+    Icon("calendar", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
     Input(type="text", placeholder="MM/DD/YYYY", cls="pl-10"),
     cls="relative"
 )
 
 Div(
-    Icon("lucide:clock", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
+    Icon("clock", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
     Input(type="text", placeholder="HH:MM", cls="pl-10"),
     cls="relative"
 )
 
 Div(
-    Icon("lucide:globe", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
+    Icon("globe", width="16", height="16", cls="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"),
     Input(type="url", placeholder="https://example.com", cls="pl-10"),
     cls="relative"
 )''',

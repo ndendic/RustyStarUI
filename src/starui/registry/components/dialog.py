@@ -106,7 +106,7 @@ def DialogContent(
 
     if show_close_button:
         close_button = BaseButton(
-            Icon("lucide:x", cls="h-4 w-4"),
+            Icon("x", cls="h-4 w-4"),
             Span("Close", cls="sr-only"),
             on_click="$[evt.target.closest('dialog').id + '_open'] = false, evt.target.closest('dialog').close()",
             cls="absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none ring-offset-background focus:ring-ring",

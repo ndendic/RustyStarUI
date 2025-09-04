@@ -113,8 +113,8 @@ ThemeToggle(cls="scale-125")   # Large''',
                     # Day/Night with different icons
                     Div(
                         Button(
-                            Span(Icon("lucide:sun-medium", width="20", height="20"), ds_show("!$isDark1")),
-                            Span(Icon("lucide:moon-star", width="20", height="20"), ds_show("$isDark1")),
+                            Span(Icon("sun-medium", width="20", height="20"), ds_show("!$isDark1")),
+                            Span(Icon("moon-star", width="20", height="20"), ds_show("$isDark1")),
                             ds_on_click("$isDark1 = !$isDark1"),
                             variant="ghost",
                             aria_label="Toggle theme",
@@ -160,8 +160,8 @@ ThemeToggle()
 
 # Custom icons
 Button(
-    Span(Icon("lucide:sun-medium"), ds_show("!$isDark")),
-    Span(Icon("lucide:moon-star"), ds_show("$isDark")),
+    Span(Icon("sun-medium"), ds_show("!$isDark")),
+    Span(Icon("moon-star"), ds_show("$isDark")),
     ds_on_click("$isDark = !$isDark"),
     variant="ghost"
 )

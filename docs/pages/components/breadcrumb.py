@@ -32,13 +32,13 @@ def examples():
                     BreadcrumbLink("Home", href="/")
                 ),
                 BreadcrumbSeparator(
-                    Icon("lucide:slash", width="16", height="16", cls="align-middle")
+                    Icon("slash", width="16", height="16", cls="align-middle")
                 ),
                 BreadcrumbItem(
                     BreadcrumbLink("Library", href="/library")
                 ),
                 BreadcrumbSeparator(
-                    Icon("lucide:slash", width="16", height="16", cls="align-middle")
+                    Icon("slash", width="16", height="16", cls="align-middle")
                 ),
                 BreadcrumbItem(
                     BreadcrumbPage("Data")
@@ -51,13 +51,13 @@ def examples():
             BreadcrumbLink("Home", href="/")
         ),
         BreadcrumbSeparator(
-            Icon("lucide:slash", width="16", height="16", cls="align-middle")
+            Icon("slash", width="16", height="16", cls="align-middle")
         ),
         BreadcrumbItem(
             BreadcrumbLink("Library", href="/library")
         ),
         BreadcrumbSeparator(
-            Icon("lucide:slash", width="16", height="16", cls="align-middle")
+            Icon("slash", width="16", height="16", cls="align-middle")
         ),
         BreadcrumbItem(
             BreadcrumbPage("Data")

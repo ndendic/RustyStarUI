@@ -47,7 +47,7 @@ def Checkbox(
             **attrs,
         ),
         # HTMLSpan(
-        #     Icon("lucide:check"),
+        #     Icon("check"),
         #     show=f"${signal}",
         #     data_slot="checkbox-indicator",
         #     cls=cn(

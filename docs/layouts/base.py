@@ -74,11 +74,11 @@ def _copy_page_button(component_name: str | None = None) -> FT:
     
     return Button(
         Span(
-            Icon("lucide:check", cls="h-4 w-4"),
+            Icon("check", cls="h-4 w-4"),
             ds_show("$page_copied")
         ),
         Span(
-            Icon("lucide:copy", cls="h-4 w-4"),
+            Icon("copy", cls="h-4 w-4"),
             ds_show("!$page_copied")
         ),
         "Copy Page",

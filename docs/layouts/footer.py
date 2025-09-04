@@ -21,7 +21,7 @@ def _github_repositories_section() -> FT:
             # StarHTML Framework Repository
             A(
                 Div(
-                    Icon("lucide:code", cls="h-4 w-4 flex-shrink-0"),
+                    Icon("code", cls="h-4 w-4 flex-shrink-0"),
                     Div(
                         Span("starHTML", cls="font-medium text-foreground"),
                         Span("Web framework", cls="text-xs text-muted-foreground"),
@@ -37,7 +37,7 @@ def _github_repositories_section() -> FT:
             # StarUI Component Library Repository  
             A(
                 Div(
-                    Icon("lucide:palette", cls="h-4 w-4 flex-shrink-0"),
+                    Icon("palette", cls="h-4 w-4 flex-shrink-0"),
                     Div(
                         Span("starUI", cls="font-medium text-foreground"),
                         Span("Component library", cls="text-xs text-muted-foreground"),

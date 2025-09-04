@@ -56,7 +56,7 @@ def CodeBlock(
 def _chevron_button(collapsed_signal: str) -> HtmlString:
     return Div(
         Span(
-            Icon("lucide:chevron-up", cls="h-4 w-4"),
+            Icon("chevron-up", cls="h-4 w-4"),
             data_class={
                 "rotate-180": f"${collapsed_signal}",
                 "rotate-0": f"!${collapsed_signal}"
@@ -75,8 +75,8 @@ def _copy_button(code_id: str, code: str) -> HtmlString:
     signal = f"copied_{code_id}"
     
     return Button(
-        Span(Icon("lucide:check", cls="h-3 w-3"), show=f"${signal}"),
-        Span(Icon("lucide:copy", cls="h-3 w-3"), show=f"!${signal}"),
+        Span(Icon("check", cls="h-3 w-3"), show=f"${signal}"),
+        Span(Icon("copy", cls="h-3 w-3"), show=f"!${signal}"),
         Span(text=f"${signal} ? 'Copied!' : 'Copy'", cls="sr-only"),
         on_click=f'evt.stopPropagation(); @clipboard(evt.target.closest(".group").querySelector("code").textContent, "{signal}", 2000)',
         variant="ghost",

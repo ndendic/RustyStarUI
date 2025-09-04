@@ -45,7 +45,7 @@ Badge("Outline", variant="outline")''',
     # With icons
     yield ComponentPreview(
         Div(
-            Badge(Icon("lucide:star", cls="w-3 h-3"), "Featured", cls="mr-2"),
+            Badge(Icon("star", cls="w-3 h-3"), "Featured", cls="mr-2"),
             Badge(
                 Div(cls="w-2 h-2 bg-green-500 rounded-full"),
                 "Online",
@@ -56,7 +56,7 @@ Badge("Outline", variant="outline")''',
         '''from starui.registry.components.badge import Badge
 from starhtml import Icon, Div
 
-Badge(Icon("lucide:star", cls="w-3 h-3"), "Featured")
+Badge(Icon("star", cls="w-3 h-3"), "Featured")
 Badge(
     Div(cls="w-2 h-2 bg-green-500 rounded-full"),
     "Online",
@@ -88,7 +88,7 @@ Badge("NEW", variant="default")''',
         Div(
             Badge("Documentation", href="/docs", variant="outline", cls="mr-2"),
             Badge(
-                Icon("lucide:external-link", cls="w-3 h-3"),
+                Icon("external-link", cls="w-3 h-3"),
                 "GitHub",
                 href="https://github.com",
                 variant="secondary"
@@ -100,7 +100,7 @@ from starhtml import Icon
 
 Badge("Documentation", href="/docs", variant="outline")
 Badge(
-    Icon("lucide:external-link", cls="w-3 h-3"),
+    Icon("external-link", cls="w-3 h-3"),
     "GitHub",
     href="https://github.com",
     variant="secondary"
@@ -152,19 +152,19 @@ Badge("TailwindCSS", variant="outline")''',
         Div(
             # Icon badges with properly proportioned icons and badges
             Div(
-                Icon("lucide:bell", width="40", height="40", cls="text-muted-foreground block"),
+                Icon("bell", width="40", height="40", cls="text-muted-foreground block"),
                 Span("3", 
                      cls="absolute -top-1 -right-1 z-10 min-w-[1.25rem] h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center ring-2 ring-background"),
                 cls="relative inline-block"
             ),
             Div(
-                Icon("lucide:mail", width="40", height="40", cls="text-muted-foreground block"),
+                Icon("mail", width="40", height="40", cls="text-muted-foreground block"),
                 Span("12", 
                      cls="absolute -top-1 -right-1 z-10 min-w-[1.25rem] h-5 px-1 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center ring-2 ring-background"),
                 cls="relative inline-block"
             ),
             Div(
-                Icon("lucide:inbox", width="40", height="40", cls="text-muted-foreground block"),
+                Icon("inbox", width="40", height="40", cls="text-muted-foreground block"),
                 Span("99+", 
                      cls="absolute -top-1 -right-1 z-10 min-w-[1.5rem] h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center ring-2 ring-background"),
                 cls="relative inline-block"
@@ -175,7 +175,7 @@ Badge("TailwindCSS", variant="outline")''',
 
 # Icon with notification counter
 Div(
-    Icon("lucide:bell", width="40", height="40", cls="text-muted-foreground"),
+    Icon("bell", width="40", height="40", cls="text-muted-foreground"),
     Span("3", cls="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-destructive text-white text-xs font-bold flex items-center justify-center ring-2 ring-white"),
     cls="relative inline-block"
 )''',
@@ -208,7 +208,7 @@ Div(
             Div(
                 Div("VU", cls="size-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-semibold text-sm"),
                 Span(
-                    Icon("lucide:check", width="12", height="12", cls="text-white font-bold"),
+                    Icon("check", width="12", height="12", cls="text-white font-bold"),
                     cls="absolute -bottom-0.5 -right-0.5 size-4 rounded-full bg-blue-600 flex items-center justify-center shadow-[0_0_0_2px_theme(colors.background)]"
                 ),
                 cls="relative inline-block"
@@ -270,7 +270,7 @@ def create_badge_docs():
             # Second row - practical examples
             Div(
                 Badge(
-                    Icon("lucide:badge-check", cls="w-3 h-3 mr-1"),
+                    Icon("badge-check", cls="w-3 h-3 mr-1"),
                     "Verified",
                     variant="secondary",
                     cls="bg-blue-500 text-white dark:bg-blue-600"
@@ -301,7 +301,7 @@ Badge("Outline", variant="outline")
 
 # Practical examples
 Badge(
-    Icon("lucide:badge-check", cls="w-3 h-3 mr-1"),
+    Icon("badge-check", cls="w-3 h-3 mr-1"),
     "Verified",
     variant="secondary",
     cls="bg-blue-500 text-white dark:bg-blue-600"

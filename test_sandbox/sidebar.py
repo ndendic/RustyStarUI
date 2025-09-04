@@ -51,8 +51,8 @@ class Sidebar():
         return [btn for btn in self.components.values()]
 
 sidebar_buttons = Sidebar()
-sidebar_buttons.buttons.home = SidebarBtn(label="Home", on_click="/", icon="lucide:home")
-sidebar_buttons.buttons.playground = SidebarBtn(label="Playground", on_click="/cmds/playground/general", icon="lucide:canvas")
+sidebar_buttons.buttons.home = SidebarBtn(label="Home", on_click="/", icon="home")
+sidebar_buttons.buttons.playground = SidebarBtn(label="Playground", on_click="/cmds/playground/general", icon="palette")
 
 sidebar_buttons.components.alerts = SidebarBtn(label="Alerts", on_click="/cmds/component.alerts/general")
 sidebar_buttons.components.buttons = SidebarBtn(label="Buttons", on_click="/cmds/component.buttons/general")
@@ -71,6 +71,10 @@ sidebar_buttons.components.selects = SidebarBtn(label="Selects", on_click="/cmds
 sidebar_buttons.components.popovers = SidebarBtn(label="Popovers", on_click="/cmds/component.popovers/general")
 sidebar_buttons.components.hover_cards = SidebarBtn(label="Hover Cards", on_click="/cmds/component.hover_cards/general")
 sidebar_buttons.components.tables = SidebarBtn(label="Tables", on_click="/cmds/component.tables/general")
+sidebar_buttons.components.toggles = SidebarBtn(label="Toggles", on_click="/cmds/component.toggles/general")
+sidebar_buttons.components.avatars = SidebarBtn(label="Avatars", on_click="/cmds/component.avatars/general")
+sidebar_buttons.components.separators = SidebarBtn(label="Separators", on_click="/cmds/component.separators/general")
+sidebar_buttons.components.skeletons = SidebarBtn(label="Skeletons", on_click="/cmds/component.skeletons/general")
 
 
 sidebar = Aside(
@@ -83,7 +87,7 @@ sidebar = Aside(
                     Li(
                         Details(
                             Summary(
-                                Icon('lucide:component'),
+                                Icon('component'),
                                 'Components',
                                 aria_controls='submenu-content-1-3-content'
                             ),

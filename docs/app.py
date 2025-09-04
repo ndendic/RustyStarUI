@@ -69,22 +69,22 @@ def home():
                 H2("Features", cls="text-3xl font-bold text-center mb-12"),
                 Div(
                     _feature_card(
-                        "lucide:server",
+                        "server",
                         "Python-First Architecture", 
                         "Write modern UI entirely in Python. No JSX, no build steps, no client-side frameworks. Pure server-side rendering with progressive enhancement."
                     ),
                     _feature_card(
-                        "lucide:terminal",
+                        "terminal",
                         "CLI-Driven Workflow",
                         "Install components instantly with `star add button`. Dependencies resolved automatically. Full type safety and IDE support out of the box."
                     ),
                     _feature_card(
-                        "lucide:zap",
+                        "zap",
                         "Reactive Without React",
                         "Datastar powers reactive patterns while keeping logic server-side. Get modern UX without JavaScript complexity or hydration delays."
                     ),
                     _feature_card(
-                        "lucide:shield-check",
+                        "shield-check",
                         "Zero Runtime Overhead",
                         "Components render complete HTML on the server. No bundle sizes, no waterfall loading, perfect SEO, and instant time-to-interactive."
                     ),
@@ -255,14 +255,14 @@ def docs_index():
                         "Components render on the server and progressively enhance with interactivity. No client-side hydration, no bundle sizes, no waterfall loading.",
                         "from starui import Button, Input, Card\n\n# Pure Python - no JSX, no build step\nCard(\n    Input(placeholder=\"Search...\"),\n    Button(\"Submit\", ds_on_click=\"$search()\")\n)",
                         "Python syntax with type safety and IDE support",
-                        "lucide:server"
+                        "server"
                     ),
                     _feature_highlight_card(
                         "Reactive Without React",
                         "Datastar provides declarative state management and reactive updates while keeping all logic server-side. Get modern UX patterns without JavaScript frameworks.",
                         "# Reactive counter - no useState, no hooks\nButton(\n    ds_text=\"'Count: ' + $count\",\n    ds_on_click=\"$count++\"\n)\n\n# State stays on the server",
                         "Reactive patterns with server-side state",
-                        "lucide:zap"
+                        "zap"
                     ),
                     cls="grid lg:grid-cols-2 gap-8 mb-16"
                 ),
@@ -308,22 +308,22 @@ def docs_index():
                         H3("Enterprise Standards", cls="text-xl font-semibold mb-4"),
                         Div(
                             Div(
-                                Icon("lucide:shield-check", cls="h-5 w-5 text-green-600 mr-3"),
+                                Icon("shield-check", cls="h-5 w-5 text-green-600 mr-3"),
                                 "WCAG 2.1 AA accessibility compliance",
                                 cls="flex items-center mb-3"
                             ),
                             Div(
-                                Icon("lucide:palette", cls="h-5 w-5 text-blue-600 mr-3"),
+                                Icon("palette", cls="h-5 w-5 text-blue-600 mr-3"),
                                 "Design tokens with light/dark theme support",
                                 cls="flex items-center mb-3"
                             ),
                             Div(
-                                Icon("lucide:code-2", cls="h-5 w-5 text-purple-600 mr-3"),
+                                Icon("code-2", cls="h-5 w-5 text-purple-600 mr-3"),
                                 "Composable components with consistent API patterns",
                                 cls="flex items-center mb-3"
                             ),
                             Div(
-                                Icon("lucide:zap", cls="h-5 w-5 text-orange-600 mr-3"),
+                                Icon("zap", cls="h-5 w-5 text-orange-600 mr-3"),
                                 "Progressive enhancement for interactive features",
                                 cls="flex items-center"
                             ),
@@ -516,8 +516,8 @@ def installation():
         return Div(
             SimpleCodeBlock(code, language=language),
             Button(
-                Span(Icon("lucide:check", cls="h-3 w-3"), ds_show(f"${signal}")),
-                Span(Icon("lucide:copy", cls="h-3 w-3"), ds_show(f"!${signal}")),
+                Span(Icon("check", cls="h-3 w-3"), ds_show(f"${signal}")),
+                Span(Icon("copy", cls="h-3 w-3"), ds_show(f"!${signal}")),
                 Span(ds_text(f"${signal} ? 'Copied!' : 'Copy'"), cls="sr-only"),
                 ds_on_click(f'@clipboard(evt.target.closest(".relative").querySelector("code").textContent, "{signal}", 2000)'),
                 variant="ghost",
@@ -596,7 +596,7 @@ Button("View Components", variant="outline")''',
                                 CodeBlockWithCopy("star init", "bash"),
                                 Div(
                                     Div(
-                                        Icon("lucide:file-text", cls="h-5 w-5 text-primary mr-3 flex-shrink-0"),
+                                        Icon("file-text", cls="h-5 w-5 text-primary mr-3 flex-shrink-0"),
                                         Div(
                                             P("Creates starui.json configuration file", cls="font-medium text-sm"),
                                             P("Configures component paths and settings", cls="text-xs text-muted-foreground"),
@@ -604,7 +604,7 @@ Button("View Components", variant="outline")''',
                                         cls="flex items-start"
                                     ),
                                     Div(
-                                        Icon("lucide:package", cls="h-5 w-5 text-primary mr-3 flex-shrink-0"),
+                                        Icon("package", cls="h-5 w-5 text-primary mr-3 flex-shrink-0"),
                                         Div(
                                             P("Installs required dependencies", cls="font-medium text-sm"),
                                             P("StarHTML, Tailwind CSS, and component utilities", cls="text-xs text-muted-foreground"),
@@ -757,21 +757,21 @@ Div(
                 H2("What's Next?", cls="text-3xl font-bold tracking-tight mb-8 mt-16"),
                 Div(
                     _next_step_card(
-                        "lucide:palette",
+                        "palette",
                         "Explore Components", 
                         "Browse our comprehensive component library with live examples and code samples.",
                         "/components",
                         "View Components"
                     ),
                     _next_step_card(
-                        "lucide:book-open",
+                        "book-open",
                         "Read the Documentation",
                         "Learn advanced patterns, theming, and best practices for building with StarUI.",
                         "/docs", 
                         "Read Docs"
                     ),
                     _next_step_card(
-                        "lucide:github",
+                        "github",
                         "Join the Community",
                         "Contribute to the project, report issues, or get help from other developers.",
                         "https://github.com/banditburai/starui",

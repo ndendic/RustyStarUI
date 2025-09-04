@@ -39,7 +39,7 @@ def index():
                     Button("Secondary", variant="secondary"),
                     Button("Ghost", variant="ghost"),
                     Button("Link", variant="link"),
-                    Button(Icon("lucide:settings"), variant="secondary", size="icon"),
+                    Button(Icon("settings"), variant="secondary", size="icon"),
                     Button("Disabled", disabled=True),
                     cls="flex flex-wrap gap-2 mb-8",
                 ),
@@ -912,10 +912,10 @@ def index():
                     Div(
                         P("Basic toggles:", cls="text-sm font-medium mb-2"),
                         Div(
-                            Toggle(Icon("lucide:bold"), signal="toggle_bold"),
-                            Toggle(Icon("lucide:italic"), signal="toggle_italic", pressed=True),
-                            Toggle(Icon("lucide:underline"), signal="toggle_underline"),
-                            Toggle(Icon("lucide:strikethrough"), disabled=True),
+                            Toggle(Icon("bold"), signal="toggle_bold"),
+                            Toggle(Icon("italic"), signal="toggle_italic", pressed=True),
+                            Toggle(Icon("underline"), signal="toggle_underline"),
+                            Toggle(Icon("strikethrough"), disabled=True),
                             cls="flex gap-1",
                         ),
                         cls="mb-4",
@@ -924,10 +924,10 @@ def index():
                     Div(
                         P("Outline variant:", cls="text-sm font-medium mb-2"),
                         Div(
-                            Toggle(Icon("lucide:align-left"), variant="outline", signal="align_left"),
-                            Toggle(Icon("lucide:align-center"), variant="outline", signal="align_center", pressed=True),
-                            Toggle(Icon("lucide:align-right"), variant="outline", signal="align_right"),
-                            Toggle(Icon("lucide:align-justify"), variant="outline", signal="align_justify"),
+                            Toggle(Icon("align-left"), variant="outline", signal="align_left"),
+                            Toggle(Icon("align-center"), variant="outline", signal="align_center", pressed=True),
+                            Toggle(Icon("align-right"), variant="outline", signal="align_right"),
+                            Toggle(Icon("align-justify"), variant="outline", signal="align_justify"),
                             cls="flex gap-1",
                         ),
                         cls="mb-4",
@@ -948,20 +948,20 @@ def index():
                         P("Toggle with text:", cls="text-sm font-medium mb-2"),
                         Div(
                             Toggle(
-                                Icon("lucide:wifi"),
+                                Icon("wifi"),
                                 Span("WiFi", cls="ml-1"),
                                 variant="outline",
                                 signal="wifi_toggle",
                             ),
                             Toggle(
-                                Icon("lucide:bluetooth"),
+                                Icon("bluetooth"),
                                 Span("Bluetooth", cls="ml-1"),
                                 variant="outline",
                                 signal="bluetooth_toggle",
                                 pressed=True,
                             ),
                             Toggle(
-                                Icon("lucide:plane"),
+                                Icon("plane"),
                                 Span("Airplane Mode", cls="ml-1"),
                                 variant="outline",
                                 signal="airplane_toggle",
@@ -981,9 +981,9 @@ def index():
                     Div(
                         P("Text formatting (single selection):", cls="text-sm font-medium mb-2"),
                         SingleToggleGroup(
-                            ("bold", Icon("lucide:bold")),
-                            ("italic", Icon("lucide:italic")),
-                            ("underline", Icon("lucide:underline")),
+                            ("bold", Icon("bold")),
+                            ("italic", Icon("italic")),
+                            ("underline", Icon("underline")),
                             signal="text_format",
                             variant="outline",
                         ),
@@ -993,10 +993,10 @@ def index():
                     Div(
                         P("Text options (multiple selection):", cls="text-sm font-medium mb-2"),
                         MultipleToggleGroup(
-                            ("bold", Icon("lucide:bold")),
-                            ("italic", Icon("lucide:italic")),
-                            ("underline", Icon("lucide:underline")),
-                            ("strikethrough", Icon("lucide:strikethrough")),
+                            ("bold", Icon("bold")),
+                            ("italic", Icon("italic")),
+                            ("underline", Icon("underline")),
+                            ("strikethrough", Icon("strikethrough")),
                             signal="text_options",
                             variant="outline",
                         ),
@@ -1006,10 +1006,10 @@ def index():
                     Div(
                         P("Text alignment:", cls="text-sm font-medium mb-2"),
                         SingleToggleGroup(
-                            ("left", Icon("lucide:align-left")),
-                            ("center", Icon("lucide:align-center")),
-                            ("right", Icon("lucide:align-right")),
-                            ("justify", Icon("lucide:align-justify")),
+                            ("left", Icon("align-left")),
+                            ("center", Icon("align-center")),
+                            ("right", Icon("align-right")),
+                            ("justify", Icon("align-justify")),
                             signal="alignment",
                             variant="default",
                         ),
@@ -1033,9 +1033,9 @@ def index():
                     Div(
                         P("View mode:", cls="text-sm font-medium mb-2"),
                         SingleToggleGroup(
-                            ("list", Div(Icon("lucide:list"), Span("List", cls="ml-1"))),
-                            ("grid", Div(Icon("lucide:layout-grid"), Span("Grid", cls="ml-1"))),
-                            ("gallery", Div(Icon("lucide:image"), Span("Gallery", cls="ml-1"))),
+                            ("list", Div(Icon("list"), Span("List", cls="ml-1"))),
+                            ("grid", Div(Icon("layout-grid"), Span("Grid", cls="ml-1"))),
+                            ("gallery", Div(Icon("image"), Span("Gallery", cls="ml-1"))),
                             signal="view_mode",
                             variant="outline",
                         ),

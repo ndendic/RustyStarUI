@@ -5,8 +5,8 @@ from rusty_tags import CustomTag, HtmlString
 
 
 def Icon(icon: str, **attrs) -> HtmlString:
-    """Iconify icon element. Usage: Icon("lucide:home", cls="h-4 w-4")"""
-    return CustomTag("iconify-icon", icon=icon, **attrs)
+    """Iconify icon element. Usage: Icon("home", cls="h-4 w-4")"""
+    return CustomTag("i", data_lucide=icon, **attrs)
 
 def cn(*classes: Any) -> str:
     result_classes: list[str] = []

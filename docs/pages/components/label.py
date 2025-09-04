@@ -65,7 +65,7 @@ Input(type="password", id="password", placeholder="Enter your password")''',
         Div(
             Div(
                 Label(
-                    Icon("lucide:user", cls="h-4 w-4"),
+                    Icon("user", cls="h-4 w-4"),
                     "Username",
                     for_="username-icon",
                     cls="flex items-center gap-2"
@@ -75,7 +75,7 @@ Input(type="password", id="password", placeholder="Enter your password")''',
             ),
             Div(
                 Label(
-                    Icon("lucide:mail", cls="h-4 w-4"),
+                    Icon("mail", cls="h-4 w-4"),
                     "Email",
                     for_="email-icon",
                     cls="flex items-center gap-2"
@@ -85,7 +85,7 @@ Input(type="password", id="password", placeholder="Enter your password")''',
             ),
             Div(
                 Label(
-                    Icon("lucide:lock", cls="h-4 w-4"),
+                    Icon("lock", cls="h-4 w-4"),
                     "Password",
                     for_="password-icon",
                     cls="flex items-center gap-2"
@@ -99,7 +99,7 @@ Input(type="password", id="password", placeholder="Enter your password")''',
 from starhtml import Icon, Input
 
 Label(
-    Icon("lucide:user", cls="h-4 w-4"),
+    Icon("user", cls="h-4 w-4"),
     "Username",
     for_="username",
     cls="flex items-center gap-2"
@@ -311,7 +311,7 @@ def create_label_docs():
             # Label with icon
             Div(
                 Label(
-                    Icon("lucide:user", width="16", height="16"),
+                    Icon("user", width="16", height="16"),
                     "Username",
                     for_="username",
                     cls="flex items-center gap-2"
@@ -331,7 +331,7 @@ Label(
 )
 
 Label(
-    Icon("lucide:user", width="16", height="16"),
+    Icon("user", width="16", height="16"),
     "Username", 
     for_="username",
     cls="flex items-center gap-2"

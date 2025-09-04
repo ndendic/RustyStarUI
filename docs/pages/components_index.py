@@ -20,17 +20,17 @@ def create_components_index(registry: ComponentRegistry, sidebar_sections: list 
     
     def component_icon(name: str) -> str:
         icons = {
-            "button": "lucide:mouse-pointer-click",
-            "input": "lucide:type", 
-            "tabs": "lucide:folder",
-            "card": "lucide:credit-card",
-            "badge": "lucide:tag",
-            "alert": "lucide:alert-circle",
-            "label": "lucide:tag",
-            "theme_toggle": "lucide:sun-moon",
-            "breadcrumb": "lucide:navigation"
+            "button": "mouse-pointer-click",
+            "input": "type", 
+            "tabs": "folder",
+            "card": "credit-card",
+            "badge": "tag",
+            "alert": "alert-circle",
+            "label": "tag",
+            "theme_toggle": "sun-moon",
+            "breadcrumb": "navigation"
         }
-        return icons.get(name, "lucide:component")
+        return icons.get(name, "component")
     
     def status_badge(status: str) -> FT:
         if status == "beta":

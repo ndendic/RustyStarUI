@@ -28,48 +28,30 @@ fonts = [
     Link(rel='preconnect', href='https://fonts.gstatic.com', crossorigin=''),
     Link(href='https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap', rel='stylesheet')
 ]
-def fouc_script(
-    storage_key="theme",
-    cls="dark",
-    system_match="(prefers-color-scheme: dark)",
-    use_data_theme=False,
-    default_theme="light",
-):
-    """Generate theme FOUC prevention script."""
-    if use_data_theme:
-        return Script(
-            f"const useAlt=localStorage.{storage_key}==='{cls}'||"
-            f"(!('{storage_key}' in localStorage)&&window.matchMedia('{system_match}').matches);"
-            f"document.documentElement.setAttribute('data-theme',useAlt?'{cls}':'{default_theme}');"
-        )
-    else:
-        return Script(
-            f"document.documentElement.classList.toggle('{cls}',"
-            f"localStorage.{storage_key}==='{cls}'||"
-            f"(!('{storage_key}' in localStorage)&&window.matchMedia('{system_match}').matches));"
-        )
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="test_sandbox/static"), name="static")
 
 hdrs=(        
-        fouc_script(use_data_theme=True),
         styles,
         *fonts,
-        Script(src=f"https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js", type="module"),
-        # Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/all.min.js', defer=''),
+        Script(src="https://unpkg.com/lucide@latest"),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/basecoat.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/select.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/popover.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/dropdown-menu.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/sidebar.min.js', defer=''),
-        Script("(() => {\r\n    try {\r\n      const stored = localStorage.getItem('themeMode');\r\n      if (stored ? stored === 'dark'\r\n                  : matchMedia('(prefers-color-scheme: dark)').matches) {\r\n        document.documentElement.classList.add('dark');\r\n      }\r\n    } catch (_) {}\r\n\r\n    const apply = dark => {\r\n      document.documentElement.classList.toggle('dark', dark);\r\n      try { localStorage.setItem('themeMode', dark ? 'dark' : 'light'); } catch (_) {}\r\n    };\r\n\r\n    document.addEventListener('basecoat:theme', (event) => {\r\n      const mode = event.detail?.mode;\r\n      apply(mode === 'dark' ? true\r\n            : mode === 'light' ? false\r\n            : !document.documentElement.classList.contains('dark'));\r\n    });\r\n  })();"),
+        Script("(() => {\r\n      try {\r\n        const stored = localStorage.getItem('themeMode');\r\n        if (stored ? stored === 'dark'\r\n                   : matchMedia('(prefers-color-scheme: dark)').matches) {\r\n          document.documentElement.classList.add('dark');\r\n        }\r\n      } catch (_) {}\r\n\r\n      const apply = dark => {\r\n        document.documentElement.classList.toggle('dark', dark);\r\n        try { localStorage.setItem('themeMode', dark ? 'dark' : 'light'); } catch (_) {}\r\n      };\r\n\r\n      document.addEventListener('basecoat:theme', (event) => {\r\n        const mode = event.detail?.mode;\r\n        apply(mode === 'dark' ? true\r\n             : mode === 'light' ? false\r\n             : !document.documentElement.classList.contains('dark'));\r\n      });\r\n    })();"),
+        Script("(function() {\r\n      try {\r\n        const storedTheme = localStorage.getItem('themeVariant');\r\n        if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);\r\n      } catch (event) {\r\n        console.error('Could not apply theme variant from localStorage', event);\r\n      }\r\n    })();"),
         # position_handler(),  # Enhanced handler is now built-in
         inspector,
     )
 htmlkw=dict(lang="en", dir="ltr")
 bodykw=dict(cls="min-h-screen bg-background text-foreground", on_load=DS.get("/updates"))
-ftrs=(CustomTag("datastar-inspector"),)
+ftrs=(
+    CustomTag("datastar-inspector"),
+    Script("import { createIcons, icons } from 'https://cdn.jsdelivr.net/npm/lucide@latest/+esm';createIcons({ icons, attrs: { width: 20, height: 20 } });", type='module')
+)
 page = create_template(hdrs=hdrs, htmlkw=htmlkw, bodykw=bodykw, ftrs=ftrs)
 
 @app.get("/cmds/{command}/{sender}")
@@ -98,46 +80,21 @@ async def event_stream(request: Request, signals: ReadSignals):
 def playground(sender: str, *args,**kwargs):
     # Button variants
     elements = Div(
-        H2("Playground", cls="text-2xl font-semibold mb-4"),
+        H2("Playground is just below", cls="text-2xl font-semibold mb-4"),
         Div(
-            P("Playground here"),
             Div(
-                Button("Playground", 
+                Button("Playground popover", 
                        popovertarget="playground-popover",
                        cls='[anchor-name:--pg]'),
                 Div(
                     Div(
-                        H3("Playground", cls="text-lg font-semibold mb-2"),
-                        P("Playground here"),
+                        H3("Popover", cls="text-lg font-semibold mb-2"),
+                        P("Some nice text here.."),
                     ),
                     popover=True,
-                    cls="border bg-popover rounded-md p-4 mt-2 [position-anchor:--pg] [top:anchor(bottom)] [left:anchor(right)]",
+                    cls="border bg-popover rounded-md p-4 mt-2 [position-anchor:--pg] [top:anchor(bottom)] [left:anchor(left)]",
                     id="playground-popover",
                 ),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
-                P("Playground here and some long text to see how it wraps and scrolls"),
                 cls="inline-block",
             ),
         ),
@@ -159,7 +116,7 @@ def buttons(sender: str, *args,**kwargs):
             Button("Secondary", variant="secondary"),
             Button("Ghost", variant="ghost"),
             Button("Link", variant="link"),
-            Button(Icon("lucide:settings"), variant="secondary", size="icon"),
+            Button(Icon("settings"), variant="secondary", size="icon"),
             Button("Disabled", disabled=True),
             cls="flex flex-wrap gap-2",
         ),
@@ -1221,6 +1178,424 @@ def hover_cards(sender: str, *args,**kwargs):
                 )                
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
+@on("component.toggles")
+def toggles(sender: str, *args,**kwargs):
+    elements = Div(
+                    H2("Toggles", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Basic toggles
+                        Div(
+                            P("Basic toggles:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle(Icon("bold"), signal="toggle_bold"),
+                                Toggle(Icon("italic"), signal="toggle_italic", pressed=True),
+                                Toggle(Icon("underline"), signal="toggle_underline"),
+                                Toggle(Icon("strikethrough"), disabled=True),
+                                cls="flex gap-1",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Outline variant toggles
+                        Div(
+                            P("Outline variant:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle(Icon("align-left"), variant="outline", signal="align_left"),
+                                Toggle(Icon("align-center"), variant="outline", signal="align_center", pressed=True),
+                                Toggle(Icon("align-right"), variant="outline", signal="align_right"),
+                                Toggle(Icon("align-justify"), variant="outline", signal="align_justify"),
+                                cls="flex gap-1",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Different sizes
+                        Div(
+                            P("Different sizes:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle("Small", size="sm", variant="outline", signal="size_sm"),
+                                Toggle("Default", size="default", variant="outline", signal="size_default"),
+                                Toggle("Large", size="lg", variant="outline", signal="size_lg"),
+                                cls="flex gap-2 items-center",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Toggle with text
+                        Div(
+                            P("Toggle with text:", cls="text-sm font-medium mb-2"),
+                            Div(
+                                Toggle(
+                                    Icon("wifi"),
+                                    Span("WiFi", cls="ml-1"),
+                                    variant="outline",
+                                    signal="wifi_toggle",
+                                ),
+                                Toggle(
+                                    Icon("bluetooth"),
+                                    Span("Bluetooth", cls="ml-1"),
+                                    variant="outline",
+                                    signal="bluetooth_toggle",
+                                    pressed=True,
+                                ),
+                                Toggle(
+                                    Icon("plane"),
+                                    Span("Airplane Mode", cls="ml-1"),
+                                    variant="outline",
+                                    signal="airplane_toggle",
+                                ),
+                                cls="flex gap-2",
+                            ),
+                            cls="mb-4",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                    H2("Toggle Groups", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Single selection toggle group
+                        Div(
+                            P("Text formatting (single selection):", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("bold", Icon("bold")),
+                                ("italic", Icon("italic")),
+                                ("underline", Icon("underline")),
+                                signal="text_format",
+                                variant="outline",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Multiple selection toggle group
+                        Div(
+                            P("Text options (multiple selection):", cls="text-sm font-medium mb-2"),
+                            MultipleToggleGroup(
+                                ("bold", Icon("bold")),
+                                ("italic", Icon("italic")),
+                                ("underline", Icon("underline")),
+                                ("strikethrough", Icon("strikethrough")),
+                                signal="text_options",
+                                variant="outline",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Alignment toggle group
+                        Div(
+                            P("Text alignment:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("left", Icon("align-left")),
+                                ("center", Icon("align-center")),
+                                ("right", Icon("align-right")),
+                                ("justify", Icon("align-justify")),
+                                signal="alignment",
+                                variant="default",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Size toggle group
+                        Div(
+                            P("Size selection:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("sm", "Small"),
+                                ("md", "Medium"),
+                                ("lg", "Large"),
+                                ("xl", "Extra Large"),
+                                signal="size_selection",
+                                variant="outline",
+                                size="lg",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # View mode toggle group
+                        Div(
+                            P("View mode:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("list", Div(Icon("list"), Span("List", cls="ml-1"))),
+                                ("grid", Div(Icon("layout-grid"), Span("Grid", cls="ml-1"))),
+                                ("gallery", Div(Icon("image"), Span("Gallery", cls="ml-1"))),
+                                signal="view_mode",
+                                variant="outline",
+                            ),
+                            cls="mb-4",
+                        ),
+                        # Disabled toggle group
+                        Div(
+                            P("Disabled group:", cls="text-sm font-medium mb-2"),
+                            SingleToggleGroup(
+                                ("option1", "Option 1"),
+                                ("option2", "Option 2"),
+                                ("option3", "Option 3"),
+                                signal="disabled_group",
+                                variant="outline",
+                                disabled=True,
+                            ),
+                            cls="mb-4",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+@on("component.avatars")
+def avatars(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
+                    H2("Avatars", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Basic Avatar with image
+                        Div(
+                            H3("Basic Avatar", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Avatar(
+                                    AvatarImage(
+                                        src="https://github.com/shadcn.png",
+                                        alt="@shadcn"
+                                    )
+                                ),
+                                Avatar(
+                                    AvatarFallback("CN")
+                                ),
+                                Avatar(
+                                    AvatarImage(
+                                        src="https://avatars.githubusercontent.com/u/1?v=4",
+                                        alt="User"
+                                    )
+                                ),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Different sizes (composition example)
+                        Div(
+                            H3("Avatar Sizes", cls="text-lg font-medium mb-2"),
+                            P("Use size classes to customize:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                Avatar(AvatarFallback("XS"), cls="size-6"),
+                                Avatar(AvatarFallback("SM"), cls="size-8"),
+                                Avatar(AvatarFallback("MD")),  # default size-10
+                                Avatar(AvatarFallback("LG"), cls="size-12"),
+                                Avatar(AvatarFallback("XL"), cls="size-16"),
+                                Avatar(AvatarFallback("2X"), cls="size-20"),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar with automatic fallback
+                        Div(
+                            H3("Automatic Fallback", cls="text-lg font-medium mb-2"),
+                            P("The second avatar will show fallback as the image URL is invalid:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                AvatarWithFallback(
+                                    src="https://github.com/shadcn.png",
+                                    alt="@shadcn",
+                                    fallback="CN"
+                                ),
+                                AvatarWithFallback(
+                                    src="https://invalid-url.com/image.jpg",
+                                    alt="Invalid",
+                                    fallback="IN"
+                                ),
+                                AvatarWithFallback(
+                                    fallback="NI"
+                                ),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar Group (composition example)
+                        Div(
+                            H3("Avatar Group", cls="text-lg font-medium mb-2"),
+                            P("Compose avatars with overlapping styles:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                Div(
+                                    Avatar(AvatarFallback("JD")),
+                                    Avatar(AvatarFallback("AS")),
+                                    Avatar(AvatarFallback("PQ")),
+                                    Avatar(AvatarFallback("+2", cls="text-xs font-medium")),
+                                    cls="flex -space-x-2 [&>*[data-slot=avatar]]:ring-2 [&>*[data-slot=avatar]]:ring-background"
+                                ),
+                                cls="mb-2"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar with Badge (composition example)
+                        Div(
+                            H3("Avatar with Badge", cls="text-lg font-medium mb-2"),
+                            P("Compose with absolute positioning:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                # Green status badge
+                                Div(
+                                    Avatar(AvatarFallback("JD")),
+                                    Span(cls="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-background"),
+                                    cls="relative inline-block"
+                                ),
+                                # Red status badge
+                                Div(
+                                    Avatar(AvatarFallback("AS")),
+                                    Span(cls="absolute bottom-0 right-0 size-3 bg-red-500 rounded-full ring-2 ring-background"),
+                                    cls="relative inline-block"
+                                ),
+                                # Badge with count
+                                Div(
+                                    Avatar(AvatarFallback("MN")),
+                                    Span("5", cls="absolute bottom-0 right-0 size-4 bg-red-500 rounded-full ring-2 ring-background flex items-center justify-center text-[8px] font-bold text-white"),
+                                    cls="relative inline-block"
+                                ),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Avatar from Initials (composition example)
+                        Div(
+                            H3("Avatar from Initials", cls="text-lg font-medium mb-2"),
+                            P("Use colored backgrounds for initials:", cls="text-sm text-muted-foreground mb-2"),
+                            Div(
+                                Avatar(AvatarFallback("JD", cls="bg-red-600 dark:bg-red-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("AS", cls="bg-blue-600 dark:bg-blue-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("PQ", cls="bg-green-600 dark:bg-green-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("MN", cls="bg-purple-600 dark:bg-purple-500 text-white font-semibold")),
+                                Avatar(AvatarFallback("XY", cls="bg-orange-600 dark:bg-orange-500 text-white font-semibold")),
+                                cls="flex gap-4 items-center"
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+
+@on("component.separators")
+def separators(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
+                    H2("Separators", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        Div(
+                            P("Content above separator", cls="mb-4"),
+                            Separator(),
+                            P("Content below separator", cls="mt-4"),
+                            cls="mb-6",
+                        ),
+                        Div(
+                            H3("Vertical Separators", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Span("Left content"),
+                                Separator(orientation="vertical", cls="mx-4"),
+                                Span("Right content"),
+                                cls="flex items-center h-8",
+                            ),
+                            cls="mb-6",
+                        ),
+                        Div(
+                            H3("Custom Styling", cls="text-lg font-medium mb-2"),
+                            Div(
+                                P("Custom colored separator below:", cls="mb-2"),
+                                Separator(cls="bg-red-500 h-0.5"),
+                                P("Thicker separator with different color:", cls="mt-4 mb-2"),
+                                Separator(cls="bg-blue-500 h-1"),
+                            ),
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                    
+
+
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+@on("component.skeletons")
+def skeletons(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
+                    H2("Skeleton", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Basic skeleton shapes
+                        Div(
+                            H3("Basic Shapes", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Skeleton(cls="h-4 w-64"),  # Text line
+                                Skeleton(cls="h-4 w-48"),  # Shorter text line
+                                Skeleton(cls="h-4 w-56"),  # Another text line
+                                cls="space-y-2 mb-4",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Card skeleton
+                        Div(
+                            H3("Card Skeleton", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Div(
+                                    Skeleton(cls="h-12 w-12 rounded-full"),  # Avatar
+                                    Div(
+                                        Skeleton(cls="h-4 w-32"),  # Name
+                                        Skeleton(cls="h-3 w-24"),  # Subtitle
+                                        cls="space-y-2",
+                                    ),
+                                    cls="flex items-center space-x-4",
+                                ),
+                                Skeleton(cls="h-32 w-full mt-4"),  # Content area
+                                Skeleton(cls="h-4 w-full mt-4"),  # Footer line
+                                cls="p-4 border rounded-lg",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Article skeleton
+                        Div(
+                            H3("Article Skeleton", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Skeleton(cls="h-8 w-3/4 mb-4"),  # Title
+                                Skeleton(cls="h-3 w-32 mb-6"),  # Date
+                                Div(
+                                    Skeleton(cls="h-4 w-full"),
+                                    Skeleton(cls="h-4 w-full"),
+                                    Skeleton(cls="h-4 w-2/3"),
+                                    cls="space-y-2 mb-4",
+                                ),
+                                Skeleton(cls="h-40 w-full"),  # Image placeholder
+                                cls="p-4 border rounded-lg",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Interactive skeleton toggle
+                        Div(
+                            H3("Loading State Toggle", cls="text-lg font-medium mb-2"),
+                            Div(
+                                Button(
+                                    text="$loading ? 'Stop Loading' : 'Start Loading'",
+                                    on_click="$loading = !$loading",
+                                    variant="outline",
+                                    cls="mb-4",
+                                ),
+                                # Content that toggles based on loading state
+                                Div(
+                                    Skeleton(cls="h-6 w-48 mb-2"),
+                                    Skeleton(cls="h-4 w-64 mb-4"),
+                                    Skeleton(cls="h-20 w-full"),
+                                    show="$loading",
+                                ),
+                                Div(
+                                    H4("Content Loaded!", cls="text-lg font-semibold mb-2"),
+                                    P("This content appears when loading is complete.", cls="mb-4"),
+                                    Div(
+                                        "This is the actual content that would load.",
+                                        cls="p-4 bg-muted rounded-lg",
+                                    ),
+                                    show="!$loading",
+                                ),
+                                signals= Signals(loading=True),
+                                cls="p-4 border rounded-lg",
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
 # @on("component.cards")
 # def cards(sender: str, *args,**kwargs):
 #     # Button variants
@@ -1284,162 +1659,6 @@ def index():
                     # cls="mb-8",
                 ),                
                     
-                Separator(cls="my-4"),
-
-                # Toggle examples
-                Div(
-                    H2("Toggles", cls="text-2xl font-semibold mb-4"),
-                    Div(
-                        # Basic toggles
-                        Div(
-                            P("Basic toggles:", cls="text-sm font-medium mb-2"),
-                            Div(
-                                Toggle(Icon("lucide:bold"), signal="toggle_bold"),
-                                Toggle(Icon("lucide:italic"), signal="toggle_italic", pressed=True),
-                                Toggle(Icon("lucide:underline"), signal="toggle_underline"),
-                                Toggle(Icon("lucide:strikethrough"), disabled=True),
-                                cls="flex gap-1",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # Outline variant toggles
-                        Div(
-                            P("Outline variant:", cls="text-sm font-medium mb-2"),
-                            Div(
-                                Toggle(Icon("lucide:align-left"), variant="outline", signal="align_left"),
-                                Toggle(Icon("lucide:align-center"), variant="outline", signal="align_center", pressed=True),
-                                Toggle(Icon("lucide:align-right"), variant="outline", signal="align_right"),
-                                Toggle(Icon("lucide:align-justify"), variant="outline", signal="align_justify"),
-                                cls="flex gap-1",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # Different sizes
-                        Div(
-                            P("Different sizes:", cls="text-sm font-medium mb-2"),
-                            Div(
-                                Toggle("Small", size="sm", variant="outline", signal="size_sm"),
-                                Toggle("Default", size="default", variant="outline", signal="size_default"),
-                                Toggle("Large", size="lg", variant="outline", signal="size_lg"),
-                                cls="flex gap-2 items-center",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # Toggle with text
-                        Div(
-                            P("Toggle with text:", cls="text-sm font-medium mb-2"),
-                            Div(
-                                Toggle(
-                                    Icon("lucide:wifi"),
-                                    Span("WiFi", cls="ml-1"),
-                                    variant="outline",
-                                    signal="wifi_toggle",
-                                ),
-                                Toggle(
-                                    Icon("lucide:bluetooth"),
-                                    Span("Bluetooth", cls="ml-1"),
-                                    variant="outline",
-                                    signal="bluetooth_toggle",
-                                    pressed=True,
-                                ),
-                                Toggle(
-                                    Icon("lucide:plane"),
-                                    Span("Airplane Mode", cls="ml-1"),
-                                    variant="outline",
-                                    signal="airplane_toggle",
-                                ),
-                                cls="flex gap-2",
-                            ),
-                            cls="mb-4",
-                        ),
-                        cls="space-y-4 mb-8",
-                    ),
-                ),
-                Separator(cls="my-4"),
-                # Toggle Group examples
-                Div(
-                    H2("Toggle Groups", cls="text-2xl font-semibold mb-4"),
-                    Div(
-                        # Single selection toggle group
-                        Div(
-                            P("Text formatting (single selection):", cls="text-sm font-medium mb-2"),
-                            SingleToggleGroup(
-                                ("bold", Icon("lucide:bold")),
-                                ("italic", Icon("lucide:italic")),
-                                ("underline", Icon("lucide:underline")),
-                                signal="text_format",
-                                variant="outline",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # Multiple selection toggle group
-                        Div(
-                            P("Text options (multiple selection):", cls="text-sm font-medium mb-2"),
-                            MultipleToggleGroup(
-                                ("bold", Icon("lucide:bold")),
-                                ("italic", Icon("lucide:italic")),
-                                ("underline", Icon("lucide:underline")),
-                                ("strikethrough", Icon("lucide:strikethrough")),
-                                signal="text_options",
-                                variant="outline",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # Alignment toggle group
-                        Div(
-                            P("Text alignment:", cls="text-sm font-medium mb-2"),
-                            SingleToggleGroup(
-                                ("left", Icon("lucide:align-left")),
-                                ("center", Icon("lucide:align-center")),
-                                ("right", Icon("lucide:align-right")),
-                                ("justify", Icon("lucide:align-justify")),
-                                signal="alignment",
-                                variant="default",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # Size toggle group
-                        Div(
-                            P("Size selection:", cls="text-sm font-medium mb-2"),
-                            SingleToggleGroup(
-                                ("sm", "Small"),
-                                ("md", "Medium"),
-                                ("lg", "Large"),
-                                ("xl", "Extra Large"),
-                                signal="size_selection",
-                                variant="outline",
-                                size="lg",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # View mode toggle group
-                        Div(
-                            P("View mode:", cls="text-sm font-medium mb-2"),
-                            SingleToggleGroup(
-                                ("list", Div(Icon("lucide:list"), Span("List", cls="ml-1"))),
-                                ("grid", Div(Icon("lucide:layout-grid"), Span("Grid", cls="ml-1"))),
-                                ("gallery", Div(Icon("lucide:image"), Span("Gallery", cls="ml-1"))),
-                                signal="view_mode",
-                                variant="outline",
-                            ),
-                            cls="mb-4",
-                        ),
-                        # Disabled toggle group
-                        Div(
-                            P("Disabled group:", cls="text-sm font-medium mb-2"),
-                            SingleToggleGroup(
-                                ("option1", "Option 1"),
-                                ("option2", "Option 2"),
-                                ("option3", "Option 3"),
-                                signal="disabled_group",
-                                variant="outline",
-                                disabled=True,
-                            ),
-                            cls="mb-4",
-                        ),
-                        cls="space-y-4 mb-8",
-                    ),
-                ),
                 Separator(cls="my-4"),
                 # Accordion examples
                 Div(
@@ -1565,251 +1784,9 @@ def index():
                         cls="space-y-4 mb-8",
                     ),
                 ),
+
                 Separator(cls="my-4"),
-                # Avatar examples
-                Div(
-                    H2("Avatars", cls="text-2xl font-semibold mb-4"),
-                    Div(
-                        # Basic Avatar with image
-                        Div(
-                            H3("Basic Avatar", cls="text-lg font-medium mb-2"),
-                            Div(
-                                Avatar(
-                                    AvatarImage(
-                                        src="https://github.com/shadcn.png",
-                                        alt="@shadcn"
-                                    )
-                                ),
-                                Avatar(
-                                    AvatarFallback("CN")
-                                ),
-                                Avatar(
-                                    AvatarImage(
-                                        src="https://avatars.githubusercontent.com/u/1?v=4",
-                                        alt="User"
-                                    )
-                                ),
-                                cls="flex gap-4 items-center"
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Different sizes (composition example)
-                        Div(
-                            H3("Avatar Sizes", cls="text-lg font-medium mb-2"),
-                            P("Use size classes to customize:", cls="text-sm text-muted-foreground mb-2"),
-                            Div(
-                                Avatar(AvatarFallback("XS"), cls="size-6"),
-                                Avatar(AvatarFallback("SM"), cls="size-8"),
-                                Avatar(AvatarFallback("MD")),  # default size-10
-                                Avatar(AvatarFallback("LG"), cls="size-12"),
-                                Avatar(AvatarFallback("XL"), cls="size-16"),
-                                Avatar(AvatarFallback("2X"), cls="size-20"),
-                                cls="flex gap-4 items-center"
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Avatar with automatic fallback
-                        Div(
-                            H3("Automatic Fallback", cls="text-lg font-medium mb-2"),
-                            P("The second avatar will show fallback as the image URL is invalid:", cls="text-sm text-muted-foreground mb-2"),
-                            Div(
-                                AvatarWithFallback(
-                                    src="https://github.com/shadcn.png",
-                                    alt="@shadcn",
-                                    fallback="CN"
-                                ),
-                                AvatarWithFallback(
-                                    src="https://invalid-url.com/image.jpg",
-                                    alt="Invalid",
-                                    fallback="IN"
-                                ),
-                                AvatarWithFallback(
-                                    fallback="NI"
-                                ),
-                                cls="flex gap-4 items-center"
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Avatar Group (composition example)
-                        Div(
-                            H3("Avatar Group", cls="text-lg font-medium mb-2"),
-                            P("Compose avatars with overlapping styles:", cls="text-sm text-muted-foreground mb-2"),
-                            Div(
-                                Div(
-                                    Avatar(AvatarFallback("JD")),
-                                    Avatar(AvatarFallback("AS")),
-                                    Avatar(AvatarFallback("PQ")),
-                                    Avatar(AvatarFallback("+2", cls="text-xs font-medium")),
-                                    cls="flex -space-x-2 [&>*[data-slot=avatar]]:ring-2 [&>*[data-slot=avatar]]:ring-background"
-                                ),
-                                cls="mb-2"
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Avatar with Badge (composition example)
-                        Div(
-                            H3("Avatar with Badge", cls="text-lg font-medium mb-2"),
-                            P("Compose with absolute positioning:", cls="text-sm text-muted-foreground mb-2"),
-                            Div(
-                                # Green status badge
-                                Div(
-                                    Avatar(AvatarFallback("JD")),
-                                    Span(cls="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-background"),
-                                    cls="relative inline-block"
-                                ),
-                                # Red status badge
-                                Div(
-                                    Avatar(AvatarFallback("AS")),
-                                    Span(cls="absolute bottom-0 right-0 size-3 bg-red-500 rounded-full ring-2 ring-background"),
-                                    cls="relative inline-block"
-                                ),
-                                # Badge with count
-                                Div(
-                                    Avatar(AvatarFallback("MN")),
-                                    Span("5", cls="absolute bottom-0 right-0 size-4 bg-red-500 rounded-full ring-2 ring-background flex items-center justify-center text-[8px] font-bold text-white"),
-                                    cls="relative inline-block"
-                                ),
-                                cls="flex gap-4 items-center"
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Avatar from Initials (composition example)
-                        Div(
-                            H3("Avatar from Initials", cls="text-lg font-medium mb-2"),
-                            P("Use colored backgrounds for initials:", cls="text-sm text-muted-foreground mb-2"),
-                            Div(
-                                Avatar(AvatarFallback("JD", cls="bg-red-600 dark:bg-red-500 text-white font-semibold")),
-                                Avatar(AvatarFallback("AS", cls="bg-blue-600 dark:bg-blue-500 text-white font-semibold")),
-                                Avatar(AvatarFallback("PQ", cls="bg-green-600 dark:bg-green-500 text-white font-semibold")),
-                                Avatar(AvatarFallback("MN", cls="bg-purple-600 dark:bg-purple-500 text-white font-semibold")),
-                                Avatar(AvatarFallback("XY", cls="bg-orange-600 dark:bg-orange-500 text-white font-semibold")),
-                                cls="flex gap-4 items-center"
-                            ),
-                            cls="mb-6",
-                        ),
-                        cls="space-y-4 mb-8",
-                    ),
-                ),
-                Separator(cls="my-4"),
-                # Separator examples
-                Div(
-                    H2("Separators", cls="text-2xl font-semibold mb-4"),
-                    Div(
-                        Div(
-                            P("Content above separator", cls="mb-4"),
-                            Separator(),
-                            P("Content below separator", cls="mt-4"),
-                            cls="mb-6",
-                        ),
-                        Div(
-                            H3("Vertical Separators", cls="text-lg font-medium mb-2"),
-                            Div(
-                                Span("Left content"),
-                                Separator(orientation="vertical", cls="mx-4"),
-                                Span("Right content"),
-                                cls="flex items-center h-8",
-                            ),
-                            cls="mb-6",
-                        ),
-                        Div(
-                            H3("Custom Styling", cls="text-lg font-medium mb-2"),
-                            Div(
-                                P("Custom colored separator below:", cls="mb-2"),
-                                Separator(cls="bg-red-500 h-0.5"),
-                                P("Thicker separator with different color:", cls="mt-4 mb-2"),
-                                Separator(cls="bg-blue-500 h-1"),
-                            ),
-                        ),
-                        cls="space-y-4 mb-8",
-                    ),
-                ),
-                Separator(cls="my-4"),
-                # Skeleton examples
-                Div(
-                    H2("Skeleton", cls="text-2xl font-semibold mb-4"),
-                    Div(
-                        # Basic skeleton shapes
-                        Div(
-                            H3("Basic Shapes", cls="text-lg font-medium mb-2"),
-                            Div(
-                                Skeleton(cls="h-4 w-64"),  # Text line
-                                Skeleton(cls="h-4 w-48"),  # Shorter text line
-                                Skeleton(cls="h-4 w-56"),  # Another text line
-                                cls="space-y-2 mb-4",
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Card skeleton
-                        Div(
-                            H3("Card Skeleton", cls="text-lg font-medium mb-2"),
-                            Div(
-                                Div(
-                                    Skeleton(cls="h-12 w-12 rounded-full"),  # Avatar
-                                    Div(
-                                        Skeleton(cls="h-4 w-32"),  # Name
-                                        Skeleton(cls="h-3 w-24"),  # Subtitle
-                                        cls="space-y-2",
-                                    ),
-                                    cls="flex items-center space-x-4",
-                                ),
-                                Skeleton(cls="h-32 w-full mt-4"),  # Content area
-                                Skeleton(cls="h-4 w-full mt-4"),  # Footer line
-                                cls="p-4 border rounded-lg",
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Article skeleton
-                        Div(
-                            H3("Article Skeleton", cls="text-lg font-medium mb-2"),
-                            Div(
-                                Skeleton(cls="h-8 w-3/4 mb-4"),  # Title
-                                Skeleton(cls="h-3 w-32 mb-6"),  # Date
-                                Div(
-                                    Skeleton(cls="h-4 w-full"),
-                                    Skeleton(cls="h-4 w-full"),
-                                    Skeleton(cls="h-4 w-2/3"),
-                                    cls="space-y-2 mb-4",
-                                ),
-                                Skeleton(cls="h-40 w-full"),  # Image placeholder
-                                cls="p-4 border rounded-lg",
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Interactive skeleton toggle
-                        Div(
-                            H3("Loading State Toggle", cls="text-lg font-medium mb-2"),
-                            Div(
-                                Button(
-                                    text="$loading ? 'Stop Loading' : 'Start Loading'",
-                                    on_click="$loading = !$loading",
-                                    variant="outline",
-                                    cls="mb-4",
-                                ),
-                                # Content that toggles based on loading state
-                                Div(
-                                    Skeleton(cls="h-6 w-48 mb-2"),
-                                    Skeleton(cls="h-4 w-64 mb-4"),
-                                    Skeleton(cls="h-20 w-full"),
-                                    show="$loading",
-                                ),
-                                Div(
-                                    H4("Content Loaded!", cls="text-lg font-semibold mb-2"),
-                                    P("This content appears when loading is complete.", cls="mb-4"),
-                                    Div(
-                                        "This is the actual content that would load.",
-                                        cls="p-4 bg-muted rounded-lg",
-                                    ),
-                                    show="!$loading",
-                                ),
-                                signals= Signals(loading=True),
-                                cls="p-4 border rounded-lg",
-                            ),
-                            cls="mb-6",
-                        ),
-                        cls="space-y-4 mb-8",
-                    ),
-                ),
-                Separator(cls="my-4"),
+
                 # Progress examples
                 Div(
                     H2("Progress", cls="text-2xl font-semibold mb-4"),
