@@ -143,7 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed icon button sizing, alignment, and visual consistency
   - Added proper `has-[>svg]` conditional padding for all size variants
   - Implemented all Shadcn size variants (`default`, `sm`, `lg`, `icon`) with exact styling
-  - Enhanced Iconify icon support with proper CSS targeting (`[&_iconify-icon]`)
+  - Enhanced Iconify icon support with proper CSS targeting (`[&_data-lucide]`)
   - Fixed CVA variant/size conflicts and compound variant handling
 
 ### Changed

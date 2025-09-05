@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-# Import starhtml first, then override with our custom components
-# from starhtml import *
-# from starhtml.datastar import value
+from starui import *
 
-from rusty_tags import *
+# Override specific rusty_tags components with HTML* aliases if needed
 from rusty_tags import Input as HTMLInput
 from rusty_tags import Label as HTMLLabel
 from rusty_tags import Button as HTMLButton
@@ -17,9 +14,8 @@ from fastapi.responses import HTMLResponse
 from datastar_py.fastapi import ReadSignals
 # Import all registry components at once (this will override starhtml components)
 from starlette.staticfiles import StaticFiles
-from registry_loader import *
-from sidebar import sidebar, navbar, sidebar_buttons, SidebarBtn
-from uuid import uuid4
+
+from sidebar import sidebar, navbar
 # from starui.registry.components.accordion import Accordion, AccordionItem, AccordionTrigger, AccordionContent
 styles = Link(rel="stylesheet", href="/static/css/starui.css", type="text/css")
 inspector = Script(src="/static/js/datastar-inspector.js", type="module")
@@ -50,7 +46,9 @@ htmlkw=dict(lang="en", dir="ltr")
 bodykw=dict(cls="min-h-screen bg-background text-foreground", on_load=DS.get("/updates"))
 ftrs=(
     CustomTag("datastar-inspector"),
-    Script("import { createIcons, icons } from 'https://cdn.jsdelivr.net/npm/lucide@latest/+esm';createIcons({ icons, attrs: { width: 20, height: 20 } });", type='module')
+    Script("lucide.createIcons();"),
+
+    # Script("import { createIcons, icons } from 'https://cdn.jsdelivr.net/npm/lucide@latest/+esm';createIcons({ icons, attrs: { width: 20, height: 20 } });", type='module')
 )
 page = create_template(hdrs=hdrs, htmlkw=htmlkw, bodykw=bodykw, ftrs=ftrs)
 
@@ -1617,9 +1615,8 @@ def index():
         Main(navbar,
             # Main content container
             Div(
-                H1("StarUI Component Test", cls="text-4xl font-bold mb-8"),
+                H1("StarUI Component Test"),
 
-                Separator(cls="my-4"),
                 # Sheet example
                 Div(
                     # H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),

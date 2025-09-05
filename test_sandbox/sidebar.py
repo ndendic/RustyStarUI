@@ -7,32 +7,24 @@ from rusty_tags import Button as HTMLButton
 
 def SidebarButton(
     label: str,
-    on_click: str | None = None,
     icon: str | None = None,
     variant='ghost',
     size="sm",
     cls="w-full justify-start",
+    on_click: str | None = None,
     **attrs
 ) -> HtmlString:
+    if on_click:
+        attrs['on_click'] = f"@get('{on_click}')"
+
     return Li(
-            A(Icon(icon) if icon else None, label, on_click=DS.get(on_click), variant=variant, size=size, cls=cls, **attrs),
+            A(
+                Icon(icon) if icon else None, label,
+                variant=variant, size=size,
+                cls=cls,
+                **attrs
+            ),
         ).render()
-
-
-class SidebarBtn(BaseModel):
-    label: str
-    on_click: str | None = None
-    icon: str | None = None
-
-    def __str__(self):
-        return SidebarButton(
-            self.label,
-            self.on_click,
-            self.icon,
-            variant='ghost',
-            size='sm',
-            cls='w-full justify-start align-middle',
-        )
 
 class Sidebar():
     buttons: AttrDict
@@ -51,30 +43,30 @@ class Sidebar():
         return [btn for btn in self.components.values()]
 
 sidebar_buttons = Sidebar()
-sidebar_buttons.buttons.home = SidebarBtn(label="Home", on_click="/", icon="home")
-sidebar_buttons.buttons.playground = SidebarBtn(label="Playground", on_click="/cmds/playground/general", icon="palette")
+sidebar_buttons.buttons.home = SidebarButton(label="Home", href="/", icon="home")
+sidebar_buttons.buttons.playground = SidebarButton(label="Playground", on_click="/cmds/playground/general", icon="palette")
 
-sidebar_buttons.components.alerts = SidebarBtn(label="Alerts", on_click="/cmds/component.alerts/general")
-sidebar_buttons.components.buttons = SidebarBtn(label="Buttons", on_click="/cmds/component.buttons/general")
-sidebar_buttons.components.breadcrumb = SidebarBtn(label="Breadcrumb", on_click="/cmds/component.breadcrumb/general")
-sidebar_buttons.components.badges = SidebarBtn(label="Badges", on_click="/cmds/component.badges/general")
-sidebar_buttons.components.cards = SidebarBtn(label="Cards", on_click="/cmds/component.cards/general")
-sidebar_buttons.components.checkboxes = SidebarBtn(label="Checkboxes", on_click="/cmds/component.checkbox/general")
-sidebar_buttons.components.dropdown_menu = SidebarBtn(label="Dropdown Menu", on_click="/cmds/component.dropdown_menu/general")
-sidebar_buttons.components.dialogs = SidebarBtn(label="Dialogs", on_click="/cmds/component.dialogs/general")
-sidebar_buttons.components.inputs = SidebarBtn(label="Inputs", on_click="/cmds/component.inputs/general")
-sidebar_buttons.components.radios = SidebarBtn(label="Radios", on_click="/cmds/component.radios/general")
-sidebar_buttons.components.tabs = SidebarBtn(label="Tabs", on_click="/cmds/component.tabs/general")
-sidebar_buttons.components.switches = SidebarBtn(label="Switches", on_click="/cmds/component.switches/general")
-sidebar_buttons.components.textareas = SidebarBtn(label="Textareas", on_click="/cmds/component.textareas/general")
-sidebar_buttons.components.selects = SidebarBtn(label="Selects", on_click="/cmds/component.selects/general")
-sidebar_buttons.components.popovers = SidebarBtn(label="Popovers", on_click="/cmds/component.popovers/general")
-sidebar_buttons.components.hover_cards = SidebarBtn(label="Hover Cards", on_click="/cmds/component.hover_cards/general")
-sidebar_buttons.components.tables = SidebarBtn(label="Tables", on_click="/cmds/component.tables/general")
-sidebar_buttons.components.toggles = SidebarBtn(label="Toggles", on_click="/cmds/component.toggles/general")
-sidebar_buttons.components.avatars = SidebarBtn(label="Avatars", on_click="/cmds/component.avatars/general")
-sidebar_buttons.components.separators = SidebarBtn(label="Separators", on_click="/cmds/component.separators/general")
-sidebar_buttons.components.skeletons = SidebarBtn(label="Skeletons", on_click="/cmds/component.skeletons/general")
+sidebar_buttons.components.alerts = SidebarButton(label="Alerts", on_click="/cmds/component.alerts/general")
+sidebar_buttons.components.buttons = SidebarButton(label="Buttons", on_click="/cmds/component.buttons/general")
+sidebar_buttons.components.breadcrumb = SidebarButton(label="Breadcrumb", on_click="/cmds/component.breadcrumb/general")
+sidebar_buttons.components.badges = SidebarButton(label="Badges", on_click="/cmds/component.badges/general")
+sidebar_buttons.components.cards = SidebarButton(label="Cards", on_click="/cmds/component.cards/general")
+sidebar_buttons.components.checkboxes = SidebarButton(label="Checkboxes", on_click="/cmds/component.checkbox/general")
+sidebar_buttons.components.dropdown_menu = SidebarButton(label="Dropdown Menu", on_click="/cmds/component.dropdown_menu/general")
+sidebar_buttons.components.dialogs = SidebarButton(label="Dialogs", on_click="/cmds/component.dialogs/general")
+sidebar_buttons.components.inputs = SidebarButton(label="Inputs", on_click="/cmds/component.inputs/general")
+sidebar_buttons.components.radios = SidebarButton(label="Radios", on_click="/cmds/component.radios/general")
+sidebar_buttons.components.tabs = SidebarButton(label="Tabs", on_click="/cmds/component.tabs/general")
+sidebar_buttons.components.switches = SidebarButton(label="Switches", on_click="/cmds/component.switches/general")
+sidebar_buttons.components.textareas = SidebarButton(label="Textareas", on_click="/cmds/component.textareas/general")
+sidebar_buttons.components.selects = SidebarButton(label="Selects", on_click="/cmds/component.selects/general")
+sidebar_buttons.components.popovers = SidebarButton(label="Popovers", on_click="/cmds/component.popovers/general")
+sidebar_buttons.components.hover_cards = SidebarButton(label="Hover Cards", on_click="/cmds/component.hover_cards/general")
+sidebar_buttons.components.tables = SidebarButton(label="Tables", on_click="/cmds/component.tables/general")
+sidebar_buttons.components.toggles = SidebarButton(label="Toggles", on_click="/cmds/component.toggles/general")
+sidebar_buttons.components.avatars = SidebarButton(label="Avatars", on_click="/cmds/component.avatars/general")
+sidebar_buttons.components.separators = SidebarButton(label="Separators", on_click="/cmds/component.separators/general")
+sidebar_buttons.components.skeletons = SidebarButton(label="Skeletons", on_click="/cmds/component.skeletons/general")
 
 
 sidebar = Aside(

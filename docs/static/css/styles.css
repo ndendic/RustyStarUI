@@ -275,7 +275,7 @@ p:first-child {
 }
 
 /* Optimized icon transitions */
-iconify-icon {
+data-lucide {
     transition: opacity 200ms ease-in-out, transform 200ms ease-in-out;
 }
 
@@ -285,7 +285,7 @@ iconify-icon {
     .theme-transitioning *,
     .theme-transitioning *::before,
     .theme-transitioning *::after,
-    iconify-icon {
+    data-lucide {
         transition: none !important;
     }
 }

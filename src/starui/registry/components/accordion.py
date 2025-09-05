@@ -1,7 +1,7 @@
 from typing import Any, Literal
 from uuid import uuid4
 
-from rusty_tags import Button, Div, HtmlString, Section, Details, Summary, Svg, Path
+from rusty_tags import Button, Details, Div, HtmlString, Path, Section, Summary, Svg
 from rusty_tags.datastar import Signals
 
 from .utils import Icon, cn

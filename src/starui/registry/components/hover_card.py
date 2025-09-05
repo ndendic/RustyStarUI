@@ -13,7 +13,7 @@ def HoverCard(
     default_open: bool = False,
     cls: str = "",
     **attrs,
-):
+) -> HtmlString:
     signal = signal or f"hover_card_{uuid4().hex[:8]}"
     return Div(
         *children,
@@ -30,7 +30,7 @@ def HoverCardTrigger(
     hide_delay: int = 300,
     cls: str = "",
     **attrs,
-):
+) -> HtmlString:
     signal = signal or "hover_card"
 
     return Div(
@@ -65,9 +65,8 @@ def HoverCardContent(
     hide_delay: int = 300,
     cls: str = "",
     **attrs,
-):
+) -> HtmlString:
     signal = signal or "hover_card"
-    placement = f"{side}-{align}" if align != "center" else side
 
     return Div(
         *children,

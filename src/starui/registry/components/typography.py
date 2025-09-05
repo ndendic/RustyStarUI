@@ -1,6 +1,5 @@
 from typing import Literal
 
-from rusty_tags import HtmlString, Div, Ol, Ul
 from rusty_tags import H1 as HTMLH1
 from rusty_tags import H2 as HTMLH2
 from rusty_tags import H3 as HTMLH3
@@ -9,6 +8,7 @@ from rusty_tags import H5 as HTMLH5
 from rusty_tags import H6 as HTMLH6
 from rusty_tags import Blockquote as HTMLBlockquote
 from rusty_tags import Code as HTMLCode
+from rusty_tags import Div, HtmlString, Ol, Ul
 from rusty_tags import Em as HTMLEm
 from rusty_tags import Figcaption as HTMLFigcaption
 from rusty_tags import Figure as HTMLFigure
