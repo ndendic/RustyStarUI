@@ -76,25 +76,328 @@ async def event_stream(request: Request, signals: ReadSignals):
 
 @on("playground")
 def playground(sender: str, *args,**kwargs):
-    # Button variants
+    # Modern popover testing following LogRocket article
     elements = Div(
-        H2("Playground is just below", cls="text-2xl font-semibold mb-4"),
+        H2("Modern Popover with @starting-style & CSS Anchor Positioning", cls="text-2xl font-semibold mb-4"),
+        P("Testing modern CSS popover animations with @starting-style, allow-discrete, and automatic CSS anchor positioning", cls="text-muted-foreground mb-6"),
+        
         Div(
+            # Basic example following the article
             Div(
-                Button("Playground popover", 
-                       popovertarget="playground-popover",
-                       cls='[anchor-name:--pg]'),
+                H3("Basic Example", cls="text-lg font-semibold mb-2"),
+                P("Simple popover with smooth scale animation and CSS anchor positioning:", cls="text-sm text-muted-foreground mb-4"),
+                Div(
+                    Button(
+                        "Open Modern Popover",
+                        popovertarget="modern-popover-1",
+                        cls="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90",
+                        style="anchor-name: --basic-trigger",
+                    ),
+                    Div(
+                        H4("Modern Popover", cls="font-semibold mb-2"),
+                        P("This popover uses modern CSS with @starting-style for smooth entry animations, allow-discrete for display transitions, and CSS anchor positioning.", cls="text-sm mb-3"),
+                        P("Notice the smooth scale animation and automatic positioning!", cls="text-xs text-muted-foreground"),
+                        popover=True,
+                        cls="my-popover bottom",
+                        id="modern-popover-1",
+                    ),
+                    cls="relative inline-block anchor-container",
+                    style="anchor-name: --basic-trigger"
+                ),
+                cls="mb-8",
+            ),
+
+            # Animation variants
+            Div(
+                H3("Animation Variants", cls="text-lg font-semibold mb-2"),
+                P("Different animation styles:", cls="text-sm text-muted-foreground mb-4"),
                 Div(
                     Div(
-                        H3("Popover", cls="text-lg font-semibold mb-2"),
-                        P("Some nice text here.."),
+                        Button(
+                            "Fade Animation",
+                            popovertarget="fade-popover",
+                            cls="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 mr-2"
+                        ),
+                        Div(
+                            H4("Fade Animation", cls="font-semibold mb-2"),
+                            P("Smooth fade in/out with @starting-style", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover fade bottom",
+                            id="fade-popover",
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --fade-trigger"
                     ),
-                    popover=True,
-                    cls="border bg-popover rounded-md p-4 mt-2 [position-anchor:--pg] [top:anchor(bottom)] [left:anchor(left)]",
-                    id="playground-popover",
+                    Div(
+                        Button(
+                            "Slide Up",
+                            popovertarget="slide-up-popover",
+                            cls="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 mr-2"
+                        ),
+                        Div(
+                            H4("Slide Up Animation", cls="font-semibold mb-2"),
+                            P("Slides up from below with smooth transition", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover slide-up bottom",
+                            id="slide-up-popover",
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --slide-up-trigger"
+                    ),
+                    Div(
+                        Button(
+                            "Slide Down",
+                            popovertarget="slide-down-popover",
+                            cls="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 mr-2"
+                        ),
+                        Div(
+                            H4("Slide Down Animation", cls="font-semibold mb-2"),
+                            P("Slides down from above with smooth transition", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover slide-down top",
+                            id="slide-down-popover",
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --slide-down-trigger"
+                    ),
+                    Div(
+                        Button(
+                            "Bounce",
+                            popovertarget="bounce-popover",
+                            cls="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700"
+                        ),
+                        Div(
+                            H4("Bounce Animation", cls="font-semibold mb-2"),
+                            P("Bounces in with cubic-bezier timing function", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover bounce bottom",
+                            id="bounce-popover",
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --bounce-trigger"
+                    ),
+                    cls="flex flex-wrap gap-4 mb-4",
                 ),
-                cls="inline-block",
+                cls="mb-8",
             ),
+            
+            # Positioning examples
+            Div(
+                H3("Positioning Examples", cls="text-lg font-semibold mb-2"),
+                P("Different positioning options with anchor points:", cls="text-sm text-muted-foreground mb-4"),
+                Div(
+                    # Top positioning
+                    Div(
+                        Button(
+                            "Top Position",
+                            popovertarget="top-popover",
+                            cls="bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 mr-2 mb-2",
+                            style="--popover-anchor: top-trigger"
+                        ),
+                        Div(
+                            H4("Top Positioned", cls="font-semibold mb-2"),
+                            P("This popover appears above the trigger using CSS anchor positioning.", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover top",
+                            id="top-popover",
+                            style="position-anchor: top-trigger"
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --top-trigger"
+                    ),
+                    # Bottom positioning
+                    Div(
+                        Button(
+                            "Bottom Position",
+                            popovertarget="bottom-popover",
+                            cls="bg-teal-600 text-white px-3 py-2 rounded-md hover:bg-teal-700 mr-2 mb-2"
+                        ),
+                        Div(
+                            H4("Bottom Positioned", cls="font-semibold mb-2"),
+                            P("This popover appears below the trigger using CSS anchor positioning.", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover bottom",
+                            id="bottom-popover",
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --bottom-trigger"
+                    ),
+                    # Left positioning
+                    Div(
+                        Button(
+                            "Left Position",
+                            popovertarget="left-popover",
+                            cls="bg-pink-600 text-white px-3 py-2 rounded-md hover:bg-pink-700 mr-2 mb-2"
+                        ),
+                        Div(
+                            H4("Left Positioned", cls="font-semibold mb-2"),
+                            P("This popover appears to the left of the trigger using CSS anchor positioning.", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover left",
+                            id="left-popover",
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --left-trigger"
+                    ),
+                    # Right positioning
+                    Div(
+                        Button(
+                            "Right Position",
+                            popovertarget="right-popover",
+                            cls="bg-cyan-600 text-white px-3 py-2 rounded-md hover:bg-cyan-700 mr-2 mb-2"
+                        ),
+                        Div(
+                            H4("Right Positioned", cls="font-semibold mb-2"),
+                            P("This popover appears to the right of the trigger using CSS anchor positioning.", cls="text-sm"),
+                            popover=True,
+                            cls="my-popover right",
+                            id="right-popover",
+                        ),
+                        cls="relative inline-block anchor-container",
+                        style="anchor-name: --right-trigger"
+                    ),
+                    cls="mb-4",
+                ),
+                # Corner positioning examples
+                Div(
+                    H4("Corner Positioning with CSS Anchors", cls="font-semibold mb-2"),
+                    Div(
+                        Div(
+                            Button(
+                                "Top-Left",
+                                popovertarget="top-left-popover",
+                                cls="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 mr-2 mb-2"
+                            ),
+                            Div(popover=True, cls="my-popover top-left", id="top-left-popover",
+                                children=[H5("Top-Left", cls="font-semibold"), P("CSS anchor positioned popover", cls="text-sm")]),
+                            cls="relative inline-block anchor-container",
+                            style="anchor-name: --top-left-trigger"
+                        ),
+                        Div(
+                            Button(
+                                "Top-Right",
+                                popovertarget="top-right-popover",
+                                cls="bg-yellow-600 text-white px-3 py-2 rounded-md hover:bg-yellow-700 mr-2 mb-2"
+                            ),
+                            Div(popover=True, cls="my-popover top-right", id="top-right-popover",
+                                children=[H5("Top-Right", cls="font-semibold"), P("CSS anchor positioned popover", cls="text-sm")]),
+                            cls="relative inline-block anchor-container",
+                            style="anchor-name: --top-right-trigger"
+                        ),
+                        Div(
+                            Button(
+                                "Bottom-Left",
+                                popovertarget="bottom-left-popover",
+                                cls="bg-emerald-600 text-white px-3 py-2 rounded-md hover:bg-emerald-700 mr-2 mb-2"
+                            ),
+                            Div(popover=True, cls="my-popover bottom-left", id="bottom-left-popover",
+                                children=[H5("Bottom-Left", cls="font-semibold"), P("CSS anchor positioned popover", cls="text-sm")]),
+                            cls="relative inline-block anchor-container",
+                            style="anchor-name: --bottom-left-trigger"
+                        ),
+                        Div(
+                            Button(
+                                "Bottom-Right",
+                                popovertarget="bottom-right-popover",
+                                cls="bg-violet-600 text-white px-3 py-2 rounded-md hover:bg-violet-700 mr-2 mb-2"
+                            ),
+                            Div(popover=True, cls="my-popover bottom-right", id="bottom-right-popover",
+                                children=[H5("Bottom-Right", cls="font-semibold"), P("CSS anchor positioned popover", cls="text-sm")]),
+                            cls="relative inline-block anchor-container",
+                            style="anchor-name: --bottom-right-trigger"
+                        ),
+                        cls="flex flex-wrap gap-4 mb-4",
+                    ),
+                ),
+                cls="mb-8",
+            ),
+
+            # CSS Anchor Positioning vs Traditional Positioning
+            Div(
+                H3("CSS Anchor Positioning vs Traditional", cls="text-lg font-semibold mb-2"),
+                P("Compare automatic anchor positioning vs manual positioning:", cls="text-sm text-muted-foreground mb-4"),
+                Div(
+                    # CSS Anchor example
+                    Div(
+                        H4("CSS Anchor Positioning (Modern)", cls="font-semibold mb-2"),
+                        P("Popover automatically positions relative to trigger using anchor() functions", cls="text-sm text-green-600 mb-2"),
+                        Div(
+                            Button(
+                                "Anchor Positioned",
+                                popovertarget="anchor-demo-popover",
+                                cls="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                            ),
+                            Div(
+                                P("This popover uses CSS anchor positioning - it automatically positions itself relative to the trigger button!", cls="text-sm"),
+                                popover=True,
+                                cls="my-popover bottom",
+                                id="anchor-demo-popover",
+                            ),
+                            cls="relative inline-block anchor-container",
+                            style="anchor-name: --anchor-demo-trigger"
+                        ),
+                        cls="p-4 border border-green-200 rounded-lg",
+                    ),
+                    # Traditional positioning example
+                    Div(
+                        H4("Traditional Positioning (Fallback)", cls="font-semibold mb-2"),
+                        P("Popover uses fixed positioning with manual calculations", cls="text-sm text-orange-600 mb-2"),
+                        Div(
+                            Button(
+                                "Traditional Positioned",
+                                popovertarget="traditional-demo-popover",
+                                cls="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700"
+                            ),
+                            Div(
+                                P("This popover uses traditional fixed positioning - position is calculated manually", cls="text-sm"),
+                                popover=True,
+                                cls="my-popover",
+                                id="traditional-demo-popover",
+                            ),
+                            cls="relative inline-block",
+                        ),
+                        cls="p-4 border border-orange-200 rounded-lg",
+                    ),
+                    cls="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8",
+                ),
+            ),
+
+            # Comparison with old style
+            Div(
+                H3("Comparison", cls="text-lg font-semibold mb-2"),
+                P("Compare modern vs traditional popover animations:", cls="text-sm text-muted-foreground mb-4"),
+                Div(
+                    Button(
+                        "Modern (with @starting-style)", 
+                        popovertarget="modern-popover-3",
+                        cls="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 mr-4"
+                    ),
+                    Button(
+                        "Traditional (without @starting-style)", 
+                        popovertarget="traditional-popover",
+                        cls="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700"
+                    ),
+                    cls="mb-4",
+                ),
+                # Modern popover
+                Div(
+                    H4("Modern Animation", cls="font-semibold mb-2"),
+                    P("Smooth entry animation with @starting-style", cls="text-sm text-green-600"),
+                    popover=True,
+                    cls="my-popover",
+                    id="modern-popover-3",
+                ),
+                # Traditional popover without @starting-style
+                Div(
+                    H4("Traditional Animation", cls="font-semibold mb-2"),
+                    P("Standard popover without modern CSS features", cls="text-sm text-orange-600"),
+                    popover=True,
+                    cls="absolute bg-white border border-gray-300 rounded-md p-4 shadow-lg z-50 transition-opacity duration-300 opacity-0 [&:popover-open]:opacity-100",
+                    id="traditional-popover",
+                ),
+            ),
+            
+            cls="space-y-6",
         ),
         cls="container mx-auto p-8",
         id="content",
