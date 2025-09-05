@@ -90,19 +90,19 @@ def playground(sender: str, *args,**kwargs):
                     Button(
                         "Open Modern Popover",
                         popovertarget="modern-popover-1",
-                        cls="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90",
-                        style="anchor-name: --basic-trigger",
+                        cls="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 [anchor-name: --basic-trigger]",
+                        # style="anchor-name: --basic-trigger",
                     ),
                     Div(
                         H4("Modern Popover", cls="font-semibold mb-2"),
                         P("This popover uses modern CSS with @starting-style for smooth entry animations, allow-discrete for display transitions, and CSS anchor positioning.", cls="text-sm mb-3"),
                         P("Notice the smooth scale animation and automatic positioning!", cls="text-xs text-muted-foreground"),
                         popover=True,
-                        cls="my-popover bottom",
+                        cls="my-popover bottom [position-anchor: --basic-trigger]",
+                        # style="position-anchor: --basic-trigger",
                         id="modern-popover-1",
                     ),
                     cls="relative inline-block anchor-container",
-                    style="anchor-name: --basic-trigger"
                 ),
                 cls="mb-8",
             ),
@@ -1148,7 +1148,7 @@ def selects(sender: str, *args,**kwargs):
 @on("component.popovers")
 def popovers(sender: str, *args,**kwargs):
     elements = Div(
-                    H2("Popovers", cls="text-2xl font-semibold mb-4"),
+                    H2("Popovers"),
                     Div(
                         # Basic popover
                         Popover(

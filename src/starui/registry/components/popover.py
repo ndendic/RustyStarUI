@@ -7,37 +7,33 @@ from .button import Button
 from .utils import cn
 
 
-
-def get_position_styles(side: str, align: str) -> str:
-    """Generate positioning styles based on side and align"""
+def get_anchor_styles(side: str, align: str) -> str:
+    """Generate CSS anchor positioning styles based on side and align"""
     styles = []
     
-    # Basic positioning based on side
+    # Position based on side
     if side == "bottom":
-        styles.append("top-full mt-1")
-    elif side == "top": 
-        styles.append("bottom-full mb-1")
+        styles.extend(["[top:anchor(bottom)]", "[left:anchor(left)]"])
+    elif side == "top":
+        styles.extend(["[bottom:anchor(top)]", "[left:anchor(left)]"])
     elif side == "right":
-        styles.append("left-full ml-1")
+        styles.extend(["[top:anchor(top)]", "[left:anchor(right)]"])
     elif side == "left":
-        styles.append("right-full mr-1")
-
-    # Alignment
+        styles.extend(["[top:anchor(top)]", "[right:anchor(left)]"])
+    
+    # Alignment adjustments
     if side in ["top", "bottom"]:
-        if align == "start":
-            styles.append("left-0")
-        elif align == "center":
-            styles.append("left-1/2 -translate-x-1/2")
+        if align == "center":
+            styles.append("[left:anchor(center)] [translate:-50%_0]")
         elif align == "end":
-            styles.append("right-0")
-    else:  # left/right
-        if align == "start":
-            styles.append("top-0")
-        elif align == "center":
-            styles.append("top-1/2 -translate-y-1/2")
+            styles.append("[right:anchor(right)]")
+        # start is default, no additional styles needed
+    else:  # left/right sides
+        if align == "center":
+            styles.append("[top:anchor(center)] [translate:0_-50%]")
         elif align == "end":
-            styles.append("bottom-0")
-
+            styles.append("[bottom:anchor(bottom)]")
+        # start is default, no additional styles needed
     return " ".join(styles)
 
 def PopoverTrigger(*children, variant="default", cls="", **attrs) -> HtmlString:
@@ -66,11 +62,10 @@ def PopoverContent(*children, cls="", side="bottom", align="start", **attrs) -> 
             id=f'{signal}-popover-content',
             data_popover=True,
             popover=True,
-            data_attr_aria_hidden=f"${signal}_open ? 'false' : 'true'",
             ref=f"{signal}Content",
             data_side=side,
             data_align=align,
-            cls=cn("w-80", "[position-anchor:--{signal}]",get_position_styles(side, align), cls),
+            cls=cn("w-80", "[position-anchor:--{signal}]", cls),
             **attrs,
         )
 
