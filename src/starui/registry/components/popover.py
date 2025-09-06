@@ -1,3 +1,4 @@
+from typing import Literal
 from uuid import uuid4
 
 from rusty_tags import Div, HtmlString, Script
@@ -54,8 +55,18 @@ def PopoverTrigger(*children, variant="default", cls="", **attrs) -> HtmlString:
     return create
 
 
-def PopoverContent(*children, cls="", side="bottom", align="start", **attrs) -> HtmlString:
+PopoverPosition = Literal[
+    "top-left", "top-center", "top-right",
+    "bottom-left", "bottom-center", "bottom-right",
+    "left-start", "left-center", "left-end",
+    "right-start", "right-center", "right-end"
+]
+
+def PopoverContent(*children, cls="w-80 p-4", position: PopoverPosition = "bottom-center", **attrs) -> HtmlString:
     def create_content(signal):
+        # Split position string to get side and align
+        side, align = position.split("-")
+
         return Div(
             *children,
             id=f'{signal}-popover-content',
@@ -64,13 +75,13 @@ def PopoverContent(*children, cls="", side="bottom", align="start", **attrs) -> 
             ref=f"{signal}Content",
             data_side=side,
             data_align=align,
-            cls=cn("[position-anchor:--{signal}]","w-80",  cls),
+            cls=cn(f"[position-anchor:--{signal}]", cls),
             **attrs,
         )
 
     return create_content
 
-def Popover(*children, signal: str | None = None, cls="relative inline-block", **attrs) -> HtmlString:
+def Popover(*children, signal: str | None = None, cls="", **attrs) -> HtmlString:
     id = signal or uuid4().hex[:8]
     signal = f"popover-{id}"
     processed_children = []
@@ -82,7 +93,7 @@ def Popover(*children, signal: str | None = None, cls="relative inline-block", *
     return Div(
         *processed_children,
         id=f'{signal}-popover',
-        cls=cn("popover inline-block",cls),
+        cls=cn("relative",cls),
         signals=Signals({f"{signal}_open": False}),
         **attrs,
     )
