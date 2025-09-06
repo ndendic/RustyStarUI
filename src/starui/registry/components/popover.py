@@ -42,9 +42,8 @@ def PopoverTrigger(*children, variant="default", cls="", **attrs) -> HtmlString:
             *children,
             id=f'{signal}-popover-trigger',
             type='button',
-            aria_expanded='false',
             aria_controls=f'{signal}-popover-content',
-                popovertarget=f'{signal}-popover-content',
+            popovertarget=f'{signal}-popover-content',
             ref=f"{signal}Trigger",
             variant=variant,
             on_click=f"${signal}_open = !${signal}_open",
@@ -65,7 +64,7 @@ def PopoverContent(*children, cls="", side="bottom", align="start", **attrs) -> 
             ref=f"{signal}Content",
             data_side=side,
             data_align=align,
-            cls=cn("w-80", "[position-anchor:--{signal}]", cls),
+            cls=cn("[position-anchor:--{signal}]","w-80",  cls),
             **attrs,
         )
 
