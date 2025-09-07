@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple CSS Anchor Positioning Test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button 
+            class="trigger-btn" 
+            id="test-btn" 
+            popovertarget="test-popover"
+            style="anchor-name: --test-anchor;"
+        >
+            Click Me
+        </button>
+        
+        <div 
+            class="popover" 
+            id="test-popover" 
+            popover
+            style="position-anchor: --test-anchor;"
+        >
+            <div class="popover-content">
+                This is a test popover. It should appear below the button and fallback to other positions if there's no space.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

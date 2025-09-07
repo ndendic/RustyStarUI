@@ -860,7 +860,7 @@ def popovers(sender: str, *args,**kwargs):
                                         ),
                                     ),
                                     position=f"{combination[0]}-{combination[1]}",
-                                    cls="max-w-64 p-4"
+                                    cls="w-64 p-4"
                                 ),
                                 signal=f"{combination[0]}{combination[1]}"
                             ),
@@ -915,8 +915,8 @@ def popovers(sender: str, *args,**kwargs):
                                             cls="space-y-2"
                                         )
                                     ),
-                                    position="top-center",
-                                    cls="w-72"
+                                    position="top-left",
+                                    cls="w-72 p-4"
                                 ),
                                 signal="form-popover"
                             ),

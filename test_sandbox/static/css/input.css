@@ -952,103 +952,19 @@
   }
 }
 
-/* Position-try rules for all 12 positions with transitions */
-@position-try --top-left {
-  top: anchor(bottom);
-  left: anchor(left);
-  transform-origin: bottom left;
-  margin-top: 0.25rem;
-}
-
-@position-try --top-center {
-  top: anchor(bottom);
-  left: anchor(center);
-  transform: translateX(-50%);
-  transform-origin: bottom center;
-  margin-top: 0.25rem;
-}
-
-@position-try --top-right {
-  top: anchor(bottom);
-  right: anchor(right);
-  transform-origin: bottom right;
-  margin-top: 0.25rem;
-}
-
-@position-try --bottom-left {
-  bottom: anchor(top);
-  left: anchor(left);
-  transform-origin: top left;
-  margin-bottom: 0.25rem;
-}
-
-@position-try --bottom-center {
-  bottom: anchor(top);
-  left: anchor(center);
-  transform: translateX(-50%);
-  transform-origin: top center;
-  margin-bottom: 0.25rem;
-}
-
-@position-try --bottom-right {
-  bottom: anchor(top);
-  right: anchor(right);
-  transform-origin: top right;
-  margin-bottom: 0.25rem;
-}
-
-@position-try --left-start {
-  right: anchor(left);
-  top: anchor(top);
-  transform-origin: right top;
-  margin-right: 0.25rem;
-}
-
-@position-try --left-center {
-  right: anchor(left);
-  top: anchor(center);
-  transform: translateY(-50%);
-  transform-origin: right center;
-  margin-right: 0.25rem;
-}
-
-@position-try --left-end {
-  right: anchor(left);
-  bottom: anchor(bottom);
-  transform-origin: right bottom;
-  margin-right: 0.25rem;
-}
-
-@position-try --right-start {
-  left: anchor(right);
-  top: anchor(top);
-  transform-origin: left top;
-  margin-left: 0.25rem;
-}
-
-@position-try --right-center {
-  left: anchor(right);
-  top: anchor(center);
-  transform: translateY(-50%);
-  transform-origin: left center;
-  margin-left: 0.25rem;
-}
-
-@position-try --right-end {
-  left: anchor(right);
-  bottom: anchor(bottom);
-  transform-origin: left bottom;
-  margin-left: 0.25rem;
-}
-
 /* Popover */
 @layer components {
   [data-popover] {
-    /* Base popover styles - let Tailwind handle width */
-    @apply absolute bg-popover text-popover-foreground overflow-x-hidden overflow-y-auto rounded-md border shadow-md z-50;
+    /* Base popover styles with proper anchor positioning setup */
+    @apply bg-popover text-popover-foreground overflow-x-hidden overflow-y-auto rounded-md border shadow-md z-50;
+    
+    /* Critical for anchor positioning */
+    position: absolute;
+    position-try: flip-block, flip-inline, flip-start;
 
     /* Base visible state */
     @apply visible inset-auto opacity-100 scale-100 transition-all transition-discrete;
+
 
 
     /* Reset transforms for open state based on side */
@@ -1056,25 +972,21 @@
     &[data-side='bottom'] {
       transform: translateY(0);
       top: anchor(bottom);
-      position-try-fallbacks: --top-start --left-center --left-end;
     }
 
     &[data-side='top'] {
       transform: translateY(0);
       bottom: anchor(top);
-      position-try-fallbacks: --top-start --top-center --top-end;
     }
 
     &[data-side='left'] {
       transform: translateX(0);
       right: anchor(left);
-      position-try-fallbacks: --right-start --right-center --right-end;
     }
 
     &[data-side='right'] {
       transform: translateX(0);
       left: anchor(right);
-      position-try-fallbacks: --left-start --left-center --left-end;
     }
     /* Open state - visible and in final position */
     &:popover-open {
@@ -1086,25 +998,21 @@
       &[data-side='bottom'] {
         transform: translateY(0);
         top: anchor(bottom);
-        position-try-fallbacks: --left-start --left-center --left-end;
       }
 
       &[data-side='top'] {
         transform: translateY(0);
         bottom: anchor(top);
-        position-try-fallbacks: --top-start --top-center --top-end;
       }
 
       &[data-side='left'] {
         transform: translateX(0);
         right: anchor(left);
-        position-try-fallbacks: --right-start --right-center --right-end;
       }
 
       &[data-side='right'] {
         transform: translateX(0);
         left: anchor(right);
-        position-try-fallbacks: --left-start --left-center --left-end;
       }
 
       /* Center alignment adjustments for open state */
@@ -1206,25 +1114,21 @@
     &[data-side='bottom'] {
       margin-top: 0.25rem;
       top: anchor(bottom);
-      position-try-fallbacks: --left-start --left-center --left-end;
     }
 
     &[data-side='top'] {
       margin-bottom: 0.25rem;
       bottom: anchor(top);
-      position-try-fallbacks: --top-start --top-center --top-end;
     }
 
     &[data-side='left'] {
       margin-right: 0.25rem;
       right: anchor(left);
-      position-try-fallbacks: --right-start --right-center --right-end;
     }
 
     &[data-side='right'] {
       margin-left: 0.25rem;
       left: anchor(right);
-      position-try-fallbacks: --left-start --left-center --left-end;
     }
 
     /* Alignment positioning */
@@ -1235,17 +1139,14 @@
       &:not([data-align]),
       &[data-align='left'] {
         left: anchor(left);
-        position-try-fallbacks: --left-start --left-center --left-end;
       }
 
       &[data-align='right'] {
         right: anchor(right);
-        position-try-fallbacks: --right-start --right-center --right-end;
       }
 
       &[data-align='center'] {
         left: anchor(center);
-        position-try-fallbacks: --left-start --left-center --left-end;
       }
     }
 
@@ -1255,17 +1156,14 @@
       &:not([data-align]),
       &[data-align='start'] {
         top: anchor(top);
-        position-try-fallbacks: --right-start --right-center --right-end;
       }
 
       &[data-align='end'] {
         bottom: anchor(bottom);
-        position-try-fallbacks: --left-start --left-center --left-end;
       }
 
       &[data-align='center'] {
         top: anchor(center);
-        position-try-fallbacks: --right-start --right-center --right-end;
       }
     }
   }
@@ -1279,6 +1177,7 @@
     }
   }
 }
+
 
 /* Radio */
 @layer components {
