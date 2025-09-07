@@ -89,7 +89,7 @@ from .select import (
     SelectTrigger,
     SelectValue,
     SelectWithLabel,
-    SelectWithLabelSimple,
+    # SelectWithLabelSimple,
 )
 from .separator import Separator
 from .sheet import (
@@ -177,7 +177,7 @@ __all__ = [
     "Checkbox", "CheckboxWithLabel",
     "Input", "InputWithLabel",
     "RadioGroup", "RadioGroupItem", "RadioGroupWithLabel",
-    "Select", "SelectTrigger", "SelectValue", "SelectContent", "SelectItem", "SelectGroup", "SelectLabel", "SelectWithLabel", "SelectWithLabelSimple",
+    "Select", "SelectTrigger", "SelectValue", "SelectContent", "SelectItem", "SelectGroup", "SelectLabel", "SelectWithLabel", # "SelectWithLabelSimple",
     "Switch", "SwitchWithLabel",
     "Textarea", "TextareaWithLabel",
     "Toggle",

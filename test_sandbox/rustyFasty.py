@@ -1522,7 +1522,6 @@ def avatars(sender: str, *args,**kwargs):
                 )                
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
-
 @on("component.separators")
 def separators(sender: str, *args,**kwargs):
     # Button variants
@@ -1677,7 +1676,79 @@ def index():
             # Main content container
             Div(
                 H1("StarUI Component Test"),
-
+                # SelectWithLabel(
+                #     "Country",
+                #     options=["United States", "Canada", "Mexico", "United Kingdom", "France", "Germany"],
+                #     placeholder="Choose a country",
+                #     signal="country",
+                #     helper_text="Select your country of residence",
+                # ),
+Div(
+    HTMLButton(
+        Span('Apple', cls='truncate'),
+        Svg(
+            Path(d='m7 15 5 5 5-5'),
+            Path(d='m7 9 5-5 5 5'),
+            xmlns='http://www.w3.org/2000/svg',
+            width='24',
+            height='24',
+            viewbox='0 0 24 24',
+            fill='none',
+            stroke='currentColor',
+            stroke_width='2',
+            stroke_linecap='round',
+            stroke_linejoin='round',
+            cls='lucide lucide-chevrons-up-down-icon lucide-chevrons-up-down text-muted-foreground opacity-50 shrink-0'
+        ),
+        type='button',
+        id='select-445592-trigger',
+        aria_haspopup='listbox',
+        aria_expanded='false',
+        aria_controls='select-445592-listbox',
+        cls='btn-outline justify-between font-normal w-[180px]'
+    ),
+    Div(
+        Header(
+            Svg(
+                Circle(cx='11', cy='11', r='8'),
+                Path(d='m21 21-4.3-4.3'),
+                xmlns='http://www.w3.org/2000/svg',
+                width='24',
+                height='24',
+                viewbox='0 0 24 24',
+                fill='none',
+                stroke='currentColor',
+                stroke_width='2',
+                stroke_linecap='round',
+                stroke_linejoin='round',
+                cls='lucide lucide-search-icon lucide-search'
+            ),
+            HTMLInput(type='text', value='', placeholder='Search entries...', autocomplete='off', autocorrect='off', spellcheck='false', aria_autocomplete='list', role='combobox', aria_expanded='false', aria_controls='select-445592-listbox', aria_labelledby='select-445592-trigger')
+        ),
+        Div(
+            Div(
+                Div('Fruits', role='heading', id='group-label-select-445592-items-1'),
+                Div('Apple', id='select-445592-items-1-1', role='option', data_value='apple', aria_selected='true'),
+                Div('Banana', id='select-445592-items-1-2', role='option', data_value='banana'),
+                Div('Blueberry', id='select-445592-items-1-3', role='option', data_value='blueberry'),
+                Div('Grapes', id='select-445592-items-1-4', role='option', data_value='pineapple'),
+                Div('Pineapple', id='select-445592-items-1-5', role='option', data_value='pineapple'),
+                role='group',
+                aria_labelledby='group-label-select-445592-items-1'
+            ),
+            role='listbox',
+            id='select-445592-listbox',
+            aria_orientation='vertical',
+            aria_labelledby='select-445592-trigger'
+        ),
+        id='select-445592-popover',
+        data_popover='',
+        # aria_hidden='true'
+    ),
+    HTMLInput(type='hidden', name='select-445592-value', value='apple'),
+    id='select-445592',
+    cls='select'
+),
                 # Sheet example
                 Div(
                     # H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
