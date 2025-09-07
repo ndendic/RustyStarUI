@@ -1167,15 +1167,6 @@
       }
     }
   }
-
-  .popover {
-    position: relative;
-    display: inline-flex;
-
-    [data-popover] {
-      padding: 1rem;
-    }
-  }
 }
 
 

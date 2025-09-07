@@ -849,9 +849,14 @@ def popovers(sender: str, *args,**kwargs):
                     # Grid layout for triggers, but each popover uses proper anchor positioning
                     Div(
                         *[Div(
-                            Popover(
-                                PopoverTrigger(f"{combination[0].title()}-{combination[1].title()}", variant="outline"),
-                                PopoverContent(
+                            Div(
+                                PopoverTrigger(
+                                    f"{combination[0].title()}-{combination[1].title()}",
+                                    id=f"{combination[0]}{combination[1]}-trigger",
+                                    variant="outline",
+                                    popovertarget=f"{combination[0]}{combination[1]}-popover"
+                                ),
+                                Popover(
                                     Div(
                                         H4(f"{combination[0].title()}-{combination[1].title()}", cls="font-semibold mb-2"),
                                         Div(
@@ -860,6 +865,8 @@ def popovers(sender: str, *args,**kwargs):
                                         ),
                                     ),
                                     position=f"{combination[0]}-{combination[1]}",
+                                    id=f"{combination[0]}{combination[1]}-popover",
+                                    anchor=f"{combination[0]}{combination[1]}-trigger",
                                     cls="w-64 p-4"
                                 ),
                                 signal=f"{combination[0]}{combination[1]}"
@@ -874,74 +881,75 @@ def popovers(sender: str, *args,**kwargs):
                         H3("Advanced Popover Examples", cls="text-lg font-semibold mb-4"),
                         Div(
                             # Complex content example
+                            PopoverTrigger(
+                                "Rich Content", 
+                                variant="default",
+                                popovertarget="rich-popover",
+                                id="rich-popover-trigger",
+                            ),
                             Popover(
-                                PopoverTrigger("Rich Content", variant="default"),
-                                PopoverContent(
+                                Div(
+                                    H4("User Profile", cls="font-semibold mb-3"),
                                     Div(
-                                        H4("User Profile", cls="font-semibold mb-3"),
+                                        Div("👤", cls="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-2xl"),
                                         Div(
-                                            Div("👤", cls="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-2xl mb-3"),
+                                            P("John Doe", cls="font-medium"),
+                                            P("@johndoe", cls="text-sm text-muted-foreground"),
+                                            P("Full-stack developer passionate about building great user experiences.", cls="text-sm"),
                                             Div(
-                                                P("John Doe", cls="font-medium"),
-                                                P("@johndoe", cls="text-sm text-muted-foreground mb-2"),
-                                                P("Full-stack developer passionate about building great user experiences.", cls="text-sm mb-3"),
-                                                Div(
-                                                    Button("Follow", size="sm", cls="mr-2"),
-                                                    Button("Message", variant="outline", size="sm"),
-                                                    cls="flex"
-                                                )
+                                                Button("Follow", size="sm"),
+                                                Button("Message", variant="outline", size="sm"),
+                                                cls="flex items-center gap-2 w-full"
                                             )
                                         ),
-                                        cls="text-center"
+                                        cls="flex flex-col items-center gap-2"
                                     ),
-                                    position="bottom-center",
-                                    cls="w-80"
+                                    cls="text-center flex flex-col items-center gap-2"
                                 ),
-                                signal="rich-popover"
+                                position="bottom-center",
+                                anchor="rich-popover-trigger",
+                                id="rich-popover",
                             ),
                             
                             # Form in popover
+                            PopoverTrigger("Quick Form", variant="secondary", popovertarget="quick-form", id="quick-form-trigger"),
                             Popover(
-                                PopoverTrigger("Quick Form", variant="secondary"),
-                                PopoverContent(
-                                    Form(
-                                        H4("Quick Contact", cls="font-semibold mb-3"),
-                                        Div(
-                                            Label("Name", for_="quick-name"),
-                                            Input(id="quick-name", placeholder="Your name", cls="mb-3"),
-                                            Label("Email", for_="quick-email"),
-                                            Input(id="quick-email", type="email", placeholder="your@email.com", cls="mb-3"),
-                                            Button("Send", size="sm", cls="w-full"),
-                                            cls="space-y-2"
-                                        )
-                                    ),
-                                    position="top-left",
-                                    cls="w-72 p-4"
+                                Form(
+                                    H4("Quick Contact", cls="font-semibold mb-3"),
+                                    Div(
+                                        Label("Name", for_="quick-name"),
+                                        Input(id="quick-name", placeholder="Your name", cls="mb-3"),
+                                        Label("Email", for_="quick-email"),
+                                        Input(id="quick-email", type="email", placeholder="your@email.com", cls="mb-3"),
+                                        Button("Send", size="sm", cls="w-full"),
+                                        cls="space-y-2"
+                                    )
                                 ),
-                                signal="form-popover"
+                                position="top-left",
+                                anchor="quick-form-trigger",
+                                id="quick-form",
+                                cls="w-72 p-4"
                             ),
                             
                             # Menu-style popover
+                            PopoverTrigger("Actions Menu", variant="ghost", popovertarget="actions-menu", id="actions-menu-trigger"),
                             Popover(
-                                PopoverTrigger("Actions Menu", variant="ghost"),
-                                PopoverContent(
+                                Div(
+                                    H4(Span("Actions",cls="font-semibold ms-2"), cls="mb-2 pb-2 border-b"),
                                     Div(
-                                        H4("Actions", cls="font-semibold mb-2 pb-2 border-b"),
-                                        Div(
-                                            Button("Edit", variant="ghost", size="sm", cls="w-full justify-start"),
-                                            Button("Duplicate", variant="ghost", size="sm", cls="w-full justify-start"),
-                                            Button("Share", variant="ghost", size="sm", cls="w-full justify-start"),
-                                            Separator(cls="my-2"),
-                                            Button("Delete", variant="ghost", size="sm", cls="w-full justify-start text-destructive"),
-                                            cls="flex flex-col space-y-1"
-                                        )
-                                    ),
-                                    position="left-end",
-                                    cls="w-48"
+                                        Button("Edit", variant="ghost", size="sm", cls="w-full justify-start"),
+                                        Button("Duplicate", variant="ghost", size="sm", cls="w-full justify-start"),
+                                        Button("Share", variant="ghost", size="sm", cls="w-full justify-start"),
+                                        Separator(cls="my-2"),
+                                        Button("Delete", variant="ghost", size="sm", cls="w-full justify-start text-destructive"),
+                                        cls="flex flex-col space-y-1"
+                                    )
                                 ),
-                                signal="menu-popover"
+                                position="left-end",
+                                anchor="actions-menu-trigger",
+                                id="actions-menu",
+                                cls="w-48"
                             ),
-                            
                             cls="flex gap-4 justify-center"
                         ),
                     ),
@@ -1164,66 +1172,63 @@ def hover_cards(sender: str, *args,**kwargs):
                     H2("Hover Cards", cls="text-2xl font-semibold mb-4"),
                     Div(
                         # Basic hover card
+                        HoverCardTrigger(
+                            Span("@username", cls="text-blue-600 underline cursor-pointer"),
+                            id="userHoverTrigger",
+                            popovertarget="userHoverContent",
+                        ),
                         HoverCard(
-                            HoverCardTrigger(
-                                Span("@username", cls="text-blue-600 underline cursor-pointer"),
-                                signal="user_hover",
-                            ),
-                            HoverCardContent(
+                            Div(
                                 Div(
-                                    Div(
-                                        Div("👤", cls="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-2xl mb-3"),
-                                        H3("John Doe", cls="font-semibold mb-1"),
-                                        P("@username", cls="text-sm text-muted-foreground mb-2"),
-                                        P("Full-stack developer passionate about building great user experiences.", cls="text-sm"),
-                                        cls="text-center",
-                                    ),
+                                    Div("👤", cls="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-2xl mb-3"),
+                                    H3("John Doe", cls="font-semibold mb-1"),
+                                    P("@username", cls="text-sm text-muted-foreground mb-2"),
+                                    P("Full-stack developer passionate about building great user experiences.", cls="text-sm"),
+                                    cls="text-center",
                                 ),
-                                signal="user_hover",
                             ),
-                            signal="user_hover",
+                            id="userHoverContent",
+                            anchor="userHoverTrigger",
                         ),
                         # Hover card with different positioning
+                        HoverCardTrigger(
+                            Button("Hover for info", variant="outline"),
+                            id="infoHoverTrigger",
+                            popovertarget="infoHoverContent",
+                        ),
                         HoverCard(
-                            HoverCardTrigger(
-                                Button("Hover for info", variant="outline"),
-                                signal="info_hover",
+                            Div(
+                                H3("Quick Info", cls="font-semibold mb-2"),
+                                P("This hover card appears when you hover over the trigger element.", cls="text-sm text-muted-foreground mb-2"),
+                                P("It stays open while you're hovering over either the trigger or the content.", cls="text-sm"),
                             ),
-                            HoverCardContent(
-                                Div(
-                                    H3("Quick Info", cls="font-semibold mb-2"),
-                                    P("This hover card appears when you hover over the trigger element.", cls="text-sm text-muted-foreground mb-2"),
-                                    P("It stays open while you're hovering over either the trigger or the content.", cls="text-sm"),
-                                ),
-                                signal="info_hover",
-                                side="top",
-                            ),
-                            signal="info_hover",
+                            id="infoHoverContent",
+                            anchor="infoHoverTrigger",
+                            side="top",
                         ),
                         # Product hover card
+                        HoverCardTrigger(
+                            Badge("Product Info", variant="secondary"),
+                            id="productHoverTrigger",
+                            popovertarget="productHoverContent",
+                        ),
                         HoverCard(
-                            HoverCardTrigger(
-                                Badge("Product Info", variant="secondary"),
-                                signal="product_hover",
-                            ),
-                            HoverCardContent(
+                            Div(
                                 Div(
+                                    H3("StarUI Components", cls="font-semibold mb-2"),
+                                    Badge("v1.0.0", variant="outline", cls="mb-2"),
+                                    P("A modern component library built with StarHTML and Datastar for reactive Python web apps.", cls="text-sm text-muted-foreground mb-3"),
                                     Div(
-                                        H3("StarUI Components", cls="font-semibold mb-2"),
-                                        Badge("v1.0.0", variant="outline", cls="mb-2"),
-                                        P("A modern component library built with StarHTML and Datastar for reactive Python web apps.", cls="text-sm text-muted-foreground mb-3"),
-                                        Div(
-                                            Badge("Python"),
-                                            Badge("StarHTML", variant="secondary"),
-                                            Badge("Datastar", variant="outline"),
-                                            cls="flex gap-1",
-                                        ),
+                                        Badge("Python"),
+                                        Badge("StarHTML", variant="secondary"),
+                                        Badge("Datastar", variant="outline"),
+                                        cls="flex gap-1",
                                     ),
                                 ),
-                                signal="product_hover",
-                                side="left",
                             ),
-                            signal="product_hover",
+                            id="productHoverContent",
+                            anchor="productHoverTrigger",
+                            position="left-start",
                         ),
                         cls="flex flex-wrap gap-4 mb-8",
                     ),

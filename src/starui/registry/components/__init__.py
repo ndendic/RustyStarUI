@@ -74,10 +74,10 @@ from .dropdown_menu import (
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 )
-from .hover_card import HoverCard, HoverCardContent, HoverCardTrigger
+from .hover_card import HoverCard, HoverCardTrigger
 from .input import Input, InputWithLabel
 from .label import Label
-from .popover import Popover, PopoverContent, PopoverTrigger
+from .popover import Popover, PopoverTrigger
 from .progress import Progress
 from .radio_group import RadioGroup, RadioGroupItem, RadioGroupWithLabel
 from .select import (
@@ -190,8 +190,8 @@ __all__ = [
     "AlertDialog", "AlertDialogTrigger", "AlertDialogContent", "AlertDialogHeader", "AlertDialogFooter", "AlertDialogTitle", "AlertDialogDescription", "AlertDialogAction", "AlertDialogCancel",
     "Dialog", "DialogTrigger", "DialogContent", "DialogClose", "DialogHeader", "DialogFooter", "DialogTitle", "DialogDescription",
     "DropdownMenu", "DropdownMenuTrigger", "DropdownMenuContent", "DropdownMenuItem", "DropdownMenuCheckboxItem", "DropdownMenuRadioGroup", "DropdownMenuRadioItem", "DropdownMenuSeparator", "DropdownMenuLabel", "DropdownMenuShortcut", "DropdownMenuGroup", "DropdownMenuSub", "DropdownMenuSubTrigger", "DropdownMenuSubContent",
-    "HoverCard", "HoverCardTrigger", "HoverCardContent",
-    "Popover", "PopoverTrigger", "PopoverContent",
+    "HoverCard", "HoverCardTrigger",
+    "Popover", "PopoverTrigger",
     "Tooltip", "TooltipTrigger", "TooltipContent", "TooltipProvider",
 
     # Feedback

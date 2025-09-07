@@ -5,15 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple CSS Anchor Positioning Test</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/gh/starfederation/datastar@main/bundles/datastar.js" type="module"></script>
 </head>
-<body>
+<body data-signal-message="Hello from datastar!">
     <div class="container">
+        <p data-text="$message"></p>
         <button 
             class="trigger-btn" 
             id="test-btn" 
             popovertarget="test-popover"
             style="anchor-name: --test-anchor;"
-        >
+            onmouseenter="clearTimeout(window.popoverTimer); window.popoverTimer = setTimeout(() => { document.getElementById('test-popover').showPopover(); }, 700);"
+            onmouseleave="clearTimeout(window.popoverTimer); window.popoverTimer = setTimeout(() => { document.getElementById('test-popover').hidePopover(); }, 300);"
+            onmouseenter="clearTimeout(window.user_hover-contentTimer); window.user_hovercontentTimer = setTimeout(() => { document.getElementById('user_hover-content').showPopover(); }, 700);"
+            >
             Click Me
         </button>
         
@@ -22,6 +27,8 @@
             id="test-popover" 
             popover
             style="position-anchor: --test-anchor;"
+            onmouseenter="clearTimeout(window.popoverTimer); window.popoverTimer = setTimeout(() => { document.getElementById('test-popover').showPopover(); }, 700);"
+            onmouseleave="clearTimeout(window.popoverTimer); window.popoverTimer = setTimeout(() => { document.getElementById('test-popover').hidePopover(); }, 300);"
         >
             <div class="popover-content">
                 This is a test popover. It should appear below the button and fallback to other positions if there's no space.

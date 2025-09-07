@@ -1,59 +1,30 @@
 from typing import Literal
 from uuid import uuid4
 
-from rusty_tags import Div, HtmlString, Script
-from rusty_tags.datastar import Signals
+from rusty_tags import Div, HtmlString
 
 from .button import Button
 from .utils import cn
 
 
-def get_anchor_styles(side: str, align: str) -> str:
-    """Generate CSS anchor positioning styles based on side and align"""
-    styles = []
-    
-    # Position based on side
-    if side == "bottom":
-        styles.extend(["[top:anchor(bottom)]", "[left:anchor(left)]"])
-    elif side == "top":
-        styles.extend(["[bottom:anchor(top)]", "[left:anchor(left)]"])
-    elif side == "right":
-        styles.extend(["[top:anchor(top)]", "[left:anchor(right)]"])
-    elif side == "left":
-        styles.extend(["[top:anchor(top)]", "[right:anchor(left)]"])
-    
-    # Alignment adjustments
-    if side in ["top", "bottom"]:
-        if align == "center":
-            styles.append("[left:anchor(center)] [translate:-50%_0]")
-        elif align == "end":
-            styles.append("[right:anchor(right)]")
-        # start is default, no additional styles needed
-    else:  # left/right sides
-        if align == "center":
-            styles.append("[top:anchor(center)] [translate:0_-50%]")
-        elif align == "end":
-            styles.append("[bottom:anchor(bottom)]")
-        # start is default, no additional styles needed
-    return " ".join(styles)
-
-def PopoverTrigger(*children, variant="default", cls="", **attrs) -> HtmlString:
-    def create(signal):
-        return Button(
-            *children,
-            id=f'{signal}-popover-trigger',
-            type='button',
-            aria_controls=f'{signal}-popover-content',
-            popovertarget=f'{signal}-popover-content',
-            ref=f"{signal}Trigger",
-            variant=variant,
-            on_click=f"${signal}_open = !${signal}_open",
-            cls=cn(f'[anchor-name:--{signal}]',cls),
-            **attrs,
-        )
-
-    return create
-
+def PopoverTrigger(*children,
+                    popovertarget: str,
+                    id: str | None = None,
+                    variant="default", cls="",
+                    **attrs) -> HtmlString:
+    id = id or uuid4().hex[:8]
+    return Button(
+        *children,
+        id=f'{id}',
+        type='button',
+        aria_controls=popovertarget,
+        popovertarget=popovertarget,
+        ref=f"{id}Trigger",
+        variant=variant,
+        cls=cn(cls),
+        style=f"anchor-name: --{id};",
+        **attrs,
+    )
 
 PopoverPosition = Literal[
     "top-left", "top-center", "top-right",
@@ -62,38 +33,23 @@ PopoverPosition = Literal[
     "right-start", "right-center", "right-end"
 ]
 
-def PopoverContent(*children, cls="w-80 p-4", position: PopoverPosition = "bottom-center", **attrs) -> HtmlString:
-    def create_content(signal):
-        # Split position string to get side and align
-        side, align = position.split("-")
-
-        return Div(
+def Popover(*children,
+            id: str,
+            anchor: str | None = None,
+            cls="w-80 p-4",
+            position: PopoverPosition = "bottom-center",
+            **attrs) -> HtmlString:
+    side, align = position.split("-")
+    return Div(
             *children,
-            id=f'{signal}-popover-content',
+            id=id,
             data_popover=True,
             popover=True,
-            ref=f"{signal}Content",
+            ref=f"{id}Content",
             data_side=side,
             data_align=align,
-            cls=cn(f"[position-anchor:--{signal}]", cls),
+            cls=cls,
+            style=f"position-anchor: --{anchor};" if anchor else None,
             **attrs,
         )
 
-    return create_content
-
-def Popover(*children, signal: str | None = None, cls="", **attrs) -> HtmlString:
-    id = signal or uuid4().hex[:8]
-    signal = f"popover-{id}"
-    processed_children = []
-    for c in children:
-        if callable(c):
-            processed_children.append(c(signal))
-        else:
-            processed_children.append(c)
-    return Div(
-        *processed_children,
-        id=f'{signal}-popover',
-        cls=cn("relative",cls),
-        signals=Signals({f"{signal}_open": False}),
-        **attrs,
-    )
