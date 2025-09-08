@@ -2,188 +2,152 @@ from typing import Any
 from uuid import uuid4
 
 from rusty_tags import Button as HTMLButton
-from rusty_tags import Div, HtmlString, Span
+from rusty_tags import Circle, Div, Header, HtmlString, Path, Span, Svg
+from rusty_tags import Input as HTMLInput
 from rusty_tags import Label as HTMLLabel
+from rusty_tags import Optgroup as HTMLOptionGroup
+from rusty_tags import OptionEl as HTMLOption
 from rusty_tags import P as HTMLP
+from rusty_tags import Select as HTMLSelect
 from rusty_tags.datastar import Signals
-# from starhtml.datastar import (
-#     ds_class,
-#     ds_on_click,
-#     ds_on_toggle,
-#     ds_position,
-#     ds_ref,
-#     ds_show,
-#     ds_signals,
-#     ds_text,
-#     value,
-# )
 
 from .utils import Icon, cn
 
 
 def Select(
-    *children,
-    initial_value: str | None = None,
-    signal: str | None = None,
-    cls: str = "",
-    **attrs: Any,
-) -> HtmlString:
+        *children,
+        initial_value: str | None = None,
+        signal: str | None = None,
+        cls: str = "",
+        **attrs: Any,
+    ) -> HtmlString:
     signal = signal or f"select_{uuid4().hex[:8]}"
     return Div(
         *children,
-        signals = Signals(
-            {
-                f"{signal}_value": initial_value or "",
-                f"{signal}_label": "",
-                f"{signal}_open": False,
-            }
-        ),
-        cls=cn("relative inline-block", cls),
-        **attrs,
+        HTMLInput(type='hidden', name=f'select-{signal}-value', value=initial_value or ''),
+        id=signal,
+        on_load="initSelectElement(el)",
+        cls=cn('select', cls)
     )
-
 
 def SelectTrigger(
-    *children,
-    signal: str | None = None,
-    width: str = "w-[180px]",
-    cls: str = "",
-    **attrs: Any,
-) -> HtmlString:
-    signal = signal or "select"
-    trigger_id = attrs.pop("id", f"{signal}-trigger")
-
-    return HTMLButton(
         *children,
-        Icon("lucide:chevron-down", cls="size-4 shrink-0 opacity-50"),
-        ref = f"{signal}Trigger",
-        popovertarget=f"{signal}-content",
-        popoveraction="toggle",
-        type="button",
-        role="combobox",
-        aria_haspopup="listbox",
-        aria_controls=f"{signal}-content",
-        data_placeholder=f"!${signal}_label",
-        id=trigger_id,
-        cls=cn(
-            width,
-            "flex h-9 items-center justify-between gap-2 rounded-md border border-input",
-            "bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs",
-            "transition-[color,box-shadow] outline-none",
-            "dark:bg-input/30 dark:hover:bg-input/50",
-            "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-            "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
-            "aria-invalid:border-destructive",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            "data-[placeholder]:text-muted-foreground",
-            cls,
+        signal: str | None = None,
+        width: str = "w-[180px]",
+        cls: str = "",
+        **attrs: Any,
+    ) -> HtmlString:
+    signal = signal or "select"
+    trigger_id = attrs.pop("id", f"select-{signal}-trigger")
+    trigger= HTMLButton(
+        *children,
+        Svg(
+            Path(d='m7 15 5 5 5-5'),
+            Path(d='m7 9 5-5 5 5'),
+            xmlns='http://www.w3.org/2000/svg',
+            width='24',
+            height='24',
+            viewbox='0 0 24 24',
+            fill='none',
+            stroke='currentColor',
+            stroke_width='2',
+            stroke_linecap='round',
+            stroke_linejoin='round',
+            cls='lucide lucide-chevrons-up-down-icon lucide-chevrons-up-down text-muted-foreground opacity-50 shrink-0'
         ),
-        **attrs,
+        type='button',
+        id=trigger_id,
+        aria_haspopup='listbox',
+        aria_expanded='false',
+        aria_controls= f"select-{signal}-listbox",
+        cls=cn('btn-outline justify-between font-normal',width,cls),
     )
-
+    return trigger
 
 def SelectValue(
-    placeholder: str = "Select an option",
-    signal: str | None = None,
-    cls: str = "",
-    **attrs: Any,
-) -> HtmlString:
+        placeholder: str = "Select an option",
+        signal: str | None = None,
+        cls: str = "",
+        **attrs: Any,
+    ) -> HtmlString:
     signal = signal or "select"
     return Span(
-        text = f"${signal}_label || '{placeholder}'",
-        data_class = {"text_muted_foreground": f"!${signal}_label"},
+        placeholder,
+        # text=f"${signal}_label || '{placeholder}'",
+        # data_class={"text-muted-foreground": f"!${signal}_label"},
         cls=cn("pointer-events-none", cls),
         **attrs,
     )
 
-
 def SelectContent(
-    *children,
-    signal: str | None = None,
-    cls: str = "",
-    **attrs: Any,
-) -> HtmlString:
+        *children,
+        signal: str | None = None,
+        cls: str = "",
+        **attrs: Any,
+    ) -> HtmlString:
     signal = signal or "select"
 
     return Div(
-        Div(*children, cls="p-1 max-h-[300px] overflow-auto"),
-        ref = f"{signal}Content",
-        on_toggle = f"""
-            if (event.newState === 'open') {{
-                const trigger = document.getElementById('{signal}-trigger');
-                if (trigger) {{
-                    el.style.minWidth = trigger.offsetWidth + 'px';
-                }}
-            }}
-        """,
-        # ds_position(
-        #     anchor=f"{signal}-trigger",
-        #     placement="bottom",
-        #     offset=4,
-        #     flip=True,
-        #     shift=True,
-        #     hide=True,
-        #     auto_size=True,
-        # ),
-        popover="auto",
-        id=f"{signal}-content",
-        role="listbox",
-        aria_labelledby=f"{signal}-trigger",
-        tabindex="-1",
-        cls=cn(
-            "z-50 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md dark:border-input",
-            cls,
-        ),
-        **attrs,
-    )
-
+            Header(
+                Svg(
+                    Circle(cx='11', cy='11', r='8'),
+                    Path(d='m21 21-4.3-4.3'),
+                    xmlns='http://www.w3.org/2000/svg',
+                    width='24',
+                    height='24',
+                    viewbox='0 0 24 24',
+                    fill='none',
+                    stroke='currentColor',
+                    stroke_width='2',
+                    stroke_linecap='round',
+                    stroke_linejoin='round',
+                    cls='lucide lucide-search-icon lucide-search'
+                ),
+                HTMLInput(type='text', value='', placeholder='Search entries...', autocomplete='off', autocorrect='off', spellcheck='false', aria_autocomplete='list', role='combobox', aria_expanded='false', aria_controls=f'select-{signal}-listbox', aria_labelledby=f'select-{signal}-trigger')
+            ),
+            Div(
+                *children,
+                role='listbox',
+                id=f'select-{signal}-listbox',
+                aria_orientation='vertical',
+                aria_labelledby=f'select-{signal}-trigger'
+            ),
+            id=f'select-{signal}-popover',
+            data_popover=True,
+            aria_hidden='false',
+            cls=cls,
+            **attrs,
+        )
 
 def SelectItem(
     value: str,
     label: str | None = None,
     signal: str | None = None,
     disabled: bool = False,
+    selected: bool = False,
     cls: str = "",
     **attrs: Any,
 ) -> HtmlString:
     label = label or value
     signal = signal or "select"
-
-    return Div(
-        Span(label),
-        Span(
-            Icon("lucide:check", cls="h-4 w-4"),
-            show = f"${signal}_value === '{value}'",
-            cls="absolute right-2 flex h-3.5 w-3.5 items-center justify-center",
-        ),
-        on_click = f"${signal}_value='{value}';${signal}_label='{label}';document.getElementById('{signal}-content').hidePopover()",
-        role="option",
-        data_value=value,
-        data_selected=f"${signal}_value === '{value}'",
-        data_disabled="true" if disabled else None,
-        cls=cn(
-            "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none",
-            "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-            cls,
-        ),
-        **attrs,
-    )
-
+    id = f'select-{signal}-items-{uuid4().hex[:8]}'
+    return Div(label, id=id, role='option', data_value=value,  disabled=disabled, cls=cls, **attrs)
 
 def SelectGroup(
     *children,
-    label: str | None = None,
+    label: str,
+    signal: str | None = None,
     cls: str = "",
     **attrs: Any,
 ) -> HtmlString:
+    signal = signal or "select"
+    id = f'group-label-select-{signal}-items-{uuid4().hex[:8]}'
     return Div(
-        SelectLabel(label) if label else "",
-        *children,
-        cls=cls,
-        **attrs,
-    )
-
+            Div(label, role='heading', id=id),
+           *children,
+            role='group',
+            aria_labelledby=id
+        )
 
 def SelectLabel(
     text: str,
@@ -196,23 +160,22 @@ def SelectLabel(
         **attrs,
     )
 
-
 def SelectWithLabel(
-    label: str,
-    options: list[str | tuple[str, str] | dict],
-    value: str | None = None,
-    placeholder: str = "Select an option",
-    name: str | None = None,
-    signal: str | None = None,
-    helper_text: str | None = None,
-    error_text: str | None = None,
-    required: bool = False,
-    disabled: bool = False,
-    label_cls: str = "",
-    select_cls: str = "",
-    cls: str = "",
-    **attrs: Any,
-) -> HtmlString:
+        label: str,
+        options: list[str | tuple[str, str] | dict],
+        value: str | None = None,
+        placeholder: str = "Select an option",
+        name: str | None = None,
+        signal: str | None = None,
+        helper_text: str | None = None,
+        error_text: str | None = None,
+        required: bool = False,
+        disabled: bool = False,
+        label_cls: str = "",
+        select_cls: str = "",
+        cls: str = "",
+        **attrs: Any,
+    ) -> HtmlString:
     # Generate signal if not provided
     if not signal:
         signal = f"select_{uuid4().hex[:8]}"
@@ -251,16 +214,17 @@ def SelectWithLabel(
         ),
         Select(
             SelectTrigger(
-                SelectValue(placeholder=placeholder, signal=signal),
+                SelectValue(value or placeholder, signal=signal),
                 signal=signal,
                 cls=select_cls,
                 disabled=disabled,
-                aria_invalid="true" if error_text else None,
+                # aria_invalid="true" if error_text else None,
                 # Don't override the ID - SelectTrigger will set it correctly
             ),
             SelectContent(*build_options(options), signal=signal),
             initial_value=value,
             signal=signal,
+            name=name or signal,
             **attrs,
         ),
         error_text and HTMLP(error_text, cls="text-sm text-destructive mt-1.5"),
@@ -269,3 +233,44 @@ def SelectWithLabel(
         and HTMLP(helper_text, cls="text-sm text-muted-foreground mt-1.5"),
         cls=cn("space-y-1.5", cls),
     )
+
+def SelectWithLabelSimple(
+    label: str,
+    options: list[str | tuple[str, str] | dict],
+    value: str | None = None,
+    placeholder: str = "Select an option",
+    name: str | None = None,
+    signal: str | None = None,
+    helper_text: str | None = None,
+    error_text: str | None = None,
+    required: bool = False,
+    disabled: bool = False,
+    cls: str = "",
+    label_cls: str = "",
+    **attrs: Any,
+) -> HtmlString:
+    items = []
+    for opt in options:
+        if isinstance(opt, str):
+            items.append(HTMLOption(value=opt, label=opt, signal=signal))
+        elif isinstance(opt, tuple) and len(opt) == 2:
+            items.append(HTMLOption(value=opt[0], label=opt[1], signal=signal))
+
+    return Div(
+            HTMLLabel(label, cls=cn("label", label_cls)) if label else None,
+            HTMLSelect(
+                HTMLOptionGroup(
+                    *items,
+                    label=label,
+                ),
+                value=value,
+                placeholder=placeholder,
+                name=name,
+                disabled=disabled,
+                required=required,
+                cls=cn("select ", cls),
+                bind=signal,
+                **attrs,
+            ),
+            cls="grid gap-3"
+        )

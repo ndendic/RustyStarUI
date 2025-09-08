@@ -280,4 +280,10 @@
     if (window.basecoat) {
       window.basecoat.register('select', 'div.select:not([data-select-initialized])', initSelect);
     }
+    
+    window.initSelectElement = (element) => {
+      if (element && !element.dataset.selectInitialized) {
+          initSelect(element);
+      }
+  };
   })();
