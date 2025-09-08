@@ -46,6 +46,7 @@ sidebar_buttons = Sidebar()
 sidebar_buttons.buttons.home = SidebarButton(label="Home", href="/", icon="home")
 sidebar_buttons.buttons.playground = SidebarButton(label="Playground", on_click="/cmds/playground/general", icon="palette")
 
+sidebar_buttons.components.accordion = SidebarButton(label="Accordion", on_click="/cmds/component.accordion/general")
 sidebar_buttons.components.alerts = SidebarButton(label="Alerts", on_click="/cmds/component.alerts/general")
 sidebar_buttons.components.buttons = SidebarButton(label="Buttons", on_click="/cmds/component.buttons/general")
 sidebar_buttons.components.breadcrumb = SidebarButton(label="Breadcrumb", on_click="/cmds/component.breadcrumb/general")

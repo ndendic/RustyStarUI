@@ -1,6 +1,6 @@
 # Core utilities
 # Layout components
-from .accordion import Accordion, AccordionContent, AccordionItem, AccordionTrigger
+from .accordion import Accordion, AccordionItem
 
 # Feedback components
 from .alert import Alert, AlertDescription, AlertTitle
@@ -165,7 +165,7 @@ __all__ = [
     "cn", "cva", "Icon",
 
     # Layout
-    "Accordion", "AccordionContent", "AccordionItem", "AccordionTrigger",
+    "Accordion", "AccordionItem",
     "Breadcrumb", "BreadcrumbItem", "BreadcrumbLink", "BreadcrumbSeparator", "BreadcrumbPage", "BreadcrumbEllipsis", "BreadcrumbList",
     "Card", "CardContent", "CardDescription", "CardHeader", "CardTitle", "CardAction", "CardFooter",
     "Separator",

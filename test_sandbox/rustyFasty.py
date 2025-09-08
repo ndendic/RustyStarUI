@@ -1655,6 +1655,122 @@ def skeletons(sender: str, *args,**kwargs):
                 )                
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
+@on("component.accordion")
+def accordion(sender: str, *args,**kwargs):
+    # Accordion variants
+    elements = Div(
+                    H2("Accordion", cls="text-2xl font-semibold mb-4"),
+                    Div(
+                        # Single accordion with collapsible
+                        Div(
+                            P(
+                                "Single selection (collapsible):",
+                                cls="text-sm font-medium mb-2",
+                            ),
+                            Accordion(
+                                AccordionItem(
+                                    Section(
+                                        "Yes. It adheres to the WAI-ARIA design pattern.", cls="text-sm",
+                                    ),
+                                    summary="Is it accessible?",
+                                    open=True,
+                                ),
+                                AccordionItem(
+                                    Section(
+                                        "Yes. It comes with default styles that matches the other components' aesthetic.", cls="text-sm",
+                                    ),
+                                    summary="Is it styled?",
+                                ),
+                                AccordionItem(                              
+                                    Section(
+                                        "Yes. It's animated by default, but you can disable it if you prefer.", cls="text-sm",
+                                    ),
+                                    summary="Is it animated?",
+                                ),
+                                type="single",
+                                signal="accordion_single",
+                                cls="w-full",
+                            ),
+                            cls="mb-6",
+                        ),
+                        # Multiple selection accordion
+                        Div(
+                            P("Multiple selection:", cls="text-sm font-medium mb-2"),
+                            Accordion(
+                                AccordionItem(
+                                    
+                                    Section(
+                                        Div(
+                                            P(
+                                                "To get started with our product, follow these steps:",
+                                                cls="mb-2",
+                                            ),
+                                            Ul(
+                                                Li("1. Sign up for an account"),
+                                                Li("2. Complete your profile"),
+                                                Li("3. Explore the dashboard"),
+                                                cls="list-disc pl-6",
+                                            ),
+                                        ),
+                                    ),
+                                    summary="Getting Started",
+                                ),
+                                AccordionItem(
+                                    Section(
+                                        Div(
+                                            P(
+                                                "Our platform offers these key features:",
+                                                cls="mb-2",
+                                            ),
+                                            Ul(
+                                                Li("Real-time collaboration"),
+                                                Li("Advanced analytics"),
+                                                Li("Custom integrations"),
+                                                Li("24/7 support"),
+                                                cls="list-disc pl-6",
+                                            ),
+                                        ),
+                                    ),
+                                    summary="Features",
+                                ),
+                                AccordionItem(
+                                    Section(
+                                        Div(
+                                            P(
+                                                "We offer flexible pricing plans:",
+                                                cls="mb-2",
+                                            ),
+                                            Div(
+                                                Div(
+                                                    "Free: $0/month - Basic features",
+                                                    cls="py-1",
+                                                ),
+                                                Div(
+                                                    "Pro: $29/month - Advanced features",
+                                                    cls="py-1",
+                                                ),
+                                                Div(
+                                                    "Enterprise: Custom - Full access",
+                                                    cls="py-1",
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    summary="Pricing",
+                                ),
+                                type="multiple",
+                                signal="accordion_multiple",
+                                cls="w-full",
+                            ),
+                            cls="mb-6",
+                        ),
+                        cls="space-y-4 mb-8",
+                    ),                    
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
 # @on("component.cards")
 # def cards(sender: str, *args,**kwargs):
 #     # Button variants
@@ -1676,14 +1792,7 @@ def index():
         Main(navbar,
             # Main content container
             Div(
-                H1("StarUI Component Test"),
-                SelectWithLabel(
-                    "Country",
-                    options=["United States", "Canada", "Mexico", "United Kingdom", "France", "Germany"],
-                    placeholder="Choose a country",
-                    signal="country",
-                    helper_text="Select your country of residence",
-                ),
+                H1("StarUI Component Test"),                
                 
                 # Sheet example
                 Div(
@@ -1723,132 +1832,6 @@ def index():
                     # ),
                     # cls="mb-8",
                 ),                
-                    
-                Separator(cls="my-4"),
-                # Accordion examples
-                Div(
-                    H2("Accordion", cls="text-2xl font-semibold mb-4"),
-                    Div(
-                        # Single accordion with collapsible
-                        Div(
-                            P(
-                                "Single selection (collapsible):",
-                                cls="text-sm font-medium mb-2",
-                            ),
-                            Accordion(
-                                AccordionItem(
-                                    AccordionContent(
-                                        "Yes. It adheres to the WAI-ARIA design pattern.",
-                                        value="item-1",
-                                    ),
-                                    summary="Is it accessible?",
-                                    value="item-1",
-                                ),
-                                AccordionItem(
-                                    AccordionContent(
-                                        "Yes. It comes with default styles that matches the other components' aesthetic.",
-                                        value="item-2",
-                                    ),
-                                    summary="Is it styled?",
-                                    value="item-2",
-                                ),
-                                AccordionItem(                              
-                                    AccordionContent(
-                                        "Yes. It's animated by default, but you can disable it if you prefer.",
-                                        value="item-3",
-                                    ),
-                                    summary="Is it animated?",
-                                    value="item-3",
-                                ),
-                                type="single",
-                                collapsible=True,
-                                default_value="item-1",
-                                signal="accordion_single",
-                                cls="w-full",
-                            ),
-                            cls="mb-6",
-                        ),
-                        # Multiple selection accordion
-                        Div(
-                            P("Multiple selection:", cls="text-sm font-medium mb-2"),
-                            Accordion(
-                                AccordionItem(
-                                    
-                                    AccordionContent(
-                                        Div(
-                                            P(
-                                                "To get started with our product, follow these steps:",
-                                                cls="mb-2",
-                                            ),
-                                            Ul(
-                                                Li("1. Sign up for an account"),
-                                                Li("2. Complete your profile"),
-                                                Li("3. Explore the dashboard"),
-                                                cls="list-disc pl-6",
-                                            ),
-                                        ),
-                                        value="getting-started",
-                                    ),
-                                    summary="Getting Started",
-                                    value="getting-started",
-                                ),
-                                AccordionItem(
-                                    AccordionContent(
-                                        Div(
-                                            P(
-                                                "Our platform offers these key features:",
-                                                cls="mb-2",
-                                            ),
-                                            Ul(
-                                                Li("Real-time collaboration"),
-                                                Li("Advanced analytics"),
-                                                Li("Custom integrations"),
-                                                Li("24/7 support"),
-                                                cls="list-disc pl-6",
-                                            ),
-                                        ),
-                                        value="features",
-                                    ),
-                                    summary="Features",
-                                    value="features",
-                                ),
-                                AccordionItem(
-                                    AccordionContent(
-                                        Div(
-                                            P(
-                                                "We offer flexible pricing plans:",
-                                                cls="mb-2",
-                                            ),
-                                            Div(
-                                                Div(
-                                                    "Free: $0/month - Basic features",
-                                                    cls="py-1",
-                                                ),
-                                                Div(
-                                                    "Pro: $29/month - Advanced features",
-                                                    cls="py-1",
-                                                ),
-                                                Div(
-                                                    "Enterprise: Custom - Full access",
-                                                    cls="py-1",
-                                                ),
-                                            ),
-                                        ),
-                                        value="pricing",
-                                    ),
-                                    summary="Pricing",
-                                    value="pricing",
-                                ),
-                                type="multiple",
-                                default_value=["getting-started"],
-                                signal="accordion_multiple",
-                                cls="w-full",
-                            ),
-                            cls="mb-6",
-                        ),
-                        cls="space-y-4 mb-8",
-                    ),
-                ),
 
                 Separator(cls="my-4"),
 
