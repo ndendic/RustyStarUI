@@ -91,7 +91,6 @@ def playground(sender: str, *args,**kwargs):
     )
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
-
 @on("component.buttons")
 def buttons(sender: str, *args,**kwargs):
     # Button variants
@@ -1885,13 +1884,17 @@ def progress(sender: str, *args,**kwargs):
 @on("component.sheet")
 def sheet(sender: str, *args,**kwargs):
     # Button variants
+    SheetSide = ["top", "right", "bottom", "left"]
     elements = Div(
                     H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
-                    Sheet(
-                        SheetTrigger("Open Sheet", signal="demo_sheet"),
+                    Div(
+                        *[SheetTrigger(f"Open {side.capitalize()} Sheet", signal=f"demo_sheet_{side}") for side in SheetSide],
+                        cls="grid grid-cols-2 gap-2 items-center",
+                    ), 
+                    *[Sheet(
                         SheetContent(
                             SheetHeader(
-                                SheetTitle("Sheet Title", signal="demo_sheet"),
+                                SheetTitle("Sheet Title", signal=f"demo_sheet_{side}"),
                                 SheetDescription(
                                     "This is a sheet description.", signal="demo_sheet"
                                 ),
@@ -1906,20 +1909,20 @@ def sheet(sender: str, *args,**kwargs):
                             SheetFooter(
                                 Button(
                                     "Cancel",
-                                    on_click="$demo_sheet_open = false",
+                                    on_click=f"$demo_sheet_{side}_open = false",
                                     variant="outline",
                                 ),
                                 Button("Save Changes"),
                             ),
-                            signal="demo_sheet",
-                            side="right",
+                            signal=f"demo_sheet_{side}",
+                            side=side,
                             size="md",
                         ),
-                        signal="demo_sheet",
-                        side="right",
+                        signal=f"demo_sheet_{side}",
+                        side=side,
                         size="md",
                         modal=True,
-                    ),
+                    ) for side in SheetSide],
                     cls="container mx-auto p-8",
                     id="content",
                 )                
@@ -1931,9 +1934,6 @@ def sheet(sender: str, *args,**kwargs):
 #     # Button variants
 #     elements = Div(
 #                     H2("Card", cls="text-2xl font-semibold mb-4"),
-#                     
-
-
 #                     cls="container mx-auto p-8",
 #                     id="content",
 #                 )                
@@ -1948,11 +1948,6 @@ def index():
             # Main content container
             Div(
                 H1("StarUI Component Test"),                
-                
-                # Sheet example
-                Div(
-                    
-                ),                
 
                 Separator(cls="my-4"),
                 # Interactive counter with Datastar
