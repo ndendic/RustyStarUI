@@ -36,9 +36,8 @@ def Progress(
 
     return Div(
         Div(
-            style_={"width": f"${signal} + '%'"},
+            data_style=f"{{'width': ${signal}+'%'}}",
             cls="bg-primary h-full transition-all duration-300 ease-out",
-            style=f"'width: {initial_percentage}%'",
         ),
         signals=Signals({signal: initial_percentage}),
         role="progressbar",

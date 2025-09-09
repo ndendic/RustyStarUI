@@ -16,6 +16,7 @@ def DropdownMenu(
         *[child(signal) if callable(child) else child for child in children],
         cls=cn("relative inline-block","dropdown-menu", cls),
         signals=Signals({f"{signal}_open": False}),
+        on_load="initDropdownMenuElement(el)",
         **attrs,
     )
 

@@ -102,3 +102,8 @@ toolbench-changes.diff
 
 # Datastar pro
 datastar-*.js*
+
+# specify
+scripts/
+templates/
+memory/

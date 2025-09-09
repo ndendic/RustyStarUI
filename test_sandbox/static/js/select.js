@@ -285,5 +285,5 @@
       if (element && !element.dataset.selectInitialized) {
           initSelect(element);
       }
-  };
+    };
   })();

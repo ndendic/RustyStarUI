@@ -39,8 +39,8 @@ hdrs=(
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/basecoat.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/select.min.js', defer=''),
         Script(src="/static/js/select.js", defer=''),
+        Script(src="/static/js/dropdown-menu.js", defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/popover.min.js', defer=''),
-        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/dropdown-menu.min.js', defer=''),
         Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/sidebar.min.js', defer=''),
         Script("(() => {\r\n      try {\r\n        const stored = localStorage.getItem('themeMode');\r\n        if (stored ? stored === 'dark'\r\n                   : matchMedia('(prefers-color-scheme: dark)').matches) {\r\n          document.documentElement.classList.add('dark');\r\n        }\r\n      } catch (_) {}\r\n\r\n      const apply = dark => {\r\n        document.documentElement.classList.toggle('dark', dark);\r\n        try { localStorage.setItem('themeMode', dark ? 'dark' : 'light'); } catch (_) {}\r\n      };\r\n\r\n      document.addEventListener('basecoat:theme', (event) => {\r\n        const mode = event.detail?.mode;\r\n        apply(mode === 'dark' ? true\r\n             : mode === 'light' ? false\r\n             : !document.documentElement.classList.contains('dark'));\r\n      });\r\n    })();"),
         Script("(function() {\r\n      try {\r\n        const storedTheme = localStorage.getItem('themeVariant');\r\n        if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);\r\n      } catch (event) {\r\n        console.error('Could not apply theme variant from localStorage', event);\r\n      }\r\n    })();"),
@@ -1771,72 +1771,10 @@ def accordion(sender: str, *args,**kwargs):
                 )                
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
-# @on("component.cards")
-# def cards(sender: str, *args,**kwargs):
-#     # Button variants
-#     elements = Div(
-#                     H2("Card", cls="text-2xl font-semibold mb-4"),
-#                     
-
-
-#                     cls="container mx-auto p-8",
-#                     id="content",
-#                 )                
-#     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
-
-@app.get("/")
-@page(title="RustyStarUi Component Test", wrap_in=HTMLResponse)
-def index():
-    return Div(
-        sidebar,
-        Main(navbar,
-            # Main content container
-            Div(
-                H1("StarUI Component Test"),                
-                
-                # Sheet example
-                Div(
-                    # H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
-                    # Sheet(
-                    #     SheetTrigger("Open Sheet", signal="demo_sheet"),
-                    #     SheetContent(
-                    #         SheetHeader(
-                    #             SheetTitle("Sheet Title", signal="demo_sheet"),
-                    #             SheetDescription(
-                    #                 "This is a sheet description.", signal="demo_sheet"
-                    #             ),
-                    #         ),
-                    #         Div(
-                    #             P(
-                    #                 "Sheet content goes here. Press ESC or click outside to close."
-                    #             ),
-                    #             Input(placeholder="Type something..."),
-                    #             cls="p-6 space-y-4",
-                    #         ),
-                    #         SheetFooter(
-                    #             Button(
-                    #                 "Cancel",
-                    #                 on_click="$demo_sheet_open = false",
-                    #                 variant="outline",
-                    #             ),
-                    #             Button("Save Changes"),
-                    #         ),
-                    #         signal="demo_sheet",
-                    #         side="right",
-                    #         size="md",
-                    #     ),
-                    #     signal="demo_sheet",
-                    #     side="right",
-                    #     size="md",
-                    #     modal=True,
-                    # ),
-                    # cls="mb-8",
-                ),                
-
-                Separator(cls="my-4"),
-
-                # Progress examples
-                Div(
+@on("component.progress")
+def progress(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
                     H2("Progress", cls="text-2xl font-semibold mb-4"),
                     Div(
                         # Basic examples
@@ -1939,7 +1877,83 @@ def index():
                         ),
                         cls="space-y-4 mb-8",
                     ),
-                ),
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+@on("component.sheet")
+def sheet(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
+                    H2("Sheet (Modal Drawer)", cls="text-2xl font-semibold mb-4"),
+                    Sheet(
+                        SheetTrigger("Open Sheet", signal="demo_sheet"),
+                        SheetContent(
+                            SheetHeader(
+                                SheetTitle("Sheet Title", signal="demo_sheet"),
+                                SheetDescription(
+                                    "This is a sheet description.", signal="demo_sheet"
+                                ),
+                            ),
+                            Div(
+                                P(
+                                    "Sheet content goes here. Press ESC or click outside to close."
+                                ),
+                                Input(placeholder="Type something..."),
+                                cls="p-6 space-y-4",
+                            ),
+                            SheetFooter(
+                                Button(
+                                    "Cancel",
+                                    on_click="$demo_sheet_open = false",
+                                    variant="outline",
+                                ),
+                                Button("Save Changes"),
+                            ),
+                            signal="demo_sheet",
+                            side="right",
+                            size="md",
+                        ),
+                        signal="demo_sheet",
+                        side="right",
+                        size="md",
+                        modal=True,
+                    ),
+                    cls="container mx-auto p-8",
+                    id="content",
+                )                
+    return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+
+# @on("component.cards")
+# def cards(sender: str, *args,**kwargs):
+#     # Button variants
+#     elements = Div(
+#                     H2("Card", cls="text-2xl font-semibold mb-4"),
+#                     
+
+
+#                     cls="container mx-auto p-8",
+#                     id="content",
+#                 )                
+#     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+
+@app.get("/")
+@page(title="RustyStarUi Component Test", wrap_in=HTMLResponse)
+def index():
+    return Div(
+        sidebar,
+        Main(navbar,
+            # Main content container
+            Div(
+                H1("StarUI Component Test"),                
+                
+                # Sheet example
+                Div(
+                    
+                ),                
+
                 Separator(cls="my-4"),
                 # Interactive counter with Datastar
                 Div(

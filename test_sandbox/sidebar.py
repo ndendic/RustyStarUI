@@ -59,6 +59,7 @@ sidebar_buttons.components.inputs = SidebarButton(label="Inputs", on_click="/cmd
 sidebar_buttons.components.radios = SidebarButton(label="Radios", on_click="/cmds/component.radios/general")
 sidebar_buttons.components.tabs = SidebarButton(label="Tabs", on_click="/cmds/component.tabs/general")
 sidebar_buttons.components.switches = SidebarButton(label="Switches", on_click="/cmds/component.switches/general")
+sidebar_buttons.components.sheet = SidebarButton(label="Sheet", on_click="/cmds/component.sheet/general")
 sidebar_buttons.components.textareas = SidebarButton(label="Textareas", on_click="/cmds/component.textareas/general")
 sidebar_buttons.components.selects = SidebarButton(label="Selects", on_click="/cmds/component.selects/general")
 sidebar_buttons.components.popovers = SidebarButton(label="Popovers", on_click="/cmds/component.popovers/general")

@@ -1,8 +1,9 @@
 from typing import Literal
 
-from rusty_tags import HtmlString, Div, P, Span
 from rusty_tags import H2 as HTMLH2
+from rusty_tags import Div, HtmlString, P, Span
 from rusty_tags.datastar import Signals
+from rusty_tags.datastar import attribute_generator as data
 
 from .utils import cn
 
@@ -30,12 +31,10 @@ def Sheet(
     return Div(
         *children,
         scroll_lock,
+        **data.on('keydown', f"evt.key === 'Escape' && (${signal_open} = false)").window() if modal else None,
         signals=Signals(**{signal_open: default_open}),
-        on_keydown=(f"evt.key === 'Escape' && (${signal_open} = false)", "window")
-        if modal
-        else None,
         data_sheet_root=signal,
-        data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
+        data_attr_data_state=f"${signal_open} ? 'open' : 'closed'",
         cls=cn("relative", class_name, cls),
         **attrs,
     )
@@ -83,10 +82,10 @@ def SheetContent(
     content_id = f"{signal}-content"
 
     side_classes = {
-        "right": "inset-y-0 right-0 h-full border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
-        "left": "inset-y-0 left-0 h-full border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
-        "top": "inset-x-0 top-0 w-full border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
-        "bottom": "inset-x-0 bottom-0 w-full border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+        "right": "inset-y-0 right-0 h-full border-l translate-x-full opacity-0 data-[state=open]:translate-x-0 data-[state=open]:opacity-100 data-[state=closed]:translate-x-full data-[state=closed]:opacity-0",
+        "left": "inset-y-0 left-0 h-full border-r -translate-x-full opacity-0 data-[state=open]:translate-x-0 data-[state=open]:opacity-100 data-[state=closed]:-translate-x-full data-[state=closed]:opacity-0",
+        "top": "inset-x-0 top-0 w-full border-b -translate-y-full opacity-0 data-[state=open]:translate-y-0 data-[state=open]:opacity-100 data-[state=closed]:-translate-y-full data-[state=closed]:opacity-0",
+        "bottom": "inset-x-0 bottom-0 w-full border-t translate-y-full opacity-0 data-[state=open]:translate-y-0 data-[state=open]:opacity-100 data-[state=closed]:translate-y-full data-[state=closed]:opacity-0",
     }
 
     size_classes = (
@@ -120,9 +119,9 @@ def SheetContent(
 
     overlay = (
         Div(
-            show=f"${signal_open}",
             on_click=f"${signal_open} = false",
-            cls="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-in fade-in-0",
+            cls="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out [transition-behavior:allow-discrete] opacity-0 data-[state=open]:opacity-100 data-[state=closed]:opacity-0 data-[state=closed]:pointer-events-none",
+            data_attr_data_state=f"${signal_open} ? 'open' : 'closed'",
             data_sheet_role="overlay",
         )
         if modal
@@ -132,19 +131,19 @@ def SheetContent(
     content_panel = Div(
         close_button or None,
         *children,
-        show=f"${signal_open}",
         id=content_id,
         role="dialog",
         aria_modal="true" if modal else None,
         aria_labelledby=f"{content_id}-title",
         aria_describedby=f"{content_id}-description",
-        data_state=f"${{{signal_open}}} ? 'open' : 'closed'",
+        data_attr_data_state=f"${signal_open} ? 'open' : 'closed'",
         data_sheet_role="content",
         cls=cn(
-            "fixed z-[110] bg-background shadow-lg border flex flex-col",
+            "fixed z-[110] bg-background shadow-lg flex flex-col",
             "transition-all duration-300 ease-in-out",
-            "data-[state=open]:animate-in data-[state=closed]:animate-out",
-            "data-[state=closed]:duration-300 data-[state=open]:duration-500",
+            "[transition-behavior:allow-discrete]",
+            # Start hidden for proper animation
+            "data-[state=closed]:pointer-events-none",
             side_classes.get(side, ""),
             size_classes.get(size, ""),
             "overflow-y-auto",
@@ -154,7 +153,12 @@ def SheetContent(
         **attrs,
     )
 
-    return Div(overlay, content_panel, data_sheet_role="content-wrapper")
+    return Div(
+        overlay,
+        content_panel,
+        # show=f"${signal_open}",
+        data_sheet_role="content-wrapper"
+    )
 
 
 def SheetClose(
