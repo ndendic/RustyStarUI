@@ -4,6 +4,9 @@ from starui import *
 from rusty_tags import Input as HTMLInput
 from rusty_tags import Label as HTMLLabel
 from rusty_tags import Button as HTMLButton
+from rusty_tags import Section as HTMLSection
+from rusty_tags import H2 as HTMLH2
+from rusty_tags import P as HTMLP
 from rusty_tags import Hr as HTMLHr
 
 from rusty_tags.datastar import Signals
@@ -36,24 +39,22 @@ hdrs=(
         *fonts,
         Script(src="https://unpkg.com/lucide@latest"),
         Script(src='https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4'),
-        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/basecoat.min.js', defer=''),
-        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/select.min.js', defer=''),
+        Script(src="/static/js/basecoat.js", defer=''),
+        Script(src="/static/js/toast.js", defer=''),
         Script(src="/static/js/select.js", defer=''),
         Script(src="/static/js/dropdown-menu.js", defer=''),
-        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/popover.min.js', defer=''),
-        Script(src='https://cdn.jsdelivr.net/npm/basecoat-css@0.3.2/dist/js/sidebar.min.js', defer=''),
+        Script(src="/static/js/tabs.js", defer=''),
+        Script(src="/static/js/sidebar.js", defer=''),
         Script("(() => {\r\n      try {\r\n        const stored = localStorage.getItem('themeMode');\r\n        if (stored ? stored === 'dark'\r\n                   : matchMedia('(prefers-color-scheme: dark)').matches) {\r\n          document.documentElement.classList.add('dark');\r\n        }\r\n      } catch (_) {}\r\n\r\n      const apply = dark => {\r\n        document.documentElement.classList.toggle('dark', dark);\r\n        try { localStorage.setItem('themeMode', dark ? 'dark' : 'light'); } catch (_) {}\r\n      };\r\n\r\n      document.addEventListener('basecoat:theme', (event) => {\r\n        const mode = event.detail?.mode;\r\n        apply(mode === 'dark' ? true\r\n             : mode === 'light' ? false\r\n             : !document.documentElement.classList.contains('dark'));\r\n      });\r\n    })();"),
         Script("(function() {\r\n      try {\r\n        const storedTheme = localStorage.getItem('themeVariant');\r\n        if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);\r\n      } catch (event) {\r\n        console.error('Could not apply theme variant from localStorage', event);\r\n      }\r\n    })();"),
         # position_handler(),  # Enhanced handler is now built-in
-        inspector,
+        inspector,        
     )
-htmlkw=dict(lang="en", dir="ltr")
+htmlkw=dict(lang="en", dir="ltr", data_signals=Signals(special="This is a special signal"))
 bodykw=dict(cls="min-h-screen bg-background text-foreground", on_load=DS.get("/updates"))
 ftrs=(
     CustomTag("datastar-inspector"),
-    Script("lucide.createIcons();"),
-
-    # Script("import { createIcons, icons } from 'https://cdn.jsdelivr.net/npm/lucide@latest/+esm';createIcons({ icons, attrs: { width: 20, height: 20 } });", type='module')
+    Script("lucide.createIcons();")
 )
 page = create_template(hdrs=hdrs, htmlkw=htmlkw, bodykw=bodykw, ftrs=ftrs)
 
@@ -84,11 +85,46 @@ def playground(sender: str, *args,**kwargs):
     # Modern popover testing following LogRocket article
     elements = Div(
         H2("Playground"),
-
-        
+        Span(text='$special'),
+        Div(
+            'Key pressed:',
+            Span(text='$key'),
+            Div(
+                Button(
+                    'KEY',
+                    Br(),
+                    'ELSE',
+                    data_id='KEY ELSE',
+                    cls='gray',
+                    on_click=DS.get("/cmds/component.toast/general")
+                ),
+                Button('CM', data_id='CM'),
+                Button('OM', data_id='OM'),
+                Button('FETCH', data_id='FETCH'),
+                Button('SET', data_id='SET'),
+                Button('EXEC', data_id='EXEC'),
+                Button(
+                    'TEST',
+                    Br(),
+                    'ALARM',
+                    data_id='TEST ALARM',
+                    cls='gray'
+                ),
+                Button('3', data_id='3'),
+                Button('2', data_id='2'),
+                Button('1', data_id='1'),
+                Button('ENTER', data_id='ENTER'),
+                Button('CLEAR', data_id='CLEAR'),
+                cls='grid grid-cols-6 gap-2',
+                id='button-container',
+                on_click='$key = evt.target.dataset.id'
+            ),
+            id='demo',
+            signals=Signals(key=""),
+        ),
         cls="container mx-auto p-8",
         id="content",
-    )
+        )
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
 @on("component.buttons")
@@ -1929,15 +1965,46 @@ def sheet(sender: str, *args,**kwargs):
     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
 
 
-# @on("component.cards")
-# def cards(sender: str, *args,**kwargs):
-#     # Button variants
-#     elements = Div(
-#                     H2("Card", cls="text-2xl font-semibold mb-4"),
-#                     cls="container mx-auto p-8",
-#                     id="content",
-#                 )                
-#     return sse_elements(elements,selector="#content", topic="updates", sender=sender)
+@on("component.toast")
+def toast(sender: str, *args,**kwargs):
+    # Button variants
+    elements = Div(
+    Div(
+        Div(
+            Svg(
+                Circle(cx='12', cy='12', r='10'),
+                Path(d='m9 12 2 2 4-4'),
+                aria_hidden='true',
+                xmlns='http://www.w3.org/2000/svg',
+                width='24',
+                height='24',
+                viewbox='0 0 24 24',
+                fill='none',
+                stroke='currentColor',
+                stroke_width='2',
+                stroke_linecap='round',
+                stroke_linejoin='round'
+            ),
+            HTMLSection(
+                HTMLH2('Success'),
+                HTMLP('A success toast called from the backend.')
+            ),
+            Footer(
+                HTMLButton('Dismiss', type='button', data_toast_action='dismiss', cls='btn')
+            ),
+            cls='toast-content'
+        ),
+        on_load="initToastElement(el)",
+        role='status',
+        aria_atomic='true',
+        aria_hidden='false',
+        data_category='success',
+        cls='toast'
+    ),
+    id='toaster',
+    cls='toaster'
+)                
+    return sse_elements(elements,selector="#content",mode="append", topic="updates", sender=sender)
 
 @app.get("/")
 @page(title="RustyStarUi Component Test", wrap_in=HTMLResponse)

@@ -68,16 +68,16 @@ def SheetTrigger(
 
 
 def SheetContent(
-    *children,
-    signal: str,
-    side: SheetSide = "right",
-    size: SheetSize = "sm",
-    modal: bool = True,
-    show_close: bool = True,
-    class_name: str = "",
-    cls: str = "",
-    **attrs,
-) -> HtmlString:
+        *children,
+        signal: str,
+        side: SheetSide = "right",
+        size: SheetSize = "sm",
+        modal: bool = True,
+        show_close: bool = True,
+        class_name: str = "",
+        cls: str = "",
+        **attrs,
+    ) -> HtmlString:
     signal_open = f"{signal}_open"
     content_id = f"{signal}-content"
 
